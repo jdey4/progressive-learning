@@ -167,7 +167,7 @@ def experiment(n_xor, n_nxor, n_test, noise_size, reps, n_trees, max_depth, acor
 mc_rep = 1000
 n_test = 1000
 n_trees = 10
-noise_size = 1000
+noise_size = 10000
 n_xor = (100*np.arange(0.5, 7.25, step=0.25)).astype(int)
 n_nxor = (100*np.arange(0.5, 7.50, step=0.25)).astype(int)
 
