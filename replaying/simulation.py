@@ -12,7 +12,7 @@ from sklearn.model_selection import StratifiedKFold
 from math import log2, ceil 
 
 import sys
-sys.path.append("../../src/")
+sys.path.append("../src/")
 from lifelong_dnn import LifeLongDNN
 from joblib import Parallel, delayed
 
@@ -104,10 +104,13 @@ def experiment(n_xor, n_nxor, n_test, noise_size, reps, n_trees, max_depth, acor
         test_nxor, test_label_nxor = generate_gaussian_parity(n_test,cov_scale=0.1,angle_params=np.pi/2)
 
         #normalize the data
-        xor = xor/np.max(np.abs(xor))
-        test_xor = test_xor/np.max(np.abs(test_xor))
-        nxor = nxor/np.max(np.abs(nxor))
-        test_nxor = test_nxor/np.max(np.abs(test_nxor))
+        if n_xor!=0:
+            xor = xor/np.max(np.abs(xor))
+            test_xor = test_xor/np.max(np.abs(test_xor))
+
+        if n_nxor != 0:
+            nxor = nxor/np.max(np.abs(nxor))
+            test_nxor = test_nxor/np.max(np.abs(test_nxor))
 
     
         if n_xor == 0:
@@ -177,7 +180,7 @@ std_te = np.zeros((2, len(n_xor)+len(n_nxor)))
 for i,n1 in enumerate(n_xor):
     print('starting to compute %s xor\n'%n1)
     error = np.array(
-        Parallel(n_jobs=40,verbose=1)(
+        Parallel(n_jobs=-1,verbose=1)(
         delayed(experiment)(n1,0,n_test,noise_size,1,n_trees=n_trees,max_depth=ceil(log2(750))) for _ in range(mc_rep)
     )
     )
@@ -193,7 +196,7 @@ for i,n1 in enumerate(n_xor):
             print('starting to compute %s nxor\n'%n2)
             
             error = np.array(
-                Parallel(n_jobs=40,verbose=1)(
+                Parallel(n_jobs=-1,verbose=1)(
                 delayed(experiment)(n1,n2,n_test,noise_size,1,n_trees=n_trees,max_depth=ceil(log2(750))) for _ in range(mc_rep)
             )
             )
