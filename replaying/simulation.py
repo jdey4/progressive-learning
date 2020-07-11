@@ -104,10 +104,13 @@ def experiment(n_xor, n_nxor, n_test, noise_size, reps, n_trees, max_depth, acor
         test_nxor, test_label_nxor = generate_gaussian_parity(n_test,cov_scale=0.1,angle_params=np.pi/2)
 
         #normalize the data
-        xor = xor/np.max(np.abs(xor))
-        test_xor = test_xor/np.max(np.abs(test_xor))
-        nxor = nxor/np.max(np.abs(nxor))
-        test_nxor = test_nxor/np.max(np.abs(test_nxor))
+        if n_xor!=0:
+            xor = xor/np.max(np.abs(xor))
+            test_xor = test_xor/np.max(np.abs(test_xor))
+
+        if n_nxor != 0:
+            nxor = nxor/np.max(np.abs(nxor))
+            test_nxor = test_nxor/np.max(np.abs(test_nxor))
 
     
         if n_xor == 0:
