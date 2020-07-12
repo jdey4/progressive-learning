@@ -197,7 +197,7 @@ data_y = data_y[:, 0]
 if model == "uf":
     slot_fold = range(5000//num_points_per_task)
     shift_fold = range(1,7,1)
-    n_trees=[40]
+    n_trees=[10]
     iterable = product(n_trees,shift_fold,slot_fold)
     Parallel(n_jobs=-2,verbose=1)(
         delayed(run_parallel_exp)(
