@@ -105,7 +105,7 @@ def LF_experiment(train_x, train_y, test_x, test_y, noise_size, ntrees, shift, s
             representation[task_jj].append(2*task_ii)
 
             if task_jj == task_ii:
-                for tt in range(task_jj-1,0,-2):
+                for tt in range(2*task_jj-1,0,-2):
                     representation[task_jj].append(tt)
             
             decider = 2*task_jj
