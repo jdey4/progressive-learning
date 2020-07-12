@@ -135,7 +135,7 @@ fte = calc_mean_fte(fte_tmp,reps=reps)
 error = calc_mean_err(err_tmp,reps=reps)
 
 #%%
-sns.set()
+#sns.set()
 
 n_tasks=10
 clr = ["#e41a1c", "#a65628", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00", "#CCCC00"]
@@ -149,6 +149,9 @@ fig, ax = plt.subplots(2,2, figsize=(16,11.5))
 ax[0][0].plot(np.arange(1,n_tasks+1), fte, c='red', marker='.', markersize=14, linewidth=3)
 ax[0][0].hlines(1, 1,n_tasks, colors='grey', linestyles='dashed',linewidth=1.5)
 ax[0][0].tick_params(labelsize=ticksize)
+ax[0][0].set_xticks(np.arange(1,11))
+ax[0][0].set_yticks([1,1.05,1.1,1.15])
+#ax[0][0].set_xlim([1,10])
 ax[0][0].set_xlabel('Number of tasks seen', fontsize=fontsize)
 ax[0][0].set_ylabel('FTE', fontsize=fontsize)
 
@@ -164,6 +167,8 @@ ax[0][1].set_xlabel('Number of tasks seen', fontsize=fontsize)
 ax[0][1].set_ylabel('BTE', fontsize=fontsize)
 #ax[0][1].set_xticks(np.arange(1,10))
 ax[0][1].tick_params(labelsize=ticksize)
+ax[0][1].set_xticks(np.arange(1,11))
+ax[0][1].set_yticks([1,1.05,1.1,1.15])
 ax[0][1].hlines(1, 1,n_tasks, colors='grey', linestyles='dashed',linewidth=1.5)
 
 
@@ -179,6 +184,8 @@ ax[1][0].set_xlabel('Number of tasks seen', fontsize=fontsize)
 ax[1][0].set_ylabel('Transfer Efficiency', fontsize=fontsize)
 #ax[1][0].set_xticks(np.arange(1,10))
 ax[1][0].tick_params(labelsize=ticksize)
+ax[1][0].set_xticks(np.arange(1,11))
+ax[1][0].set_yticks([1,1.05,1.1,1.15])
 ax[1][0].hlines(1, 1,n_tasks, colors='grey', linestyles='dashed',linewidth=1.5)
 
 '''for rep in range(reps):
@@ -205,9 +212,8 @@ for i in range(n_tasks):
 #ax[1][1].legend(loc='center left', bbox_to_anchor=(1, 0.5), fontsize=22)
 ax[1][1].set_xlabel('Number of tasks seen', fontsize=fontsize)
 ax[1][1].set_ylabel('Accuracy', fontsize=fontsize)
-#ax[1][1].set_yticks([.4,.6,.8,.9,1, 1.1,1.2])
-#ax[1][1].set_xticks(np.arange(1,10))
-#ax[1][1].set_ylim(0.89, 1.15)
+ax[1][1].set_xticks(np.arange(1,11))
+ax[1][1].set_yticks([.25,.35,.45])
 ax[1][1].tick_params(labelsize=ticksize)
 
 plt.savefig('./result/figs/fig_trees'+str(ntrees)+"__"+model+'.pdf',dpi=300)
