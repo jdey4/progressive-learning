@@ -76,22 +76,21 @@ def LF_experiment(train_x, train_y, test_x, test_y, noise_size, ntrees, shift, s
             )
 
         #excite with noise
-        if task_ii != 0:
-            np.random.seed(acorn*task_ii)
-            noise = np.random.uniform(0,1,(noise_size,train_x.shape[1]))
-            noise_label = lifelong_forest.predict(
-                noise, representation=task_ii-1, decider=task_ii-1
-            )
+        np.random.seed(acorn*task_ii)
+        noise = np.random.uniform(0,1,(noise_size,train_x.shape[1]))
+        noise_label = lifelong_forest.predict(
+             noise, representation=task_ii, decider=task_ii
+        )
 
-            if acorn is not None:
-                np.random.seed(acorn)
+        if acorn is not None:
+            np.random.seed(acorn)
 
-            lifelong_forest.new_forest(
-            noise, 
-            noise_label, 
-            max_depth=ceil(log2(num_points_per_task)), 
-            n_estimators=ntrees
-            )
+        lifelong_forest.new_forest(
+        noise, 
+        noise_label, 
+        max_depth=ceil(log2(num_points_per_task)), 
+        n_estimators=ntrees
+        )
 
         if model == "dnn":
             llf_task=lifelong_forest.predict(
@@ -112,7 +111,7 @@ def LF_experiment(train_x, train_y, test_x, test_y, noise_size, ntrees, shift, s
             decider = 2*task_jj
 
             llf_task=lifelong_forest.predict(
-                test_x[task_jj*1000:(task_jj+1)*1000,:], representation=representation, decider=decider
+                test_x[task_jj*1000:(task_jj+1)*1000,:], representation=representation[task_jj], decider=decider
                 )
             
             shifts.append(shift)
