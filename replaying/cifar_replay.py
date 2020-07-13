@@ -163,7 +163,7 @@ def run_parallel_exp(data_x, data_y, noise_size, n_trees, model, num_points_per_
 ### MAIN HYPERPARAMS ###
 model = "uf"
 num_points_per_task = 500
-noise_size = 5000
+noise_size = 500
 ########################
 
 (X_train, y_train), (X_test, y_test) = keras.datasets.cifar100.load_data()
