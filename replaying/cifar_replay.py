@@ -77,7 +77,19 @@ def LF_experiment(train_x, train_y, test_x, test_y, noise_size, ntrees, shift, s
 
         #excite with noise
         np.random.seed(acorn*task_ii)
-        noise = np.random.uniform(0,1,(noise_size,train_x.shape[1]))
+        dims = train_x.shape[1]
+        mu = np.mean(lifelong_forest.X_across_tasks[task_ii][:,0])
+        sigma = np.var(lifelong_forest.X_across_tasks[task_ii][:,0])
+        noise = np.random.normal(mu, sigma, noise_size).reshape(noise_size,1)
+
+        for ii in range(dims-1):
+            mu = np.mean(lifelong_forest.X_across_tasks[task_ii][:,ii+1])
+            sigma = np.var(lifelong_forest.X_across_tasks[task_ii][:,ii+1])
+            noise = np.concatenate(
+                (noise, np.random.normal(mu, sigma, noise_size).reshape(noise_size,1)),
+                axis = 1
+            )
+
         noise_label = lifelong_forest.predict(
              noise, representation=task_ii, decider=task_ii
         )
@@ -163,7 +175,7 @@ def run_parallel_exp(data_x, data_y, noise_size, n_trees, model, num_points_per_
 ### MAIN HYPERPARAMS ###
 model = "uf"
 num_points_per_task = 500
-noise_size = 500
+noise_size = 5000
 ########################
 
 (X_train, y_train), (X_test, y_test) = keras.datasets.cifar100.load_data()
