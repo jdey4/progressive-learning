@@ -143,7 +143,9 @@ def experiment(n_xor, n_nxor, n_test, noise_size, reps, n_trees, max_depth, acor
             label_noise = l2f.predict(noise, representation=0,decider=0)
 
             #train a forest to replay the pseudo data
-            l2f.new_forest(noise, label_noise, n_estimators=n_trees, max_depth=max_depth)
+            #l2f.new_forest(noise, label_noise, n_estimators=n_trees, max_depth=max_depth)
+            l2f.X_across_tasks[0] = noise
+            l2f.y_across_tasks[0] = label_noise
 
             #train a forest for the second task
             l2f.new_forest(nxor, label_nxor, n_estimators=n_trees,max_depth=max_depth)
@@ -152,9 +154,9 @@ def experiment(n_xor, n_nxor, n_test, noise_size, reps, n_trees, max_depth, acor
             uf.new_forest(nxor, label_nxor, n_estimators=2*n_trees,max_depth=max_depth)
 
             uf_task1=uf.predict(test_xor, representation=0, decider=0)
-            l2f_task1=l2f.predict(test_xor, representation=[0,2], decider=0)
+            l2f_task1=l2f.predict(test_xor, representation='all', decider=0)
             uf_task2=uf.predict(test_nxor, representation=1, decider=1)
-            l2f_task2=l2f.predict(test_nxor, representation=[1,2], decider=2)
+            l2f_task2=l2f.predict(test_nxor, representation='all', decider=1)
             
             errors[i,0] = 1 - np.sum(uf_task1 == test_label_xor)/n_test
             errors[i,1] = 1 - np.sum(l2f_task1 == test_label_xor)/n_test
