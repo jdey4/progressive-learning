@@ -38,7 +38,7 @@ def LF_experiment(train_x, train_y, test_x, test_y, noise_size, ntrees, shift, s
 
     for task_ii in range(10):
         if model == "uf":
-            single_task_learner = LifeLongDNN(model = "uf", parallel = True)
+            single_task_learner = LifeLongDNN(model = "uf", parallel = False)
 
             if acorn is not None:
                 np.random.seed(acorn)
@@ -62,8 +62,8 @@ def LF_experiment(train_x, train_y, test_x, test_y, noise_size, ntrees, shift, s
                     llf_task == test_y[task_ii*1000:(task_ii+1)*1000]
                     )
 
-    representation = [[] for _ in range(10)]
-    lifelong_forest = LifeLongDNN(model = model, parallel = True if model == "uf" else False)
+    
+    lifelong_forest = LifeLongDNN(model = model, parallel = False)
     for task_ii in range(10):
         print("Starting Task {} For Fold {}".format(task_ii, shift))
         if acorn is not None:
@@ -90,9 +90,11 @@ def LF_experiment(train_x, train_y, test_x, test_y, noise_size, ntrees, shift, s
                 axis = 1
             )
 
+        print(noise.shape)
         noise_label = lifelong_forest.predict(
              noise, representation=task_ii, decider=task_ii
         )
+        print(np.unique(noise_label))
 
         lifelong_forest.X_across_tasks[task_ii] = noise
         lifelong_forest.y_across_tasks[task_ii] = noise_label
@@ -110,6 +112,9 @@ def LF_experiment(train_x, train_y, test_x, test_y, noise_size, ntrees, shift, s
                 test_x[task_jj*1000:(task_jj+1)*1000,:], representation='all', decider=task_jj
                 )
             
+            print(task_ii, task_jj, np.mean(
+                llf_task == test_y[task_jj*1000:(task_jj+1)*1000]
+                ))
             shifts.append(shift)
             tasks.append(task_jj+1)
             base_tasks.append(task_ii+1)
@@ -175,7 +180,7 @@ def run_parallel_exp(data_x, data_y, noise_size, n_trees, model, num_points_per_
 ### MAIN HYPERPARAMS ###
 model = "uf"
 num_points_per_task = 500
-noise_size = 5000
+noise_size = 50000
 ########################
 
 (X_train, y_train), (X_test, y_test) = keras.datasets.cifar100.load_data()
