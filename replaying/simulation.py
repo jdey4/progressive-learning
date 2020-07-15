@@ -97,12 +97,20 @@ def experiment(n_xor, n_nxor, n_test, delta, reps, n_trees, max_depth, acorn=Non
         uf = LifeLongDNN()
         #source data
         xor, label_xor = generate_gaussian_parity(n_xor,cov_scale=0.1,angle_params=0)
+        normalize_xor = np.max(np.abs(xor))
+        xor = xor/normalize_xor
+
         test_xor, test_label_xor = generate_gaussian_parity(n_test,cov_scale=0.1,angle_params=0)
+        test_xor = test_xor/normalize_xor
 
         #target data
-        nxor, label_nxor = generate_gaussian_parity(n_nxor,cov_scale=0.1,angle_params=np.pi/2)
-        test_nxor, test_label_nxor = generate_gaussian_parity(n_test,cov_scale=0.1,angle_params=np.pi/2)
+        if n_nxor != 0:
+            nxor, label_nxor = generate_gaussian_parity(n_nxor,cov_scale=0.1,angle_params=np.pi/2)
+            normalize_nxor = np.max(np.abs(nxor))
+            nxor = nxor/normalize_nxor
 
+            test_nxor, test_label_nxor = generate_gaussian_parity(n_test,cov_scale=0.1,angle_params=np.pi/2)
+            test_nxor = test_nxor/normalize_nxor
         #normalize the data
         if n_xor!=0:
             xor = xor/np.max(np.abs(xor))
