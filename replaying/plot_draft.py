@@ -86,6 +86,8 @@ noise = np.concatenate((X,Y), axis=1)
 
 # %%
 xor, label_xor = generate_gaussian_parity(750,cov_scale=0.1,angle_params=0)
+normalize_xor = np.max(np.abs(xor))
+xor = xor/normalize_xor
 
 l2f = LifeLongDNN()
 l2f.new_forest(xor, label_xor, n_estimators=10,max_depth=ceil(log2(750)))
@@ -96,12 +98,14 @@ label_noise = l2f.predict(noise, representation=0,decider=0).astype(int)
 sns.set_context("talk")
 
 colors = sns.color_palette('Dark2', n_colors=2)
-fig = plt.figure(constrained_layout=True,figsize=(16,7))
-gs = fig.add_gridspec(7, 16)
-ax1 = fig.add_subplot(gs[:7,:7])
-ax1.scatter(X,Y,s=1)
+fig, ax = plt.subplots(ncols=2, nrows=1, sharey=True, figsize=(12,6))
+ax[0].scatter(X,Y,s=1)
+ax[0].set_xticks([-1, -.5, 0, .5, 1])
+ax[0].set_yticks([-1, -.5, 0, .5, 1])
 
-ax1 = fig.add_subplot(gs[:7,8:15])
-ax1.scatter(X, Y, c=get_colors(colors, label_noise), s=1)
+ax[1].scatter(X, Y, c=get_colors(colors, label_noise), s=1)
+ax[1].set_xticks([-1, -.5, 0, .5, 1])
+ax[1].set_yticks([-1, -.5, 0, .5, 1])
 
+plt.savefig('result/figs/partition.pdf')
 # %%
