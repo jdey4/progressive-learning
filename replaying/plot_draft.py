@@ -74,7 +74,8 @@ def generate_gaussian_parity(n, mean=np.array([-1, -1]), cov_scale=1, angle_para
 
 
 # %% main hyperparameters
-delta = 0.01
+delta = 0.05
+delta_ = 0.01
 #########################
 
 x = np.arange(-1, 1+delta, step=delta)
@@ -83,6 +84,14 @@ X, Y = np.meshgrid(x,y)
 X = np.ravel(X).reshape(-1,1)
 Y = np.ravel(Y).reshape(-1,1)
 noise = np.concatenate((X,Y), axis=1)
+
+
+x = np.arange(-1, 1+delta_, step=delta_)
+y = np.arange(-1, 1+delta_, step=delta_)
+X_, Y_ = np.meshgrid(x,y)
+X_ = np.ravel(X_).reshape(-1,1)
+Y_ = np.ravel(Y_).reshape(-1,1)
+noise_ = np.concatenate((X_,Y_), axis=1)
 
 # %%
 xor, label_xor = generate_gaussian_parity(750,cov_scale=0.1,angle_params=0)
@@ -93,19 +102,28 @@ l2f = LifeLongDNN()
 l2f.new_forest(xor, label_xor, n_estimators=10,max_depth=ceil(log2(750)))
 
 label_noise = l2f.predict(noise, representation=0,decider=0).astype(int)
+label_noise_ = l2f.predict(noise_, representation=0,decider=0).astype(int)
 
 #%%
 sns.set_context("talk")
 
 colors = sns.color_palette('Dark2', n_colors=2)
-fig, ax = plt.subplots(ncols=2, nrows=1, sharey=True, figsize=(12,6))
-ax[0].scatter(X,Y,s=1)
-ax[0].set_xticks([-1, -.5, 0, .5, 1])
-ax[0].set_yticks([-1, -.5, 0, .5, 1])
+fig, ax = plt.subplots(ncols=2, nrows=2, sharex=True, sharey=True, figsize=(12,12))
+ax[0][0].scatter(X,Y,s=1)
+ax[0][0].set_xticks([-1, -.5, 0, .5, 1])
+ax[0][0].set_yticks([-1, -.5, 0, .5, 1])
 
-ax[1].scatter(X, Y, c=get_colors(colors, label_noise), s=1)
-ax[1].set_xticks([-1, -.5, 0, .5, 1])
-ax[1].set_yticks([-1, -.5, 0, .5, 1])
+ax[0][1].scatter(X, Y, c=get_colors(colors, label_noise), s=1)
+ax[0][1].set_xticks([-1, -.5, 0, .5, 1])
+ax[0][1].set_yticks([-1, -.5, 0, .5, 1])
+
+ax[1][0].scatter(X_,Y_,s=1)
+ax[1][0].set_xticks([-1, -.5, 0, .5, 1])
+ax[1][0].set_yticks([-1, -.5, 0, .5, 1])
+
+ax[1][1].scatter(X_, Y_, c=get_colors(colors, label_noise_), s=1)
+ax[1][1].set_xticks([-1, -.5, 0, .5, 1])
+ax[1][1].set_yticks([-1, -.5, 0, .5, 1])
 
 plt.savefig('result/figs/partition.pdf')
 # %%
