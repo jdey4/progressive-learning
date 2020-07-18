@@ -82,7 +82,7 @@ def generate_gaussian_parity(n, mean=np.array([-1, -1]), cov_scale=1, angle_para
 
 
 #%%
-def experiment(n_xor, n_nxor, n_test, delta, reps, n_trees, max_depth, acorn=None):
+def experiment(n_xor, n_nxor, n_test, noise_size, reps, n_trees, max_depth, acorn=None):
     #print(1)
     if n_xor==0 and n_nxor==0:
         raise ValueError('Wake up and provide samples to train!!!')
@@ -147,11 +147,13 @@ def experiment(n_xor, n_nxor, n_test, delta, reps, n_trees, max_depth, acorn=Non
             l2f.new_forest(xor, label_xor, n_estimators=n_trees,max_depth=max_depth)
 
             #excite the model with noise
-            x = np.arange(-1, 1, step=delta)
+            '''x = np.arange(-1, 1, step=delta)
             y = np.arange(-1, 1, step=delta)
             X, Y = np.meshgrid(x,y)
             X = np.ravel(X).reshape(-1,1)
-            Y = np.ravel(Y).reshape(-1,1)
+            Y = np.ravel(Y).reshape(-1,1)'''
+            noise = np.random.uniform(-1,1,(noise_size,2))
+            noise = np.concatenate((noise,nxor),axis=0)
             noise = np.concatenate((X,Y), axis=1)
             label_noise = l2f.predict(noise, representation=0,decider=0)
 
@@ -182,7 +184,8 @@ def experiment(n_xor, n_nxor, n_test, delta, reps, n_trees, max_depth, acorn=Non
 mc_rep = 1000
 n_test = 1000
 n_trees = 10
-delta = .01
+#delta = .01
+noise_size = 500
 n_xor = (100*np.arange(0.5, 7.25, step=0.25)).astype(int)
 n_nxor = (100*np.arange(0.5, 7.50, step=0.25)).astype(int)
 
@@ -196,7 +199,7 @@ for i,n1 in enumerate(n_xor):
     print('starting to compute %s xor\n'%n1)
     error = np.array(
         Parallel(n_jobs=-1,verbose=1)(
-        delayed(experiment)(n1,0,n_test,delta,1,n_trees=n_trees,max_depth=ceil(log2(750))) for _ in range(mc_rep)
+        delayed(experiment)(n1,0,n_test,noise_size,1,n_trees=n_trees,max_depth=ceil(log2(750))) for _ in range(mc_rep)
     )
     )
     mean_error[:,i] = np.mean(error,axis=0)
@@ -212,7 +215,7 @@ for i,n1 in enumerate(n_xor):
             
             error = np.array(
                 Parallel(n_jobs=-1,verbose=1)(
-                delayed(experiment)(n1,n2,n_test,delta,1,n_trees=n_trees,max_depth=ceil(log2(750))) for _ in range(mc_rep)
+                delayed(experiment)(n1,n2,n_test,noise_size,1,n_trees=n_trees,max_depth=ceil(log2(750))) for _ in range(mc_rep)
             )
             )
             mean_error[:,i+j+1] = np.mean(error,axis=0)
