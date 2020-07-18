@@ -154,7 +154,7 @@ def experiment(n_xor, n_nxor, n_test, noise_size, reps, n_trees, max_depth, acor
             Y = np.ravel(Y).reshape(-1,1)'''
             noise = np.random.uniform(-1,1,(noise_size,2))
             noise = np.concatenate((noise,nxor),axis=0)
-            noise = np.concatenate((X,Y), axis=1)
+            #noise = np.concatenate((X,Y), axis=1)
             label_noise = l2f.predict(noise, representation=0,decider=0)
 
             #train a forest to replay the pseudo data
