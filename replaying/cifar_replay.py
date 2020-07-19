@@ -13,7 +13,7 @@ from sklearn.model_selection import StratifiedKFold
 from math import log2, ceil 
 
 import sys
-sys.path.append("../src/")
+sys.path.append("../src_replay/")
 from lifelong_dnn import LifeLongDNN
 from joblib import Parallel, delayed
 from multiprocessing import Pool
@@ -76,28 +76,28 @@ def LF_experiment(train_x, train_y, test_x, test_y, noise_size, ntrees, shift, s
             )
 
         #excite with noise
-        if task_ii!=9:
-            np.random.seed(acorn*task_ii)
-            dims = train_x.shape[1]
-            noise = np.random.uniform(0,1,(noise_size,dims))
-            tmp = train_x[(task_ii+1)*5000+slot*num_points_per_task:(task_ii+1)*5000+(slot+1)*num_points_per_task,:]
-            noise = np.concatenate((noise,tmp),axis=0)
+       # if task_ii!=9:
+       #     np.random.seed(acorn*task_ii)
+       #     dims = train_x.shape[1]
+       #     noise = np.random.uniform(0,1,(noise_size,dims))
+       #     tmp = train_x[(task_ii)*5000+slot*num_points_per_task:(task_ii)*5000+(slot+1)*num_points_per_task,:]
+       #     noise = np.concatenate((noise,tmp),axis=0)
         
-            noise_label = lifelong_forest.predict(
-                noise, representation=task_ii, decider=task_ii
-            )
-        print(np.unique(noise_label))
+       #     noise_label = lifelong_forest.predict(
+       #         noise, representation=task_ii, decider=task_ii
+       #     )
+       # print(np.unique(noise_label))
 
-        lifelong_forest.X_across_tasks[task_ii] = noise
-        lifelong_forest.y_across_tasks[task_ii] = noise_label
+        #lifelong_forest.X_across_tasks[task_ii] = noise
+        #lifelong_forest.y_across_tasks[task_ii] = noise_label
 
-        if model == "dnn":
-            llf_task=lifelong_forest.predict(
-                test_x[task_ii*1000:(task_ii+1)*1000,:], representation=task_ii, decider=task_ii
-                )
-            single_task_accuracies[task_ii] = np.mean(
-                    llf_task == test_y[task_ii*1000:(task_ii+1)*1000]
-                    )
+       # if model == "dnn":
+       #     llf_task=lifelong_forest.predict(
+       #         test_x[task_ii*1000:(task_ii+1)*1000,:], representation=task_ii, decider=task_ii
+       #         )
+       #     single_task_accuracies[task_ii] = np.mean(
+       #             llf_task == test_y[task_ii*1000:(task_ii+1)*1000]
+       #             )
         
         for task_jj in range(task_ii+1):
             llf_task=lifelong_forest.predict(
@@ -172,7 +172,7 @@ def run_parallel_exp(data_x, data_y, noise_size, n_trees, model, num_points_per_
 ### MAIN HYPERPARAMS ###
 model = "uf"
 num_points_per_task = 500
-noise_size = 1000
+noise_size = 1
 ########################
 
 (X_train, y_train), (X_test, y_test) = keras.datasets.cifar100.load_data()
