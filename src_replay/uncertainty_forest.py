@@ -192,7 +192,7 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                             posteriors = np.mean(cal_ys_of_node,axis=0)
 
                             #finite sample correction
-                            posteriors_corrected = _finite_sample_correction(posteriors, len(cal_idxs_of_node_id), len(self.classes_))
+                            posteriors_corrected = posteriors#_finite_sample_correction(posteriors, len(cal_idxs_of_node_id), len(self.classes_))
                             node_ids_to_posterior_map[node_id] = posteriors_corrected
 
                         #add the node_ids_to_posterior_map to the overall tree_idx map 
