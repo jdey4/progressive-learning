@@ -137,6 +137,7 @@ class LifeLongDNN():
                         )
                 )    
         else:
+            print(worker(0))
             posteriors_across_tasks = np.array([worker(transformer_task_idx) for transformer_task_idx in representation])    
             
         return np.mean(posteriors_across_tasks, axis = 0)
