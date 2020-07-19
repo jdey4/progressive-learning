@@ -80,7 +80,7 @@ class LifeLongDNN():
         
         #add one voter to previous task voter lists under the new transformation
         for task_idx in range(self.n_tasks):
-            cuurent_task = n_tasks
+            cuurent_task = self.n_tasks
             X_of_task = self.X_across_tasks[current_task]
             y_of_task = self._estimate_posteriors(X_of_task, representation=task_idx, decider=task_idx)
             
