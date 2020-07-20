@@ -84,12 +84,13 @@ class LifeLongDNN():
             X_of_task = self.X_across_tasks[current_task]
             y_of_task = self._estimate_posteriors(X_of_task, representation=task_idx, decider=task_idx)
             
+            #print(y_of_task,'y of task')
             if self.model == "uf" and task_idx==0:
                 X_of_task_under_new_transform = new_transformer(X_of_task) 
             unfit_task_voter_under_new_transformation = clone(self.voters_across_tasks_matrix[task_idx][0])
             if self.model == "uf":
                 unfit_task_voter_under_new_transformation.classes_ = self.voters_across_tasks_matrix[task_idx][0].classes_
-            task_voter_under_new_transformation = unfit_task_voter_under_new_transformation.fit(X_of_task_under_new_transform, y_of_task)
+            task_voter_under_new_transformation = unfit_task_voter_under_new_transformation.fit(X_of_task_under_new_transform, y_of_task,'posterior')
 
             self.voters_across_tasks_matrix[task_idx].append(task_voter_under_new_transformation)
             
@@ -104,7 +105,7 @@ class LifeLongDNN():
             unfit_new_task_voter_under_task_transformation = clone(new_voter)
             if self.model == "uf":
                 unfit_new_task_voter_under_task_transformation.classes_ = new_voter.classes_
-            new_task_voter_under_task_transformation = unfit_new_task_voter_under_task_transformation.fit(X_under_task_transformation, y, option='posterior')
+            new_task_voter_under_task_transformation = unfit_new_task_voter_under_task_transformation.fit(X_under_task_transformation, y, 'label')
             new_voters_under_previous_task_transformation.append(new_task_voter_under_task_transformation)
             
         #make sure to add the voter of the new task under its own transformation
@@ -137,8 +138,13 @@ class LifeLongDNN():
                         )
                 )    
         else:
-            print(worker(0))
-            posteriors_across_tasks = np.array([worker(transformer_task_idx) for transformer_task_idx in representation])    
+            tmp = []
+            for transformer_task_idx in representation:
+                elements = worker(transformer_task_idx)
+                #print(elements.shape,'elements',transformer_task_idx)
+                tmp.append(elements)
+                #print(len(tmp))
+            posteriors_across_tasks = np.array(tmp)    
             
         return np.mean(posteriors_across_tasks, axis = 0)
         
