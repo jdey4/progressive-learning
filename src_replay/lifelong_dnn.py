@@ -6,7 +6,7 @@ Email: levinewill@icloud.com
 from sklearn.base import clone 
 
 import numpy as np
-
+from scipy.sparse import rand
 from joblib import Parallel, delayed
 
 class LifeLongDNN():
@@ -82,6 +82,15 @@ class LifeLongDNN():
         for task_idx in range(self.n_tasks):
             current_task = self.n_tasks
             X_of_task = self.X_across_tasks[current_task]
+
+            #add noise
+            tmp = X_of_task.copy()
+            for i in range(6):
+                noise_of_task = tmp + rand(tmp.shape[0],tmp.shape[1], 
+                density=0.1, format="csr"
+                )
+                X_of_task = np.concatenate((X_of_task,noise_of_task),axis=0)
+
             y_of_task = self._estimate_posteriors(X_of_task, representation=task_idx, decider=task_idx)
             
             #print(y_of_task,'y of task')
