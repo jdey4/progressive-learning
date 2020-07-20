@@ -87,7 +87,7 @@ class LifeLongDNN():
             tmp = X_of_task.copy()
             for i in range(6):
                 noise_of_task = tmp + rand(tmp.shape[0],tmp.shape[1], 
-                density=0.1, format="csr"
+                density=0.45, format="csr"
                 )
                 X_of_task = np.concatenate((X_of_task,noise_of_task),axis=0)
 
