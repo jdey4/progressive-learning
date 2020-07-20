@@ -168,7 +168,7 @@ ax[0][1].set_ylabel('BTE', fontsize=fontsize)
 #ax[0][1].set_xticks(np.arange(1,10))
 ax[0][1].tick_params(labelsize=ticksize)
 ax[0][1].set_xticks(np.arange(1,11))
-ax[0][1].set_yticks([1,1.05,1.1,1.15])
+#ax[0][1].set_yticks([1,1.05,1.1,1.15])
 ax[0][1].hlines(1, 1,n_tasks, colors='grey', linestyles='dashed',linewidth=1.5)
 
 
