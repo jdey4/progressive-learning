@@ -82,7 +82,7 @@ class LifeLongDNN():
         for task_idx in range(self.n_tasks):
             current_task = self.n_tasks
             X_of_task = self.X_across_tasks[current_task]
-
+            y_of_task = self._estimate_posteriors(X_of_task, representation=0, decider=task_idx)
             #add noise
             '''tmp = X_of_task.copy()
             for i in range(6):
@@ -91,7 +91,11 @@ class LifeLongDNN():
                 )
                 X_of_task = np.concatenate((X_of_task,noise_of_task),axis=0)'''
 
-            y_of_task = self._estimate_posteriors(X_of_task, representation=task_idx, decider=task_idx)
+            X_of_task_ = X_of_task.copy()
+            for voter_idx in range(1,self.n_tasks):
+                X_of_task = np.concatenate((X_of_task,X_of_task_), axis=0)
+                y_of_task_ = self._estimate_posteriors(X_of_task_, representation=voter_idx, decider=task_idx)
+                y_of_task = np.concatenate((y_of_task,y_of_task_),axis=0)
             
             #print(y_of_task,'y of task')
             if self.model == "uf" and task_idx==0:
