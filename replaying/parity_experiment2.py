@@ -76,8 +76,8 @@ def experiment(n_xor, n_nxor, n_test, d, reps, n_trees, max_depth, acorn=None):
         test_xor, test_label_xor = generate_parity(-1, 1, n_test, d, type='xor')
     
         #target data
-        nxor, label_nxor = generate_gaussian_parity(-1, 1, n_xor, d, type='nxor')
-        test_nxor, test_label_nxor = generate_gaussian_parity(-1, 1, n_test, d, type='nxor')
+        nxor, label_nxor = generate_parity(-1, 1, n_xor, d, type='nxor')
+        test_nxor, test_label_nxor = generate_parity(-1, 1, n_test, d, type='nxor')
     
         if n_xor == 0:
             start = timeit.timeit()
