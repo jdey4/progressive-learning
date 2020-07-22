@@ -75,7 +75,7 @@ def experiment(n, d, n_test, n_trees, reps, acorn=None):
         start = timeit.timeit()
         l2f = LifeLongDNN(parallel=False)
         l2f.new_forest(
-            xor, label_xor, n_estimators=ntrees, max_depth=depth
+            xor, label_xor, n_estimators=n_trees, max_depth=depth
         )
         end = timeit.timeit()
         time_train_first_task = end-start
@@ -87,7 +87,7 @@ def experiment(n, d, n_test, n_trees, reps, acorn=None):
         ################################
         start = timeit.timeit()
         l2f.new_forest(
-            nxor, label_nxor, n_estimators=ntrees, max_depth=depth
+            nxor, label_nxor, n_estimators=n_trees, max_depth=depth
         )
         end = timeit.timeit()
         time_elapsed[rep] = time_train_first_task + (end-start)
@@ -117,11 +117,9 @@ n_trees = 10
 reps = 100
 max_dim = 1000
 # %%
-result = np.array(
-        Parallel(n_jobs=-1,verbose=1)(
+result = Parallel(n_jobs=-1,verbose=1)(
         delayed(experiment)(n, d, n_test, n_trees, reps, acorn=d) for d in range(2,max_dim)
         )
-    )
 
 with open('result/parity_without replay.pickle', 'wb') as f:
     pickle.dump(result,f)
