@@ -135,8 +135,8 @@ n_trees = 10
 n_xor = (100*np.arange(0.5, 7.25, step=0.25)).astype(int)
 n_nxor = (100*np.arange(0.5, 7.50, step=0.25)).astype(int)
 
-mean_error = np.zeros((4, len(n_xor)+len(n_nxor)))
-std_error = np.zeros((4, len(n_xor)+len(n_nxor)))
+mean_error = np.zeros((5, len(n_xor)+len(n_nxor)))
+std_error = np.zeros((5, len(n_xor)+len(n_nxor)))
 
 mean_te = np.zeros((2, len(n_xor)+len(n_nxor)))
 std_te = np.zeros((2, len(n_xor)+len(n_nxor)))
