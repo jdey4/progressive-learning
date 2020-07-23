@@ -168,7 +168,6 @@ ax[2].set_title('Rotated-XOR', fontsize=30)
 ax[2].axis('off')
 
 plt.savefig('figs/transmedia-xor-nxor.png')
-plt.savefig('figs/transmedia-xor-nxor.svg')
 # %%
 mean_error = unpickle('../experiments/xor_nxor_exp/result/mean_xor_nxor.pickle')
 std_error = unpickle('../experiments/xor_nxor_exp/result/std_xor_nxor.pickle')
