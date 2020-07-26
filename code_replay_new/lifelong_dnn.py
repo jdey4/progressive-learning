@@ -21,6 +21,7 @@ class LifeLongDNN():
         self.n_tasks = 0
         
         self.classes_across_tasks = []
+        self.estimators_accoross_tasks = []
         
         self.tree_profile_across_transformers = []
 
@@ -79,21 +80,33 @@ class LifeLongDNN():
         new_tree_profile = new_honest_dnn.tree_id_to_leaf_profile
         
         self.tree_profile_across_transformers.append(new_tree_profile)
+        self.estimators_accoross_tasks.append(new_honest_dnn.ensemble.estimators_)
         self.transformers_across_tasks.append(new_transformer)
         self.classes_across_tasks.append(new_classes)
+
         
         #add one voter to previous task voter lists under the new transformation
         for task_idx in range(self.n_tasks):
-            X_of_task, y_of_task = self.X_across_tasks[task_idx], self.y_across_tasks[task_idx]
+            #X_of_task, y_of_task = self.X_across_tasks[task_idx], self.y_across_tasks[task_idx]
             if self.model == "dnn":
                 X_of_task_under_new_transform = new_transformer.predict(X_of_task) 
             if self.model == "uf":
-                X_of_task_under_new_transform = new_transformer(X_of_task) 
+                #X_of_task_under_new_transform = new_transformer(X_of_task) 
+                estimators_of_task = self.estimators_accoross_tasks[task_idx]
+                
             unfit_task_voter_under_new_transformation = clone(self.voters_across_tasks_matrix[task_idx][0])
+            posterior_map_to_be_mapped = self.voters_across_tasks_matrix[task_idx][task_idx].tree_idx_to_node_ids_to_posterior_map
+            
             if self.model == "uf":
                 unfit_task_voter_under_new_transformation.classes_ = self.voters_across_tasks_matrix[task_idx][0].classes_
-            task_voter_under_new_transformation = unfit_task_voter_under_new_transformation.fit(X_of_task_under_new_transform, y_of_task)
-
+            task_voter_under_new_transformation = unfit_task_voter_under_new_transformation.fit(
+                estimators=estimators_of_task,
+                posterior_map_to_be_mapped=posterior_map_to_be_mapped,
+                map=True
+            )
+            print(
+                task_voter_under_new_transformation.tree_idx_to_node_ids_to_posterior_map
+            )
             self.voters_across_tasks_matrix[task_idx].append(task_voter_under_new_transformation)
             
         #add n_tasks voters to new task voter list under previous transformations 
@@ -107,7 +120,10 @@ class LifeLongDNN():
             unfit_new_task_voter_under_task_transformation = clone(new_voter)
             if self.model == "uf":
                 unfit_new_task_voter_under_task_transformation.classes_ = new_voter.classes_
-            new_task_voter_under_task_transformation = unfit_new_task_voter_under_task_transformation.fit(X_under_task_transformation, y)
+            new_task_voter_under_task_transformation = unfit_new_task_voter_under_task_transformation.fit(
+                nodes_across_trees=X_under_task_transformation, 
+                y=y
+                )
             new_voters_under_previous_task_transformation.append(new_task_voter_under_task_transformation)
             
         #make sure to add the voter of the new task under its own transformation

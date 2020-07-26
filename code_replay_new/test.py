@@ -84,14 +84,19 @@ def generate_gaussian_parity(n, mean=np.array([-1, -1]), cov_scale=1, angle_para
 xor, label_xor = generate_gaussian_parity(100,cov_scale=0.1,angle_params=0)
 test_xor, test_label_xor = generate_gaussian_parity(10,cov_scale=0.1,angle_params=0)
 
-nxor, label_nxor = generate_gaussian_parity(100,cov_scale=0.1,angle_params=np.pi/2)
+nxor, label_nxor = generate_gaussian_parity(1000,cov_scale=0.1,angle_params=np.pi/2)
 test_nxor, test_label_nxor = generate_gaussian_parity(10,cov_scale=0.1,angle_params=np.pi/2)
 
 xor = (xor - np.min(xor))
 xor = xor/np.max(xor)
 
-l2f = LifeLongDNN()
+l2f = LifeLongDNN(parallel=False)
 l2f.new_forest(xor, label_xor, n_estimators=10,max_depth=10)
-#l2f.new_forest(nxor, label_nxor, n_estimators=10,max_depth=10)
+l2f.new_forest(nxor, label_nxor, n_estimators=10,max_depth=10)
 
-# %%
+l2f_task1 = l2f.predict(test_xor, representation='all', decider=0)
+uf_task1 = l2f.predict(test_xor, representation=0, decider=0)
+
+print(np.mean(uf_task1 == test_label_xor))
+print(np.mean(l2f_task1 == test_label_xor))
+ # %%
