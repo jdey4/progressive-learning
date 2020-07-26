@@ -12,6 +12,7 @@ from sklearn.model_selection import StratifiedKFold
 from math import log2, ceil 
 
 import sys
+sys.path.append("../src/")
 from lifelong_dnn import LifeLongDNN
 
 # %%
@@ -84,21 +85,11 @@ def generate_gaussian_parity(n, mean=np.array([-1, -1]), cov_scale=1, angle_para
 xor, label_xor = generate_gaussian_parity(100,cov_scale=0.1,angle_params=0)
 test_xor, test_label_xor = generate_gaussian_parity(10,cov_scale=0.1,angle_params=0)
 
-nxor, label_nxor = generate_gaussian_parity(10000,cov_scale=0.1,angle_params=np.pi/2)
+nxor, label_nxor = generate_gaussian_parity(1000,cov_scale=0.1,angle_params=np.pi/2)
 test_nxor, test_label_nxor = generate_gaussian_parity(10,cov_scale=0.1,angle_params=np.pi/2)
 
-min_xor = np.min(xor)
-xor = (xor - min_xor)
-max_xor = np.max(xor)
-xor = xor/max_xor
-
-min_nxor = np.min(nxor)
-nxor = (nxor - min_nxor)
-max_nxor = np.max(nxor)
-nxor = nxor/max_nxor
-
-test_xor = (test_xor-min_xor)/max_xor
-test_nxor = (test_nxor-min_nxor)/max_nxor
+xor = (xor - np.min(xor))
+xor = xor/np.max(xor)
 
 l2f = LifeLongDNN(parallel=False)
 l2f.new_forest(xor, label_xor, n_estimators=10,max_depth=10)

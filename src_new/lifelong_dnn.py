@@ -104,9 +104,9 @@ class LifeLongDNN():
                 posterior_map_to_be_mapped=posterior_map_to_be_mapped,
                 map=True
             )
-            print(
-                task_voter_under_new_transformation.tree_idx_to_node_ids_to_posterior_map
-            )
+            #print(
+            #    task_voter_under_new_transformation.tree_idx_to_node_ids_to_posterior_map
+            #)
             self.voters_across_tasks_matrix[task_idx].append(task_voter_under_new_transformation)
             
         #add n_tasks voters to new task voter list under previous transformations 
