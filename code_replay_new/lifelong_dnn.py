@@ -87,14 +87,14 @@ class LifeLongDNN():
         
         #add one voter to previous task voter lists under the new transformation
         for task_idx in range(self.n_tasks):
-            #X_of_task, y_of_task = self.X_across_tasks[task_idx], self.y_across_tasks[task_idx]
+            X_of_task, y_of_task = self.X_across_tasks[task_idx], self.y_across_tasks[task_idx]
             if self.model == "dnn":
                 X_of_task_under_new_transform = new_transformer.predict(X_of_task) 
             if self.model == "uf":
                 #X_of_task_under_new_transform = new_transformer(X_of_task) 
                 estimators_of_task = self.estimators_across_tasks[task_idx]
                 
-            unfit_task_voter_under_new_transformation = clone(self.voters_across_tasks_matrix[task_idx][0])
+            unfit_task_voter_under_new_transformation = clone(new_voter)
             posterior_map_to_be_mapped = self.voters_across_tasks_matrix[task_idx][task_idx].tree_idx_to_node_ids_to_posterior_map
             
             if self.model == "uf":
@@ -104,16 +104,13 @@ class LifeLongDNN():
                 posterior_map_to_be_mapped=posterior_map_to_be_mapped,
                 map=True
             )
-            print(
-                estimators_of_task[0].tree_.children_left,
-                estimators_of_task[0].tree_.children_right
-            )
-            print(
-                posterior_map_to_be_mapped
-            )
-            print(
-                task_voter_under_new_transformation.tree_idx_to_node_ids_to_posterior_map
-            )
+            
+           # print(
+            #    self.voters_across_tasks_matrix[task_idx][0].tree_idx_to_node_ids_to_posterior_map, 'hi'
+            #)
+            #print(
+            #    task_voter_under_new_transformation.tree_idx_to_node_ids_to_posterior_map
+            #)
             self.voters_across_tasks_matrix[task_idx].append(task_voter_under_new_transformation)
             
         #add n_tasks voters to new task voter list under previous transformations 
@@ -124,7 +121,7 @@ class LifeLongDNN():
                 X_under_task_transformation = transformer_of_task.predict(X)
             if self.model == "uf":
                 X_under_task_transformation = transformer_of_task(X)
-            unfit_new_task_voter_under_task_transformation = clone(new_voter)
+            unfit_new_task_voter_under_task_transformation = clone(self.voters_across_tasks_matrix[task_idx][0])
             if self.model == "uf":
                 unfit_new_task_voter_under_task_transformation.classes_ = new_voter.classes_
             new_task_voter_under_task_transformation = unfit_new_task_voter_under_task_transformation.fit(

@@ -108,12 +108,13 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
     def _profile_leaf(self):
         self.tree_id_to_leaf_profile = {}
         leaf_profile = {}
-
+        #print('hi')
         def worker(node, children_left, children_right, feature, threshold, profile_mat):
 
             if children_left[node] == children_right[node]:
                 profile_mat_ = profile_mat.copy()
                 leaf_profile[node] = profile_mat_
+                #print(node,'nodes')
             else:
                 feature_indx = feature[node]
 
@@ -153,6 +154,7 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
             children_left = estimator.tree_.children_left
             children_right = estimator.tree_.children_right
             threshold = estimator.tree_.threshold
+            #print(children_left,children_right)
 
             worker(
                     0, 
@@ -248,7 +250,7 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                         if children_left[node] == children_right[node]:
                             
                             if node in list(posterior_map_to_be_mapped[tree_id].keys()):
-                                #print(node, posterior_map_to_be_mapped[tree_id][node], mul, 'hi')
+                                #print(node, posterior_map_to_be_mapped[tree_id][node], mul, 'hi JD')
                                 return mul*posterior_map_to_be_mapped[tree_id][node]
                             else:
                                 return 0
@@ -317,8 +319,9 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                                 )
 
                     def map_leaf(leaf,profile):
+                        
                         posterior = np.zeros(
-                            (len(estimators), len(self.classes_)),
+                            (len(estimators), len(self.classes_)), #need to change classes later
                             dtype = float
                         )
 
@@ -343,15 +346,18 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                             )
                             
                     tree_idx = list(self.tree_id_to_leaf_profile.keys())
-                    for idx in tree_idx:
-                        node_ids_to_posterior_map = {}
+                    node_ids_to_posterior_map = {}
+                    for idx in tree_idx: 
                         leaf_id = list(self.tree_id_to_leaf_profile[idx].keys())
 
                         for leaf in leaf_id:
+                            #print(leaf,'fervebgtr')
                             profile = self.tree_id_to_leaf_profile[idx][leaf]
                             map_leaf(leaf,profile)
 
+                        #print(node_ids_to_posterior_map,'jerhubiruu')
                         self.tree_idx_to_node_ids_to_posterior_map[idx] = node_ids_to_posterior_map
+                        node_ids_to_posterior_map.clear()
                     
                     return self
                          

@@ -81,7 +81,7 @@ def generate_gaussian_parity(n, mean=np.array([-1, -1]), cov_scale=1, angle_para
 
 
 # %%
-xor, label_xor = generate_gaussian_parity(100,cov_scale=0.1,angle_params=0)
+xor, label_xor = generate_gaussian_parity(10,cov_scale=0.1,angle_params=0)
 test_xor, test_label_xor = generate_gaussian_parity(10,cov_scale=0.1,angle_params=0)
 
 nxor, label_nxor = generate_gaussian_parity(10000,cov_scale=0.1,angle_params=np.pi/2)
