@@ -248,7 +248,7 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
 
                     def worker(node, tree_id, feature, children_left, children_right, threshold, mul, profile_mat):
                         if children_left[node] == children_right[node]:
-                            
+                            print(node, mul, 'final des')
                             if node in list(posterior_map_to_be_mapped[tree_id].keys()):
                                 #print(mul, node)
                                 return mul*posterior_map_to_be_mapped[tree_id][node]
@@ -319,7 +319,7 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                                 )
 
                     def map_leaf(leaf,profile):
-                        
+                        print(leaf,'leaf id')
                         posterior = np.zeros(
                             (len(estimators), len(self.classes_)), #need to change classes later
                             dtype = float
