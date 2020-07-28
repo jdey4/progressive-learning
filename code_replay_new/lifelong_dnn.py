@@ -108,11 +108,20 @@ class LifeLongDNN():
            # print(
             #    self.voters_across_tasks_matrix[task_idx][0].tree_idx_to_node_ids_to_posterior_map, 'hi'
             #)
-            #print(
-            #    task_voter_under_new_transformation.tree_idx_to_node_ids_to_posterior_map
-            #)
-            self.voters_across_tasks_matrix[task_idx].append(task_voter_under_new_transformation)
             
+            self.voters_across_tasks_matrix[task_idx].append(task_voter_under_new_transformation)
+            '''print(
+                self.voters_across_tasks_matrix[0][0].tree_idx_to_node_ids_to_posterior_map
+            )
+            print(
+                self.voters_across_tasks_matrix[0][1].tree_idx_to_node_ids_to_posterior_map
+            )
+            print(
+                self.estimators_across_tasks[0][0].tree_.threshold,'hello'
+            )
+            print(
+                self.estimators_across_tasks[1][0].tree_.threshold,'hello'
+            )'''
         #add n_tasks voters to new task voter list under previous transformations 
         new_voters_under_previous_task_transformation = []
         for task_idx in range(self.n_tasks):
