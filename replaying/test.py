@@ -12,7 +12,7 @@ from sklearn.model_selection import StratifiedKFold
 from math import log2, ceil 
 
 import sys
-sys.path.append("../src_new/")
+sys.path.append("../src_mapping_2/")
 from lifelong_dnn import LifeLongDNN
 from joblib import Parallel, delayed
 

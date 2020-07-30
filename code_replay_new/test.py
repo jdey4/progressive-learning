@@ -86,8 +86,8 @@ test_xor, test_label_xor = generate_gaussian_parity(1000,cov_scale=0.1,angle_par
 
 nxor = xor
 label_nxor = (label_xor==0)*1
-'''nxor, label_nxor = generate_gaussian_parity(100,cov_scale=0.1,angle_params=np.pi/2)
-test_nxor, test_label_nxor = generate_gaussian_parity(1000,cov_scale=0.1,angle_params=np.pi/2)'''
+#nxor, label_nxor = generate_gaussian_parity(100,cov_scale=0.1,angle_params=np.pi/2)
+#test_nxor, test_label_nxor = generate_gaussian_parity(1000,cov_scale=0.1,angle_params=np.pi/2)
 
 min_xor = np.min(xor)
 xor = (xor - min_xor)
@@ -104,9 +104,9 @@ test_xor = (test_xor-min_xor)/max_xor
 
 l2f = LifeLongDNN(parallel=False)
 np.random.seed(12345)
-l2f.new_forest(xor, label_xor, n_estimators=10,max_depth=60)
-#np.random.seed(12345)
-l2f.new_forest(nxor, label_nxor, n_estimators=10,max_depth=60)
+l2f.new_forest(xor, label_xor, n_estimators=2,max_depth=10)
+np.random.seed(12345)
+l2f.new_forest(nxor, label_nxor, n_estimators=2,max_depth=10)
 
 l2f_task1 = l2f.predict(test_xor, representation='all', decider=0)
 uf_task1 = l2f.predict(test_xor, representation=0, decider=0)
