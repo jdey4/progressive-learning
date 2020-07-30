@@ -205,7 +205,8 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
         self._profile_leaf()
         
         class Voter(BaseEstimator):
-            def __init__(self, estimators_samples_, classes, tree_id_to_leaf_profile, parallel, n_jobs):
+            def __init__(self, estimators, estimators_samples_, classes, tree_id_to_leaf_profile, parallel, n_jobs):
+                self.estimators = estimators
                 self.n_estimators = len(estimators_samples_)
                 self.classes_ = classes
                 self.tree_id_to_leaf_profile = tree_id_to_leaf_profile
@@ -213,7 +214,7 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                 self.estimators_samples_ = estimators_samples_
                 self.n_jobs = n_jobs
             
-            def fit(self, estimators=None, nodes_across_trees=None, y=None, posterior_map_to_be_mapped=None, fitting = False, map=False):
+            def fit(self, nodes_across_trees=None, y=None, voters_to_be_mapped=None, fitting = False, map=False):
                 self.tree_idx_to_node_ids_to_posterior_map = {}
 
                 if map == False:
@@ -246,12 +247,12 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                 else:
                     node_ids_to_posterior_map = {}
 
-                    def worker(node, tree_id, feature, children_left, children_right, threshold, mul, profile_mat):
+                    def worker(node, tree_id, feature, children_left, children_right, threshold, mul, profile_mat, posteriors_to_be_mapped):
                         if children_left[node] == children_right[node]:
-                            print(node, mul, 'final des')
-                            if node in list(posterior_map_to_be_mapped[tree_id].keys()):
+                            #print(node, mul, 'final des')
+                            if node in list(posteriors_to_be_mapped.keys()):
                                 #print(mul, node)
-                                return mul*posterior_map_to_be_mapped[tree_id][node]
+                                return mul*posteriors_to_be_mapped[node]
                             else:
                                 return 0
                         else:
@@ -282,7 +283,8 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                                     children_right,
                                     threshold,
                                     mul_left,
-                                    profile_mat_left
+                                    profile_mat_left,
+                                    posteriors_to_be_mapped
                                 ) + worker(
                                     children_right[node],
                                     tree_id,
@@ -291,7 +293,8 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                                     children_right,
                                     threshold,
                                     mul_right,
-                                    profile_mat_right
+                                    profile_mat_right,
+                                    posteriors_to_be_mapped
                                 )
                             elif current_threshold <= feature_range[0]:
                                 
@@ -303,7 +306,8 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                                     children_right,
                                     threshold,
                                     mul,
-                                    profile_mat_right
+                                    profile_mat_right,
+                                    posteriors_to_be_mapped
                                 )
                             elif current_threshold >= feature_range[1]:
                                 
@@ -315,35 +319,54 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                                     children_right,
                                     threshold,
                                     mul,
-                                    profile_mat_left
+                                    profile_mat_left,
+                                    posteriors_to_be_mapped
                                 )
 
-                    def map_leaf(leaf,profile):
-                        print(leaf,'leaf id')
-                        posterior = np.zeros(
-                            (len(estimators), len(self.classes_)), #need to change classes later
-                            dtype = float
-                        )
+                    def map_leaf(voters_to_be_mapped,leaf,profile):
+                        #print(leaf,'leaf id')
+                        #print(voters_to_be_mapped)
+                        for ids, current_voter in enumerate(voters_to_be_mapped):
+                            estimators = current_voter.estimators
+                            #print(estimators)
+                            posteriors_to_be_mapped = current_voter.tree_idx_to_node_ids_to_posterior_map
 
-                        for tree_id,tree in enumerate(estimators):
-                            feature = tree.tree_.feature
-                            children_left = tree.tree_.children_left
-                            children_right = tree.tree_.children_right
-                            threshold = tree.tree_.threshold
-
-                            posterior[tree_id] = worker(
-                                    0,
-                                    tree_id,
-                                    feature,
-                                    children_left,
-                                    children_right,
-                                    threshold,
-                                    1,
-                                    profile
-                                )
-                            node_ids_to_posterior_map[leaf] = np.mean(
-                                posterior, axis=0
+                            posterior = np.zeros(
+                                (len(estimators), len(current_voter.classes_)), 
+                                dtype = float
                             )
+
+                            for tree_id,tree in enumerate(estimators):
+                                feature = tree.tree_.feature
+                                children_left = tree.tree_.children_left
+                                children_right = tree.tree_.children_right
+                                threshold = tree.tree_.threshold
+
+                                posterior[tree_id] = worker(
+                                        0,
+                                        tree_id,
+                                        feature,
+                                        children_left,
+                                        children_right,
+                                        threshold,
+                                        1,
+                                        profile,
+                                        posteriors_to_be_mapped[tree_id]
+                                    )
+
+                            if ids == 0:
+                                posterior_ = posterior
+                            else:
+                                posterior_ = np.concatenate(
+                                    (
+                                        posterior_,posterior
+                                    ),
+                                    axis=0
+                                )
+
+                        node_ids_to_posterior_map[leaf] = np.mean(
+                            posterior_, axis=0
+                        )
 
                      #################################################################################      
                     tree_idx = list(self.tree_id_to_leaf_profile.keys())
@@ -354,7 +377,7 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                         for leaf in leaf_id:
                             #print(leaf,'fervebgtr')
                             profile = self.tree_id_to_leaf_profile[idx][leaf]
-                            map_leaf(leaf,profile)
+                            map_leaf(voters_to_be_mapped,leaf,profile)
                             #print(profile,'profile',leaf, idx)
                         #print(node_ids_to_posterior_map,'jerhubiruu')
                         self.tree_idx_to_node_ids_to_posterior_map[idx] = node_ids_to_posterior_map
@@ -399,6 +422,7 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
         #get the nodes of the calibration set
         nodes_across_trees = self.transform(X) 
         self.voter = Voter(
+            estimators = self.ensemble.estimators_,
             estimators_samples_ = self.ensemble.estimators_samples_, 
             classes = self.classes_, 
             tree_id_to_leaf_profile = self.tree_id_to_leaf_profile,
