@@ -12,7 +12,7 @@ from sklearn.model_selection import StratifiedKFold
 from math import log2, ceil 
 
 import sys
-sys.path.append("../src/")
+sys.path.append("../src_mapping_3/")
 from lifelong_dnn import LifeLongDNN
 from joblib import Parallel, delayed
 
@@ -121,5 +121,5 @@ result = Parallel(n_jobs=-1,verbose=1)(
         delayed(experiment)(n, d, n_test, n_trees, reps, acorn=d) for d in range(2,max_dim)
         )
 
-with open('result/parity_without replay.pickle', 'wb') as f:
+with open('result/parity_without_replay.pickle', 'wb') as f:
     pickle.dump(result,f)
