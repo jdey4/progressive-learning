@@ -64,7 +64,7 @@ def experiment(n_xor, n_nxor, n_test, reps, n_trees, max_depth, d, acorn=None):
         uf = LifeLongDNN(parallel=False)
         #source data
         xor, label_xor = generate_parity(-1,1,n_xor,d)
-        test_xor, test_label_xor = generate_gaussian_parity(-1,1,n_test,d)
+        test_xor, test_label_xor = generate_parity(-1,1,n_test,d)
 
         min_xor = np.min(xor)
         xor = (xor - min_xor)
@@ -125,7 +125,7 @@ def experiment(n_xor, n_nxor, n_test, reps, n_trees, max_depth, d, acorn=None):
 # %%
 #main hyperparameters#
 #######################
-n = 1000
+mc_rep = 1000
 n_test = 1000
 n_trees = 10
 reps = 100
@@ -187,7 +187,7 @@ mean_error = unpickle('result/mean_xor_nxor'+str(d)+'.pickle')
 std_error = unpickle('result/std_xor_nxor'+str(d)+'.pickle')
 
 n_xor = (100*np.arange(0.5, 7.25, step=0.25)).astype(int)
-n_nxor = (100*np.arange(0.5, 1500, step=0.25)).astype(int)
+n_nxor = (100*np.arange(0.5, 7.5, step=0.25)).astype(int)
 
 n1s = n_xor
 n2s = n_nxor
