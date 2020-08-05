@@ -86,7 +86,7 @@ test_xor, test_label_xor = generate_gaussian_parity(1000,cov_scale=0.1,angle_par
 
 #nxor = xor
 #label_nxor = (label_xor==0)*1
-nxor, label_nxor = generate_gaussian_parity(10000,cov_scale=0.1,angle_params=np.pi/2)
+nxor, label_nxor = generate_gaussian_parity(1000,cov_scale=0.1,angle_params=np.pi/2)
 test_nxor, test_label_nxor = generate_gaussian_parity(1000,cov_scale=0.1,angle_params=np.pi/2)
 
 min_xor = np.min(xor)
