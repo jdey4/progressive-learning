@@ -210,7 +210,7 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
         #get the nodes of the calibration set
         nodes_across_trees = self.transform(X) 
         self.voter = Voter(estimators_samples_ = self.ensemble.estimators_samples_, classes = self.classes_, parallel = self.parallel, n_jobs = self.n_jobs)
-        self.voter.fit(nodes_across_trees, y)#, fitting = True)
+        self.voter.fit(nodes_across_trees, y, fitting = True)
         self.fitted = True
 
     def predict(self, X):

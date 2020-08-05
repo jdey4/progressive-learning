@@ -12,7 +12,7 @@ from sklearn.model_selection import StratifiedKFold
 from math import log2, ceil 
 
 import sys
-sys.path.append("../src/")
+sys.path.append("../src_mapping_3/")
 from lifelong_dnn import LifeLongDNN
 from joblib import Parallel, delayed
 
@@ -160,7 +160,7 @@ mc_rep = 1000
 n_test = 1000
 n_trees = 10
 n_xor = (100*np.arange(0.5, 7.25, step=0.25)).astype(int)
-n_nxor = (100*np.arange(0.5, 7.50, step=0.25)).astype(int)
+n_nxor = (100*np.arange(0.5, 1500, step=0.25)).astype(int)
 
 mean_error = np.zeros((4, len(n_xor)+len(n_nxor)))
 std_error = np.zeros((4, len(n_xor)+len(n_nxor)))
@@ -216,7 +216,7 @@ mean_error = unpickle('result/mean_xor_nxor.pickle')
 std_error = unpickle('result/std_xor_nxor.pickle')
 
 n_xor = (100*np.arange(0.5, 7.25, step=0.25)).astype(int)
-n_nxor = (100*np.arange(0.5, 7.50, step=0.25)).astype(int)
+n_nxor = (100*np.arange(0.5, 1500, step=0.25)).astype(int)
 
 n1s = n_xor
 n2s = n_nxor
@@ -412,6 +412,6 @@ ax.set_yticks([])
 ax.set_title('Gaussian N-XOR', fontsize=30)
 ax.axis('off')
 #plt.tight_layout()
-plt.savefig('./result/figs/xor_nxor_exp_not_honest.pdf')
+plt.savefig('./result/figs/xor_nxor_exp_extended_sample.pdf')
 
 # %%
