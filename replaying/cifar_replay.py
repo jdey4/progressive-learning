@@ -13,7 +13,7 @@ from sklearn.model_selection import StratifiedKFold
 from math import log2, ceil 
 
 import sys
-sys.path.append("../src_replay/")
+sys.path.append("../src_mapping_3/")
 from lifelong_dnn import LifeLongDNN
 from joblib import Parallel, delayed
 from multiprocessing import Pool
@@ -72,7 +72,7 @@ def LF_experiment(train_x, train_y, test_x, test_y, noise_size, ntrees, shift, s
         lifelong_forest.new_forest(
             train_x[task_ii*5000+slot*num_points_per_task:task_ii*5000+(slot+1)*num_points_per_task,:], 
             train_y[task_ii*5000+slot*num_points_per_task:task_ii*5000+(slot+1)*num_points_per_task], 
-            max_depth=ceil(log2(num_points_per_task)), n_estimators=ntrees
+            max_depth=200, n_estimators=ntrees
             )
 
         #excite with noise

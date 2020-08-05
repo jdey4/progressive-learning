@@ -160,7 +160,7 @@ mc_rep = 1000
 n_test = 1000
 n_trees = 10
 n_xor = (100*np.arange(0.5, 7.25, step=0.25)).astype(int)
-n_nxor = (100*np.arange(0.5, 1500, step=0.25)).astype(int)
+n_nxor = (100*np.arange(0.5, 15, step=0.25)).astype(int)
 
 mean_error = np.zeros((4, len(n_xor)+len(n_nxor)))
 std_error = np.zeros((4, len(n_xor)+len(n_nxor)))
@@ -178,7 +178,7 @@ for i,n1 in enumerate(n_xor):
     mean_error[:,i] = np.mean(error,axis=0)
     std_error[:,i] = np.std(error,ddof=1,axis=0)
     mean_te[0,i] = np.mean(error[:,0]/error[:,1])
-    mean_te[1,i] = np.mean(error[:,2]/error[:,3])
+    mean_te[1,i] = np.mean(error[[]:,2]/error[:,3])
     std_te[0,i] = np.std(error[:,0]/error[:,1],ddof=1)
     std_te[1,i] = np.std(error[:,2]/error[:,3],ddof=1)
     
@@ -216,7 +216,7 @@ mean_error = unpickle('result/mean_xor_nxor.pickle')
 std_error = unpickle('result/std_xor_nxor.pickle')
 
 n_xor = (100*np.arange(0.5, 7.25, step=0.25)).astype(int)
-n_nxor = (100*np.arange(0.5, 1500, step=0.25)).astype(int)
+n_nxor = (100*np.arange(0.5, 15, step=0.25)).astype(int)
 
 n1s = n_xor
 n2s = n_nxor
