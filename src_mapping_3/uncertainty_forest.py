@@ -401,7 +401,8 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                         #print(voters_to_be_mapped)
                         for ids, current_voter in enumerate(voters_to_be_mapped):
                             estimators = current_voter.estimators
-                            #print(estimators)
+                            print(estimators)
+                            
                             posteriors_to_be_mapped = current_voter.tree_idx_to_node_ids_to_posterior_map
                             sample_count_map = current_voter.tree_idx_to_node_ids_to_sample_count_map
                             profile_map = current_voter.tree_id_to_leaf_profile

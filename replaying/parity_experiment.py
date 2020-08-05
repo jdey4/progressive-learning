@@ -17,6 +17,11 @@ from lifelong_dnn import LifeLongDNN
 from joblib import Parallel, delayed
 
 # %%
+def unpickle(file):
+    with open(file, 'rb') as fo:
+        dict = pickle.load(fo, encoding='bytes')
+    return dict
+    
 def generate_parity(low, high, n, d, type='xor',acorn=None):
     r'''
     A function that generates d dimensional parity data 
