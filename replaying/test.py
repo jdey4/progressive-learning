@@ -12,7 +12,7 @@ from sklearn.model_selection import StratifiedKFold
 from math import log2, ceil 
 
 import sys
-sys.path.append("../src_mapping_2/")
+sys.path.append("../src_mapping_3/")
 from lifelong_dnn import LifeLongDNN
 from joblib import Parallel, delayed
 
@@ -172,7 +172,7 @@ for i,n1 in enumerate(n_xor):
     print('starting to compute %s xor\n'%n1)
     error = np.array(
         Parallel(n_jobs=-1,verbose=1)(
-        delayed(experiment)(n1,0,n_test,1,n_trees=n_trees,max_depth=ceil(log2(n1))) for _ in range(mc_rep)
+        delayed(experiment)(n1,0,n_test,1,n_trees=n_trees,max_depth=200) for _ in range(mc_rep)
     )
     )
     mean_error[:,i] = np.mean(error,axis=0)
@@ -188,7 +188,7 @@ for i,n1 in enumerate(n_xor):
             
             error = np.array(
                 Parallel(n_jobs=-1,verbose=1)(
-                delayed(experiment)(n1,n2,n_test,1,n_trees=n_trees,max_depth=ceil(log2(n2))) for _ in range(mc_rep)
+                delayed(experiment)(n1,n2,n_test,1,n_trees=n_trees,max_depth=200) for _ in range(mc_rep)
             )
             )
             mean_error[:,i+j+1] = np.mean(error,axis=0)
@@ -412,6 +412,6 @@ ax.set_yticks([])
 ax.set_title('Gaussian N-XOR', fontsize=30)
 ax.axis('off')
 #plt.tight_layout()
-plt.savefig('./result/figs/xor_nxor_exp_low_depth.pdf')
+plt.savefig('./result/figs/xor_nxor_exp_new.pdf')
 
 # %%
