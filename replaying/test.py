@@ -12,7 +12,7 @@ from sklearn.model_selection import StratifiedKFold
 from math import log2, ceil 
 
 import sys
-sys.path.append("../src_mapping_3/")
+sys.path.append("../src/")
 from lifelong_dnn import LifeLongDNN
 from joblib import Parallel, delayed
 
@@ -138,6 +138,24 @@ def experiment(n_xor, n_nxor, n_test, reps, n_trees, max_depth, acorn=None):
             errors[i,3] = 0.5
         else:
             l2f.new_forest(xor, label_xor, n_estimators=n_trees,max_depth=max_depth)
+
+            delta = .01
+            #sample the grid
+            x = np.arange(0,1,step=delta)
+            y = np.arange(0,1,step=delta)
+            x,y = np.meshgrid(x,y)
+            sample = np.concatenate(
+                (
+                    x.reshape(-1,1),
+                    y.reshape(-1,1)
+                ),
+                axis=1
+            )
+            sample_label = l2f.predict(sample, representation=0,decider=0)
+            l2f.X_across_tasks[0] = sample
+            l2f.y_across_tasks[0] = sample_label
+            ############################
+
             l2f.new_forest(nxor, label_nxor, n_estimators=n_trees,max_depth=max_depth)
             
             uf.new_forest(xor, label_xor, n_estimators=n_trees,max_depth=max_depth)
@@ -178,7 +196,7 @@ for i,n1 in enumerate(n_xor):
     mean_error[:,i] = np.mean(error,axis=0)
     std_error[:,i] = np.std(error,ddof=1,axis=0)
     mean_te[0,i] = np.mean(error[:,0]/error[:,1])
-    mean_te[1,i] = np.mean(error[[]:,2]/error[:,3])
+    mean_te[1,i] = np.mean(error[:,2]/error[:,3])
     std_te[0,i] = np.std(error[:,0]/error[:,1],ddof=1)
     std_te[1,i] = np.std(error[:,2]/error[:,3],ddof=1)
     
@@ -412,6 +430,6 @@ ax.set_yticks([])
 ax.set_title('Gaussian N-XOR', fontsize=30)
 ax.axis('off')
 #plt.tight_layout()
-plt.savefig('./result/figs/xor_nxor_exp_extended_sample.pdf')
+plt.savefig('./result/figs/xor_nxor_exp_sampling_partition.pdf')
 
 # %%
