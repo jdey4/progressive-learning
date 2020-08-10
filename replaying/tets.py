@@ -13,7 +13,7 @@ from sklearn.model_selection import StratifiedKFold
 from math import log2, ceil 
 
 import sys
-sys.path.append("../src_mapping_1/")
+sys.path.append("../src_mapping_2/")
 from lifelong_dnn import LifeLongDNN
 from joblib import Parallel, delayed
 from multiprocessing import Pool
@@ -109,10 +109,10 @@ test_xor = (test_xor-min_xor)/max_xor
 #test_nxor = (test_nxor-min_nxor)/max_nxor
 
 l2f = LifeLongDNN(parallel=False)
-#np.random.seed(12345)
-l2f.new_forest(xor, label_xor, n_estimators=10,max_depth=100)
-#np.random.seed(12345)
-l2f.new_forest(nxor, label_nxor, n_estimators=10,max_depth=100)
+np.random.seed(12345)
+l2f.new_forest(xor, label_xor, n_estimators=2,max_depth=100)
+np.random.seed(12345)
+l2f.new_forest(nxor, label_nxor, n_estimators=2,max_depth=100)
 
 l2f_task1 = l2f.predict(test_xor, representation='all', decider=0)
 uf_task1 = l2f.predict(test_xor, representation=0, decider=0)

@@ -275,8 +275,8 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                                 k1 = np.prod(
                                     (profile_mat[:,1]-profile_mat[:,0])/(profile_map[node][:,1]- profile_map[node][:,0])
                                 )
-                                #print(profile_mat, profile_map[node])
-                                #print(mul)
+                                #print(profile_mat, profile_map[node], 'kukuta')
+                                #print(mul, 'kutta')
                                 #print(node, current_task_posterior_map,'osovyo')
 
                                 if node in list(current_task_posterior_map.keys()):
@@ -401,8 +401,8 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                         #print(voters_to_be_mapped)
                         for ids, current_voter in enumerate(voters_to_be_mapped):
                             estimators = current_voter.estimators
-                            print(estimators)
-                            
+                            print(estimators[0].tree_, 'eije ami asi')
+
                             posteriors_to_be_mapped = current_voter.tree_idx_to_node_ids_to_posterior_map
                             sample_count_map = current_voter.tree_idx_to_node_ids_to_sample_count_map
                             profile_map = current_voter.tree_id_to_leaf_profile

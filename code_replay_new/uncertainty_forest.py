@@ -222,15 +222,15 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                     def worker(tree_idx):
                         nodes = nodes_across_trees[tree_idx]
                         oob_samples = np.delete(range(len(nodes)), self.estimators_samples_[tree_idx])
-                        cal_nodes = nodes #nodes[oob_samples] if fitting else nodes
-                        y_cal = y #y[oob_samples] if fitting else y                    
+                        cal_nodes = nodes#[oob_samples] if fitting else nodes
+                        y_cal = y#[oob_samples] if fitting else y                    
                         
                         #create a map from the unique node ids to their classwise posteriors
                         node_ids_to_posterior_map = {}
                         node_ids_to_sample_count_map = {}
 
                         #fill in the posteriors 
-                        for node_id in np.unique(cal_nodes):
+                        for node_id in np.unique(nodes):
                             cal_idxs_of_node_id = np.where(cal_nodes == node_id)[0]
                             cal_ys_of_node = y_cal[cal_idxs_of_node_id]
                             class_counts = [len(np.where(cal_ys_of_node == y)[0]) for y in np.unique(y) ]
@@ -238,7 +238,12 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                             posteriors = np.nan_to_num(np.array(class_counts) / sample_no)
 
                             #finite sample correction
-                            posteriors_corrected = _finite_sample_correction(posteriors, len(cal_idxs_of_node_id), len(self.classes_))
+                            num_points_in_partition = len(cal_idxs_of_node_id)
+
+                            if num_points_in_partition == 0:
+                                num_points_in_partition = 1
+
+                            posteriors_corrected = _finite_sample_correction(posteriors, num_points_in_partition, len(self.classes_))
                             node_ids_to_posterior_map[node_id] = posteriors_corrected
                             node_ids_to_sample_count_map[node_id] = sample_no
 
