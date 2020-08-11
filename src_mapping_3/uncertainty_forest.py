@@ -222,8 +222,8 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                     def worker(tree_idx):
                         nodes = nodes_across_trees[tree_idx]
                         oob_samples = np.delete(range(len(nodes)), self.estimators_samples_[tree_idx])
-                        cal_nodes = nodes #nodes[oob_samples] if fitting else nodes
-                        y_cal = y #y[oob_samples] if fitting else y                    
+                        cal_nodes = nodes[oob_samples] if fitting else nodes
+                        y_cal = y[oob_samples] if fitting else y                    
                         
                         #create a map from the unique node ids to their classwise posteriors
                         node_ids_to_posterior_map = {}
@@ -235,10 +235,19 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                             cal_ys_of_node = y_cal[cal_idxs_of_node_id]
                             class_counts = [len(np.where(cal_ys_of_node == y)[0]) for y in np.unique(y) ]
                             sample_no = np.sum(class_counts)
-                            posteriors = np.nan_to_num(np.array(class_counts) / sample_no)
+                            if sample_no != 0:
+                                posteriors = np.nan_to_num(np.array(class_counts) / sample_no)
+                            else:
+                                posteriors = np.zeros(len(self.classes_),dtype=float)
 
                             #finite sample correction
-                            posteriors_corrected = _finite_sample_correction(posteriors, len(cal_idxs_of_node_id), len(self.classes_))
+                            total_samples = len(cal_idxs_of_node_id)
+
+                            if total_samples == 0:
+                                total_samples = 1
+                                
+                            posteriors_corrected = _finite_sample_correction(posteriors, total_samples, len(self.classes_))
+
                             node_ids_to_posterior_map[node_id] = posteriors_corrected
                             node_ids_to_sample_count_map[node_id] = sample_no
 
@@ -401,7 +410,7 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                         #print(voters_to_be_mapped)
                         for ids, current_voter in enumerate(voters_to_be_mapped):
                             estimators = current_voter.estimators
-                            print(estimators[0].tree_, 'eije ami asi')
+                            #print(estimators[0].tree_, 'eije ami asi')
 
                             posteriors_to_be_mapped = current_voter.tree_idx_to_node_ids_to_posterior_map
                             sample_count_map = current_voter.tree_idx_to_node_ids_to_sample_count_map
@@ -439,11 +448,23 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                                         current_task_mul
                                         )
                                 
-                                num = np.array(_leaf_posteriors)
-                                den = np.array(_leaf_sample_covered)
-                                posterior[tree_id] = np.sum(
-                                    num, axis=0
-                                ) / np.sum(den)
+                                num = np.sum(
+                                    np.array(_leaf_posteriors),
+                                    axis = 0
+                                )
+                                den = np.sum(
+                                    np.array(_leaf_sample_covered)
+                                )
+
+                                if den == 0:
+                                    '''print(np.ones(
+                                        self.classes_)/self.classes_,self.classes_,'hlw')'''
+                                    posterior[tree_id] = np.ones(
+                                        len(self.classes_),
+                                        dtype=float
+                                    )/len(self.classes_)
+                                else:
+                                    posterior[tree_id] = num/den
 
                                 _leaf_posteriors.clear()
                                 _leaf_sample_covered.clear()
