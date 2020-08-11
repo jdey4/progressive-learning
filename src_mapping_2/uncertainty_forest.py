@@ -222,8 +222,8 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                     def worker(tree_idx):
                         nodes = nodes_across_trees[tree_idx]
                         oob_samples = np.delete(range(len(nodes)), self.estimators_samples_[tree_idx])
-                        cal_nodes = nodes#[oob_samples] if fitting else nodes
-                        y_cal = y#[oob_samples] if fitting else y                    
+                        cal_nodes = nodes[oob_samples] if fitting else nodes
+                        y_cal = y[oob_samples] if fitting else y                    
                         
                         #create a map from the unique node ids to their classwise posteriors
                         node_ids_to_posterior_map = {}
@@ -275,18 +275,23 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                         ):
                         if children_left[node] == children_right[node]:
                             
-                            if node in list(posterior_map.keys()):
-                                mul = np.prod(
-                                    (profile_mat[:,1]-profile_mat[:,0])/(profile_map[node][:,1]- profile_map[node][:,0])
-                                )
-                                #print(profile_mat, profile_map[node])
-                                #print(mul)
-                                _leaf_posteriors.append(
-                                    mul*sample_map[node]*posterior_map[node]
-                                )
-                                _leaf_sample_covered.append(
-                                    mul*sample_map[node]
-                                )
+                            mul = np.prod(
+                                (profile_mat[:,1]-profile_mat[:,0])/(profile_map[node][:,1]- profile_map[node][:,0])
+                            )
+                            #print(profile_mat, profile_map[node])
+                            #print(mul)
+                            #print(node, mul, sample_map[node], posterior_map[node],'hi')
+
+                            sample_count = sample_map[node]
+                            if sample_count == 0:
+                                sample_count = 1
+
+                            _leaf_posteriors.append(
+                                mul*sample_count*posterior_map[node]
+                            )
+                            _leaf_sample_covered.append(
+                                mul*sample_count
+                            )
                             
                         else:
                             profile_mat_left = profile_mat.copy()
@@ -422,6 +427,7 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                         leaf_id = list(self.tree_id_to_leaf_profile[idx].keys())
 
                         for leaf in leaf_id:
+                            #print(leaf,"we are going to map this leaf")
                             #print(leaf,'fervebgtr')
                             profile = self.tree_id_to_leaf_profile[idx][leaf]
                             map_leaf(voters_to_be_mapped,leaf,profile)
