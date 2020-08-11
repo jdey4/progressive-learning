@@ -116,7 +116,7 @@ def experiment(n_xor, n_nxor, n_test, reps, n_trees, max_depth, acorn=None):
             test_nxor = (test_nxor-min_nxor)/max_nxor
 
         if n_xor == 0:
-            l2f.new_forest(nxor, label_nxor, n_estimators=n_trees)
+            l2f.new_forest(nxor, label_nxor, n_estimators=n_trees,max_depth=max_depth)
             
             errors[i,0] = 0.5
             errors[i,1] = 0.5
@@ -127,7 +127,7 @@ def experiment(n_xor, n_nxor, n_test, reps, n_trees, max_depth, acorn=None):
             errors[i,2] = 1 - np.sum(uf_task2 == test_label_nxor)/n_test
             errors[i,3] = 1 - np.sum(l2f_task2 == test_label_nxor)/n_test
         elif n_nxor == 0:
-            l2f.new_forest(xor, label_xor, n_estimators=n_trees)
+            l2f.new_forest(xor, label_xor, n_estimators=n_trees,max_depth=max_depth)
             
             uf_task1=l2f.predict(test_xor, representation=0, decider=0)
             l2f_task1=l2f.predict(test_xor, representation='all', decider=0)
@@ -137,7 +137,7 @@ def experiment(n_xor, n_nxor, n_test, reps, n_trees, max_depth, acorn=None):
             errors[i,2] = 0.5
             errors[i,3] = 0.5
         else:
-            l2f.new_forest(xor, label_xor, n_estimators=n_trees)
+            l2f.new_forest(xor, label_xor, n_estimators=n_trees,max_depth=max_depth)
 
             '''delta = .01
             #sample the grid
@@ -156,10 +156,10 @@ def experiment(n_xor, n_nxor, n_test, reps, n_trees, max_depth, acorn=None):
             l2f.y_across_tasks[0] = sample_label'''
             ############################
 
-            l2f.new_forest(nxor, label_nxor, n_estimators=n_trees)
+            l2f.new_forest(nxor, label_nxor, n_estimators=n_trees,max_depth=max_depth)
             
-            uf.new_forest(xor, label_xor, n_estimators=n_trees)
-            uf.new_forest(nxor, label_nxor, n_estimators=n_trees)
+            uf.new_forest(xor, label_xor, n_estimators=n_trees,max_depth=max_depth)
+            uf.new_forest(nxor, label_nxor, n_estimators=n_trees,max_depth=max_depth)
 
             uf_task1=uf.predict(test_xor, representation=0, decider=0)
             l2f_task1=l2f.predict(test_xor, representation='all', decider=0)
@@ -174,7 +174,7 @@ def experiment(n_xor, n_nxor, n_test, reps, n_trees, max_depth, acorn=None):
     return np.mean(errors,axis=0)
 
 #%%
-mc_rep = 48
+mc_rep = 96
 n_test = 1000
 n_trees = 10
 n_xor = (100*np.arange(0.5, 7.25, step=0.25)).astype(int)
@@ -190,7 +190,7 @@ for i,n1 in enumerate(n_xor):
     print('starting to compute %s xor\n'%n1)
     error = np.array(
         Parallel(n_jobs=-1,verbose=1)(
-        delayed(experiment)(n1,0,n_test,1,n_trees=n_trees,max_depth=200) for _ in range(mc_rep)
+        delayed(experiment)(n1,0,n_test,1,n_trees=n_trees,max_depth=60) for _ in range(mc_rep)
     )
     )
     mean_error[:,i] = np.mean(error,axis=0)
@@ -206,7 +206,7 @@ for i,n1 in enumerate(n_xor):
             
             error = np.array(
                 Parallel(n_jobs=-1,verbose=1)(
-                delayed(experiment)(n1,n2,n_test,1,n_trees=n_trees,max_depth=200) for _ in range(mc_rep)
+                delayed(experiment)(n1,n2,n_test,1,n_trees=n_trees,max_depth=60) for _ in range(mc_rep)
             )
             )
             mean_error[:,i+j+1] = np.mean(error,axis=0)
