@@ -174,7 +174,7 @@ def experiment(n_xor, n_nxor, n_test, reps, n_trees, max_depth, acorn=None):
     return np.mean(errors,axis=0)
 
 #%%
-mc_rep = 1000
+mc_rep = 48
 n_test = 1000
 n_trees = 10
 n_xor = (100*np.arange(0.5, 7.25, step=0.25)).astype(int)
@@ -430,6 +430,6 @@ ax.set_yticks([])
 ax.set_title('Gaussian N-XOR', fontsize=30)
 ax.axis('off')
 #plt.tight_layout()
-plt.savefig('./result/figs/xor_nxor_exp_honest_trees.pdf')
+plt.savefig('./result/figs/xor_nxor_exp_dishonest_trees.pdf')
 
 # %%
