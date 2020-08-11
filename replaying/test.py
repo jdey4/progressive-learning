@@ -174,11 +174,11 @@ def experiment(n_xor, n_nxor, n_test, reps, n_trees, max_depth, acorn=None):
     return np.mean(errors,axis=0)
 
 #%%
-mc_rep = 1000
+mc_rep = 10
 n_test = 1000
 n_trees = 10
 n_xor = (100*np.arange(0.5, 7.25, step=0.25)).astype(int)
-n_nxor = (100*np.arange(0.5, 15, step=0.25)).astype(int)
+n_nxor = (100*np.arange(0.5, 7.5, step=0.25)).astype(int)
 
 mean_error = np.zeros((4, len(n_xor)+len(n_nxor)))
 std_error = np.zeros((4, len(n_xor)+len(n_nxor)))
@@ -190,7 +190,7 @@ for i,n1 in enumerate(n_xor):
     print('starting to compute %s xor\n'%n1)
     error = np.array(
         Parallel(n_jobs=-1,verbose=1)(
-        delayed(experiment)(n1,0,n_test,1,n_trees=n_trees,max_depth=50) for _ in range(mc_rep)
+        delayed(experiment)(n1,0,n_test,1,n_trees=n_trees,max_depth=ceil(log2(n1))) for _ in range(mc_rep)
     )
     )
     mean_error[:,i] = np.mean(error,axis=0)
@@ -206,7 +206,7 @@ for i,n1 in enumerate(n_xor):
             
             error = np.array(
                 Parallel(n_jobs=-1,verbose=1)(
-                delayed(experiment)(n1,n2,n_test,1,n_trees=n_trees,max_depth=50) for _ in range(mc_rep)
+                delayed(experiment)(n1,n2,n_test,1,n_trees=n_trees,max_depth=ceil(log2(n2))) for _ in range(mc_rep)
             )
             )
             mean_error[:,i+j+1] = np.mean(error,axis=0)
@@ -234,7 +234,7 @@ mean_error = unpickle('result/mean_xor_nxor.pickle')
 std_error = unpickle('result/std_xor_nxor.pickle')
 
 n_xor = (100*np.arange(0.5, 7.25, step=0.25)).astype(int)
-n_nxor = (100*np.arange(0.5, 15, step=0.25)).astype(int)
+n_nxor = (100*np.arange(0.5, 7.5, step=0.25)).astype(int)
 
 n1s = n_xor
 n2s = n_nxor
