@@ -95,14 +95,19 @@ class LifeLongDNN():
              #   estimators_of_task = self.estimators_across_tasks[task_idx]
                 
             unfit_task_voter_under_new_transformation = clone(new_voter)
+            #print(unfit_task_voter_under_new_transformation.tree_idx_to_node_ids_to_sample_count_map)
             #posterior_map_to_be_mapped = self.voters_across_tasks_matrix[task_idx][task_idx].tree_idx_to_node_ids_to_posterior_map
             voters_to_be_mapped = []
             for voter_id in range(task_idx+1):
                 voters_to_be_mapped.append(self.voters_across_tasks_matrix[task_idx][voter_id])
+                #print(task_idx, voter_id, self.voters_across_tasks_matrix[task_idx][voter_id].tree_idx_to_node_ids_to_sample_count_map,'hiahi', self.voters_across_tasks_matrix[task_idx][voter_id].tree_idx_to_node_ids_to_posterior_map)
+
 
             if self.model == "uf":
                 unfit_task_voter_under_new_transformation.classes_ = self.voters_across_tasks_matrix[task_idx][0].classes_
             task_voter_under_new_transformation = unfit_task_voter_under_new_transformation.fit(
+                estimators = new_voter.estimators,
+                tree_id_to_leaf_profile = new_voter.tree_id_to_leaf_profile,
                 voters_to_be_mapped=voters_to_be_mapped,
                 map=True
             )
@@ -136,9 +141,14 @@ class LifeLongDNN():
             if self.model == "uf":
                 unfit_new_task_voter_under_task_transformation.classes_ = new_voter.classes_
             new_task_voter_under_task_transformation = unfit_new_task_voter_under_task_transformation.fit(
+                estimators = self.voters_across_tasks_matrix[task_idx][task_idx].estimators,
+                tree_id_to_leaf_profile = self.voters_across_tasks_matrix[task_idx][task_idx].tree_id_to_leaf_profile,
+                tree_idx_to_node_ids_to_sample_count_map = self.voters_across_tasks_matrix[task_idx][task_idx].tree_idx_to_node_ids_to_sample_count_map,
                 nodes_across_trees=X_under_task_transformation, 
                 y=y
                 )
+
+            #print(new_task_voter_under_task_transformation.tree_idx_to_node_ids_to_sample_count_map,'hi', new_task_voter_under_task_transformation.tree_idx_to_node_ids_to_posterior_map)
             new_voters_under_previous_task_transformation.append(new_task_voter_under_task_transformation)
             
         #make sure to add the voter of the new task under its own transformation

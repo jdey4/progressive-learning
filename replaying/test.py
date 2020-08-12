@@ -104,6 +104,15 @@ def experiment(n_xor, n_nxor, n_test, reps, n_trees, max_depth, acorn=None):
         max_xor = np.max(xor)
         xor = xor/max_xor
         test_xor = (test_xor-min_xor)/max_xor
+
+        demo_data, demo_label = generate_gaussian_parity(100,cov_scale=0.1,angle_params=0)
+        min_demo = np.min(demo_data)
+        demo_data = (demo_data - min_demo)
+        max_demo = np.max(demo_data)
+        demo_data = demo_data/max_demo
+
+        l2f.new_forest(demo_data, demo_label, n_estimators=n_trees,max_depth=max_depth)
+
         #target data
         if n_nxor!=0:
             nxor, label_nxor = generate_gaussian_parity(n_nxor,cov_scale=0.1,angle_params=np.pi/2)
@@ -130,7 +139,7 @@ def experiment(n_xor, n_nxor, n_test, reps, n_trees, max_depth, acorn=None):
             l2f.new_forest(xor, label_xor, n_estimators=n_trees,max_depth=max_depth)
             
             uf_task1=l2f.predict(test_xor, representation=0, decider=0)
-            l2f_task1=l2f.predict(test_xor, representation='all', decider=0)
+            l2f_task1=l2f.predict(test_xor, representation=[1], decider=1)
             
             errors[i,0] = 1 - np.sum(uf_task1 == test_label_xor)/n_test
             errors[i,1] = 1 - np.sum(l2f_task1 == test_label_xor)/n_test
@@ -162,9 +171,9 @@ def experiment(n_xor, n_nxor, n_test, reps, n_trees, max_depth, acorn=None):
             uf.new_forest(nxor, label_nxor, n_estimators=n_trees,max_depth=max_depth)
 
             uf_task1=uf.predict(test_xor, representation=0, decider=0)
-            l2f_task1=l2f.predict(test_xor, representation='all', decider=0)
+            l2f_task1=l2f.predict(test_xor, representation=[1,2], decider=1)
             uf_task2=uf.predict(test_nxor, representation=1, decider=1)
-            l2f_task2=l2f.predict(test_nxor, representation='all', decider=1)
+            l2f_task2=l2f.predict(test_nxor, representation=[1,2], decider=2)
             
             errors[i,0] = 1 - np.sum(uf_task1 == test_label_xor)/n_test
             errors[i,1] = 1 - np.sum(l2f_task1 == test_label_xor)/n_test

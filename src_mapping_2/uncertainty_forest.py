@@ -155,6 +155,8 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
             children_right = estimator.tree_.children_right
             threshold = estimator.tree_.threshold
             #print(children_left,children_right)
+            #print(feature,'feature')
+            #print(threshold,'threshold')
 
             worker(
                     0, 
@@ -166,6 +168,7 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                     )
 
             self.tree_id_to_leaf_profile[tree_id] = leaf_profile
+            
         #print(self.tree_id_to_leaf_profile,'gdgfg')
 
     def get_transformer(self):
@@ -214,11 +217,21 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                 self.estimators_samples_ = estimators_samples_
                 self.n_jobs = n_jobs
             
-            def fit(self, nodes_across_trees=None, y=None, voters_to_be_mapped=None, fitting = False, map=False):
+            def fit(self, estimators=None, tree_id_to_leaf_profile=None, tree_idx_to_node_ids_to_sample_count_map =None, nodes_across_trees=None, y=None, voters_to_be_mapped=None, fitting = False, map=False):
                 self.tree_idx_to_node_ids_to_posterior_map = {}
-                self.tree_idx_to_node_ids_to_sample_count_map = {}
+
+                if estimators != None:
+                    self.estimators = estimators
+
+                if tree_id_to_leaf_profile != None:
+                    self.tree_id_to_leaf_profile = tree_id_to_leaf_profile
+
+                if tree_idx_to_node_ids_to_sample_count_map  != None:
+                    self.tree_idx_to_node_ids_to_sample_count_map = tree_idx_to_node_ids_to_sample_count_map 
 
                 if map == False:
+                    self.tree_idx_to_node_ids_to_sample_count_map = {}
+
                     def worker(tree_idx):
                         nodes = nodes_across_trees[tree_idx]
                         oob_samples = np.delete(range(len(nodes)), self.estimators_samples_[tree_idx])
@@ -281,13 +294,21 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                             #print(profile_mat, profile_map[node])
                             #print(mul)
                             #print(node, mul, sample_map[node], posterior_map[node],'hi')
+                            #print(threshold, node,'nody')
 
-                            sample_count = sample_map[node]
+                            if node not in list(sample_map.keys()):
+                                #print(self.classes_,'cls')
+                                prob = np.ones(len(self.classes_),dtype=float)/len(self.classes_)
+                                sample_count = 1
+                            else:
+                                sample_count = sample_map[node]
+                                prob = posterior_map[node]
+
                             if sample_count == 0:
                                 sample_count = 1
 
                             _leaf_posteriors.append(
-                                mul*sample_count*posterior_map[node]
+                                mul*sample_count*prob
                             )
                             _leaf_sample_covered.append(
                                 mul*sample_count
@@ -357,8 +378,10 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                         #print(leaf,'leaf id')
                         #print(voters_to_be_mapped)
                         for ids, current_voter in enumerate(voters_to_be_mapped):
+
+                            #print(ids)
                             estimators = current_voter.estimators
-                            #print(estimators)
+                            #print(estimators[0].tree_)
                             posteriors_to_be_mapped = current_voter.tree_idx_to_node_ids_to_posterior_map
                             sample_count_map = current_voter.tree_idx_to_node_ids_to_sample_count_map
                             profile_map = current_voter.tree_id_to_leaf_profile
@@ -369,11 +392,15 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                             )
 
                             for tree_id,tree in enumerate(estimators):
+                                #print('estimator',tree_id)
                                 feature = tree.tree_.feature
                                 children_left = tree.tree_.children_left
                                 children_right = tree.tree_.children_right
                                 threshold = tree.tree_.threshold
 
+                                #if tree_id == 0:
+                                    #print(threshold, 'threshold', posteriors_to_be_mapped[tree_id])
+                                #print(sample_count_map[tree_id],tree_id,'sample map')
                                 worker(
                                         0,
                                         feature,

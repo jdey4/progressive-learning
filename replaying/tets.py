@@ -87,12 +87,12 @@ def generate_gaussian_parity(n, mean=np.array([-1, -1]), cov_scale=1, angle_para
 
 
 # %%
-xor, label_xor = generate_gaussian_parity(750,cov_scale=0.1,angle_params=0)
+xor, label_xor = generate_gaussian_parity(100,cov_scale=0.1,angle_params=0)
 test_xor, test_label_xor = generate_gaussian_parity(1000,cov_scale=0.1,angle_params=0)
 
 #nxor = xor
 #label_nxor = (label_xor==0)*1
-nxor, label_nxor = generate_gaussian_parity(750,cov_scale=0.1,angle_params=np.pi/2)
+nxor, label_nxor = generate_gaussian_parity(1000,cov_scale=0.1,angle_params=np.pi/2)
 test_nxor, test_label_nxor = generate_gaussian_parity(1000,cov_scale=0.1,angle_params=np.pi/2)
 
 min_xor = np.min(xor)
@@ -110,12 +110,15 @@ test_xor = (test_xor-min_xor)/max_xor
 
 l2f = LifeLongDNN(parallel=False)
 #np.random.seed(12345)
-l2f.new_forest(xor, label_xor, n_estimators=10)
+l2f.new_forest(nxor[0:], label_nxor[0:], n_estimators=10)
+l2f.new_forest(xor[0:], label_xor[0:], n_estimators=10)
 #np.random.seed(12345)
-l2f.new_forest(nxor, label_nxor, n_estimators=10)
+l2f.new_forest(xor, label_xor, n_estimators=10,max_depth=200)
 
-l2f_task1 = l2f.predict(test_xor, representation='all', decider=0)
-uf_task1 = l2f.predict(test_xor, representation=0, decider=0)
+l2f.new_forest(nxor, label_nxor, n_estimators=10,max_depth=200)
+
+l2f_task1 = l2f.predict(test_xor, representation=[2,3], decider=2)
+uf_task1 = l2f.predict(test_xor, representation=2, decider=2)
 
 print(np.mean(uf_task1 == test_label_xor))
 print(np.mean(l2f_task1 == test_label_xor))
