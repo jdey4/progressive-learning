@@ -138,7 +138,7 @@ def experiment(n_xor, n_nxor, n_test, reps, n_trees, max_depth, acorn=None):
         elif n_nxor == 0:
             l2f.new_forest(xor, label_xor, n_estimators=n_trees,max_depth=max_depth)
             
-            uf_task1=l2f.predict(test_xor, representation=0, decider=0)
+            uf_task1=l2f.predict(test_xor, representation=1, decider=1)
             l2f_task1=l2f.predict(test_xor, representation=[1], decider=1)
             
             errors[i,0] = 1 - np.sum(uf_task1 == test_label_xor)/n_test
