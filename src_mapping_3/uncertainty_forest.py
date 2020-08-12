@@ -230,7 +230,7 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                         node_ids_to_sample_count_map = {}
 
                         #fill in the posteriors 
-                        for node_id in np.unique(cal_nodes):
+                        for node_id in np.unique(nodes):
                             cal_idxs_of_node_id = np.where(cal_nodes == node_id)[0]
                             cal_ys_of_node = y_cal[cal_idxs_of_node_id]
                             class_counts = [len(np.where(cal_ys_of_node == y)[0]) for y in np.unique(y) ]
