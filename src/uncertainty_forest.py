@@ -150,8 +150,8 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                 def worker(tree_idx):
                     nodes = nodes_across_trees[tree_idx]
                     oob_samples = np.delete(range(len(nodes)), self.estimators_samples_[tree_idx])
-                    cal_nodes = nodes[oob_samples] if fitting else nodes
-                    y_cal = y[oob_samples] if fitting else y                    
+                    cal_nodes = nodes#[oob_samples] if fitting else nodes
+                    y_cal = y#[oob_samples] if fitting else y                    
                     
                     #create a map from the unique node ids to their classwise posteriors
                     node_ids_to_posterior_map = {}

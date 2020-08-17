@@ -85,41 +85,33 @@ def generate_gaussian_parity(n, mean=np.array([-1, -1]), cov_scale=1, angle_para
     return X, Y.astype(int)
 
 
+# %%
+reps = 100
+err = np.zeros(reps,dtype=float)
+fte = np.zeros(reps,dtype=float)
+bte = np.zeros(reps,dtype=float)
+
+for i in range(reps):
+    xor, label_xor = generate_gaussian_parity(200,cov_scale=0.1,angle_params=0)
+    test_xor, test_label_xor = generate_gaussian_parity(1000,cov_scale=0.1,angle_params=0)
+
+    nxor, label_nxor = generate_gaussian_parity(500,cov_scale=0.1,angle_params=np.pi/2)
+    test_nxor, test_label_nxor = generate_gaussian_parity(1000,cov_scale=0.1,angle_params=np.pi/2)
+
+    l2f = LifeLongDNN(parallel=False)
+    l2f.new_forest(xor, label_xor, n_estimators=1, max_depth=30)
+    l2f.new_forest(nxor, label_nxor, n_estimators=1, max_depth=30)
+
+    l2f_task1 = l2f.predict(test_xor, representation='all', decider=0)
+    uf_task1 = l2f.predict(test_xor, representation=0, decider=0)
+
+    l2f_task2 = l2f.predict(test_nxor, representation='all', decider=1)
+    uf_task2 = l2f.predict(test_nxor, representation=1, decider=1)
+
+    fte[i] = (1-np.mean(uf_task2 == test_label_nxor))/(1-np.mean(l2f_task2 == test_label_nxor))
+    bte[i] = (1-np.mean(uf_task1 == test_label_xor))/(1-np.mean(l2f_task1 == test_label_xor))
+
+print(np.mean(fte), np.mean(bte))
+
 
 # %%
-xor, label_xor = generate_gaussian_parity(100,cov_scale=0.1,angle_params=0)
-test_xor, test_label_xor = generate_gaussian_parity(1000,cov_scale=0.1,angle_params=0)
-
-#nxor = xor
-#label_nxor = (label_xor==0)*1
-nxor, label_nxor = generate_gaussian_parity(1000,cov_scale=0.1,angle_params=np.pi/2)
-test_nxor, test_label_nxor = generate_gaussian_parity(1000,cov_scale=0.1,angle_params=np.pi/2)
-
-min_xor = np.min(xor)
-xor = (xor - min_xor)
-max_xor = np.max(xor)
-xor = xor/max_xor
-
-min_nxor = np.min(nxor)
-nxor = (nxor - min_nxor)
-max_nxor = np.max(nxor)
-nxor = nxor/max_nxor
-
-test_xor = (test_xor-min_xor)/max_xor
-#test_nxor = (test_nxor-min_nxor)/max_nxor
-
-l2f = LifeLongDNN(parallel=False)
-#np.random.seed(12345)
-l2f.new_forest(nxor[0:], label_nxor[0:], n_estimators=10)
-l2f.new_forest(xor[0:], label_xor[0:], n_estimators=10)
-#np.random.seed(12345)
-l2f.new_forest(xor, label_xor, n_estimators=10,max_depth=200)
-
-l2f.new_forest(nxor, label_nxor, n_estimators=10,max_depth=200)
-
-l2f_task1 = l2f.predict(test_xor, representation=[2,3], decider=2)
-uf_task1 = l2f.predict(test_xor, representation=2, decider=2)
-
-print(np.mean(uf_task1 == test_label_xor))
-print(np.mean(l2f_task1 == test_label_xor))
- # %%

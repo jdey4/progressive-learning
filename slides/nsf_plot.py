@@ -106,11 +106,8 @@ task_num = 10
 shifts = 6
 total_alg_top = 9
 total_alg_bottom = 5
-alg_name_top = ['L2N','L2F','Prog-NN', 'DF-CNN','RC-L2F','LwF','EWC','O-EWC','SI']
-alg_name_bottom = ['L2F','LwF','EWC','O-EWC','SI']
-combined_alg_name = ['L2N','L2F','Prog-NN', 'DF-CNN','LwF','EWC','O-EWC','SI']
-model_file_top = ['dnn0','fixed_uf10','Prog_NN','DF_CNN','uf10','LwF','EWC','Online_EWC','SI']
-model_file_bottom = ['uf10','LwF','EWC','Online_EWC','SI']
+alg_name_top = ['L2N','L2F','RC-L2F','Prog-NN', 'DF-CNN','LwF','EWC','O-EWC','SI']
+model_file_top = ['dnn0','fixed_uf10','uf10','Prog_NN','DF_CNN','LwF','EWC','Online_EWC','SI']
 btes_top = [[] for i in range(total_alg_top)]
 ftes_top = [[] for i in range(total_alg_top)]
 tes_top = [[] for i in range(total_alg_top)]
@@ -128,7 +125,7 @@ for alg in range(total_alg_top):
 
     for slot in range(slots):
         for shift in range(shifts):
-            if alg < 2 or alg == 4:
+            if alg < 2 or alg == 2:
                 filename = '../experiments/cifar_exp/result/result/'+model_file_top[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
             else:
                 filename = '../experiments/cifar_exp/benchmarking_algorthms_result/'+model_file_top[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
@@ -151,7 +148,7 @@ for alg in range(total_alg_top):
 fig = plt.figure(constrained_layout=True,figsize=(14,6))
 gs = fig.add_gridspec(6, 14)
 
-clr_top = [ "#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#e41a1c", "#ff7f00", "#ffff33", "#a65628", "#f781bf"]
+clr_top = [ "#377eb8", "#e41a1c", "#e41a1c", "#4daf4a", "#984ea3", "#ff7f00", "#ffff33", "#a65628", "#f781bf"]
 c_top = sns.color_palette(clr_top, n_colors=len(clr_top))
 
 fontsize=25
@@ -169,6 +166,10 @@ for i, fte in enumerate(ftes_top):
         ax.plot(np.arange(1,11), fte, color=c_top[i], marker='.', markersize=12, label=alg_name_top[i], linewidth=3)
         continue
     
+    if i == 2:
+        ax.plot(np.arange(1,11), fte, color=c_top[i], marker='.', linestyle='dashed', markersize=12, label=alg_name_top[i], linewidth=3)
+        continue
+
     ax.plot(np.arange(1,11), fte, color=c_top[i], marker='.', markersize=12, label=alg_name_top[i])
     
 ax.set_xticks(np.arange(1,11))
@@ -198,7 +199,7 @@ for i in range(task_num - 1):
     for j in range(0,total_alg_top):
         if j == 0:
             if i == 0:
-                ax.plot(ns, et[j,:], marker='.', markersize=8, label=None, color=c_top[j], linewidth = 3)
+                ax.plot(ns, et[j,:], marker='.', markersize=8, label=alg_name_top[j], color=c_top[j], linewidth = 3)
             else:
                 ax.plot(ns, et[j,:], marker='.', markersize=8, color=c_top[j], linewidth = 3)
         elif j == 1:
@@ -206,6 +207,11 @@ for i in range(task_num - 1):
                 ax.plot(ns, et[j,:], marker='.', markersize=8, label = alg_name_top[j], color=c_top[j])
             else:
                 ax.plot(ns, et[j,:], marker='.', markersize=8, color=c_top[j], linewidth = 3)
+        elif j == 2:
+            if i == 0:
+                ax.plot(ns, et[j,:], linestyle='dashed', marker='.', markersize=8, label = alg_name_top[j], color=c_top[j])
+            else:
+                ax.plot(ns, et[j,:], marker='.', markersize=8, color=c_top[j], linewidth = 3)     
         else:
             if i == 0:
                 ax.plot(ns, et[j,:], marker='.', markersize=8, label = alg_name_top[j], color=c_top[j])
