@@ -12,7 +12,7 @@ from sklearn.model_selection import StratifiedKFold
 from math import log2, ceil 
 
 import sys
-sys.path.append("../src_mapping_3/")
+sys.path.append("../src_mapping_2/")
 from lifelong_dnn import LifeLongDNN
 from joblib import Parallel, delayed
 
@@ -177,8 +177,8 @@ def experiment(n_xor, n_nxor, n_test, reps, n_trees, max_depth, acorn=None):
 mc_rep = 1000
 n_test = 1000
 n_trees = 10
-n_xor = (100*np.arange(0.5, 7.25, step=0.25)).astype(int)
-n_nxor = (100*np.arange(0.5, 7.5, step=0.25)).astype(int)
+n_xor = (100*np.arange(0.5, 14.75, step=0.25)).astype(int)
+n_nxor = (100*np.arange(0.5, 15, step=0.25)).astype(int)
 
 mean_error = np.zeros((4, len(n_xor)+len(n_nxor)))
 std_error = np.zeros((4, len(n_xor)+len(n_nxor)))
@@ -233,8 +233,8 @@ with open('./result/std_te_xor_nxor.pickle','wb') as f:
 mean_error = unpickle('result/mean_xor_nxor.pickle')
 std_error = unpickle('result/std_xor_nxor.pickle')
 
-n_xor = (100*np.arange(0.5, 7.25, step=0.25)).astype(int)
-n_nxor = (100*np.arange(0.5, 7.5, step=0.25)).astype(int)
+n_xor = (100*np.arange(0.5, 14.75, step=0.25)).astype(int)
+n_nxor = (100*np.arange(0.5, 15, step=0.25)).astype(int)
 
 n1s = n_xor
 n2s = n_nxor
@@ -281,7 +281,7 @@ ax1.set_xlabel('Total Sample Size', fontsize=fontsize)
 ax1.tick_params(labelsize=labelsize)
 ax1.set_yticks([0.15, 0.2])
 ax1.set_xticks([250,750,1500])
-ax1.axvline(x=750, c='gray', linewidth=1.5, linestyle="dashed")
+ax1.axvline(x=1500, c='gray', linewidth=1.5, linestyle="dashed")
 ax1.set_title('XOR', fontsize=30)
 
 right_side = ax1.spines["right"]
@@ -393,7 +393,7 @@ right_side = ax1.spines["right"]
 right_side.set_visible(False)
 top_side = ax1.spines["top"]
 top_side.set_visible(False)
-ax1.hlines(1, 50,1500, colors='gray', linestyles='dashed',linewidth=1.5)
+ax1.hlines(1, 50,3000, colors='gray', linestyles='dashed',linewidth=1.5)
 
 ax1.text(400, np.mean(ax1.get_ylim()), "%s"%(TASK1), fontsize=26)
 ax1.text(900, np.mean(ax1.get_ylim()), "%s"%(TASK2), fontsize=26)
