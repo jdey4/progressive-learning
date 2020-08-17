@@ -102,7 +102,72 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
             return np.array(
                     [worker(tree_idx, tree) for tree_idx, tree in enumerate(self.ensemble.estimators_)]
                     )
-        
+    
+    # function added to do partition mapping
+    def _profile_leaf(self):
+        self.tree_id_to_leaf_profile = {}
+        leaf_profile = {}
+        #print('hi')
+        def worker(node, children_left, children_right, feature, threshold, profile_mat):
+
+            if children_left[node] == children_right[node]:
+                profile_mat_ = profile_mat.copy()
+                leaf_profile[node] = profile_mat_
+                #print(node,'nodes')
+            else:
+                feature_indx = feature[node]
+                profile_mat_ = profile_mat.copy()
+                profile_mat_[feature_indx,1] = threshold[node]
+
+                worker(
+                    children_left[node], 
+                    children_left, 
+                    children_right, 
+                    feature, 
+                    threshold,
+                    profile_mat_
+                    )
+                        
+                profile_mat_ = profile_mat.copy()
+                profile_mat_[feature_indx,0] = threshold[node]
+                worker(
+                    children_right[node], 
+                    children_left, 
+                    children_right, 
+                    feature, 
+                    threshold,
+                    profile_mat_
+                    )
+
+        profile_mat = np.concatenate(
+            (
+                np.zeros((self._feature_dimension,1),dtype=float),
+                np.ones((self._feature_dimension,1),dtype=float)
+            ),
+            axis = 1
+        )
+
+        for tree_id, estimator in enumerate(self.ensemble.estimators_):
+            leaf_profile = {}
+            feature = estimator.tree_.feature
+            children_left = estimator.tree_.children_left
+            children_right = estimator.tree_.children_right
+            threshold = estimator.tree_.threshold
+            #print(children_left,children_right)
+
+            worker(
+                    0, 
+                    children_left, 
+                    children_right, 
+                    feature, 
+                    threshold,
+                    profile_mat.copy()
+                    )
+
+            self.tree_id_to_leaf_profile[tree_id] = leaf_profile
+        #print(self.tree_id_to_leaf_profile,'gdgfg')
+
+
     def get_transformer(self):
         return lambda X : self.transform(X)
         
@@ -135,7 +200,9 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
         
         #fit the ensemble
         self.ensemble.fit(X, y)
-        
+        #profile trees for partition mapping
+        self._profile_leaf()
+
         class Voter(BaseEstimator):
             def __init__(self, estimators_samples_, classes, parallel, n_jobs):
                 self.n_estimators = len(estimators_samples_)

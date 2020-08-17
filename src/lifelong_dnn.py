@@ -100,7 +100,7 @@ class LifeLongDNN():
                 X_under_task_transformation = transformer_of_task.predict(X)
             if self.model == "uf":
                 X_under_task_transformation = transformer_of_task(X)
-            unfit_new_task_voter_under_task_transformation = clone(new_voter)
+            unfit_new_task_voter_under_task_transformation = clone(self.voters_across_tasks_matrix[task_idx][0])
             if self.model == "uf":
                 unfit_new_task_voter_under_task_transformation.classes_ = new_voter.classes_
             new_task_voter_under_task_transformation = unfit_new_task_voter_under_task_transformation.fit(X_under_task_transformation, y)
