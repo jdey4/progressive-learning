@@ -104,19 +104,16 @@ ntrees = 10
 slots = 10
 task_num = 10
 shifts = 6
-total_alg_top = 4
+total_alg_top = 9
 total_alg_bottom = 5
-alg_name_top = ['L2N','L2F','Prog-NN', 'DF-CNN']
+alg_name_top = ['L2N','L2F','Prog-NN', 'DF-CNN','RC-L2F','LwF','EWC','O-EWC','SI']
 alg_name_bottom = ['L2F','LwF','EWC','O-EWC','SI']
-combined_alg_name = ['L2F','L2N','Prog-NN', 'DF-CNN','LwF','EWC','O-EWC','SI']
-model_file_top = ['dnn0','fixed_uf10','Prog_NN','DF_CNN']
+combined_alg_name = ['L2N','L2F','Prog-NN', 'DF-CNN','LwF','EWC','O-EWC','SI']
+model_file_top = ['dnn0','fixed_uf10','Prog_NN','DF_CNN','uf10','LwF','EWC','Online_EWC','SI']
 model_file_bottom = ['uf10','LwF','EWC','Online_EWC','SI']
 btes_top = [[] for i in range(total_alg_top)]
 ftes_top = [[] for i in range(total_alg_top)]
 tes_top = [[] for i in range(total_alg_top)]
-btes_bottom = [[] for i in range(total_alg_bottom)]
-ftes_bottom = [[] for i in range(total_alg_bottom)]
-tes_bottom = [[] for i in range(total_alg_bottom)]
 
 ########################
 
@@ -131,7 +128,7 @@ for alg in range(total_alg_top):
 
     for slot in range(slots):
         for shift in range(shifts):
-            if alg < 2:
+            if alg < 2 or alg == 4:
                 filename = '../experiments/cifar_exp/result/result/'+model_file_top[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
             else:
                 filename = '../experiments/cifar_exp/benchmarking_algorthms_result/'+model_file_top[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
@@ -151,68 +148,17 @@ for alg in range(total_alg_top):
     tes_top[alg].extend(calc_mean_te(te_tmp,reps=reps))
 
 # %%
-reps = slots*shifts
+fig = plt.figure(constrained_layout=True,figsize=(14,6))
+gs = fig.add_gridspec(6, 14)
 
-for alg in range(total_alg_bottom): 
-    count = 0 
-    bte_tmp = [[] for _ in range(reps)]
-    fte_tmp = [[] for _ in range(reps)] 
-    te_tmp = [[] for _ in range(reps)]
-
-    for slot in range(slots):
-        for shift in range(shifts):
-            if alg < 1:
-                filename = '../experiments/cifar_exp/result/result/'+model_file_bottom[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
-            else:
-                filename = '../experiments/cifar_exp/benchmarking_algorthms_result/'+model_file_bottom[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
-
-            multitask_df, single_task_df = unpickle(filename)
-
-            single_err, err = get_error_matrix(filename)
-            fte, bte, te = get_fte_bte(err,single_err)
-            
-            bte_tmp[count].extend(bte)
-            fte_tmp[count].extend(fte)
-            te_tmp[count].extend(te)
-            count+=1
-    
-    btes_bottom[alg].extend(calc_mean_bte(bte_tmp,reps=reps))
-    ftes_bottom[alg].extend(calc_mean_fte(fte_tmp,reps=reps))
-    tes_bottom[alg].extend(calc_mean_te(te_tmp,reps=reps))
-
-#%%
-te_500 = {'L2N':np.zeros(10,dtype=float), 'L2F':np.zeros(10,dtype=float), 'Prog-NN':np.zeros(10,dtype=float),
-        'DF-CNN':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
-        'EWC':np.zeros(10,dtype=float), 'Online EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float)}
-
-for count,name in enumerate(te_500.keys()):
-    for i in range(10):
-        if count <4:
-            te_500[name][i] = tes_top[count][i][9-i]
-        elif count>3:
-            te_500[name][i] = tes_bottom[count-3][i][9-i]
-
-df_500 = pd.DataFrame.from_dict(te_500)
-df_500 = pd.melt(df_500,var_name='Algorithms', value_name='Transfer Efficieny')
-
-# %%
-fig = plt.figure(constrained_layout=True,figsize=(19,16))
-gs = fig.add_gridspec(16, 19)
-
-clr_top = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3"]
+clr_top = [ "#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#e41a1c", "#ff7f00", "#ffff33", "#a65628", "#f781bf"]
 c_top = sns.color_palette(clr_top, n_colors=len(clr_top))
-
-clr_bottom = ["#e41a1c", "#ff7f00", "#ffff33", "#a65628", "#f781bf"]
-c_bottom = sns.color_palette(clr_bottom, n_colors=len(clr_bottom))
-
-clr_combined = [ "#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#ff7f00", "#ffff33", "#a65628", "#f781bf"]
-c_combined = sns.color_palette(clr_combined, n_colors=total_alg_top+total_alg_bottom)
 
 fontsize=25
 ticksize=22
-legendsize=14
+legendsize=18
 
-ax = fig.add_subplot(gs[:7,:7])
+ax = fig.add_subplot(gs[:6,:6])
 
 for i, fte in enumerate(ftes_top):
     if i == 0:
@@ -230,7 +176,7 @@ ax.set_yticks([0.9, 1, 1.1, 1.2, 1.3,1.4])
 ax.set_ylim(0.89, 1.41)
 ax.tick_params(labelsize=ticksize)
 
-ax.set_ylabel('Forward Transfer Efficiency (FTE)', fontsize=fontsize)
+ax.set_ylabel('Forward Transfer Efficiency', fontsize=fontsize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 
 right_side = ax.spines["right"]
@@ -238,9 +184,8 @@ right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
 ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5)
-
-#ax[0][0].grid(axis='x')
-ax = fig.add_subplot(gs[:7,8:15])
+#########################################################
+ax = fig.add_subplot(gs[:6,7:13])
 
 for i in range(task_num - 1):
 
@@ -253,12 +198,12 @@ for i in range(task_num - 1):
     for j in range(0,total_alg_top):
         if j == 0:
             if i == 0:
-                ax.plot(ns, et[j,:], marker='.', markersize=8, label = alg_name_top[j], color=c_top[j], linewidth = 3)
+                ax.plot(ns, et[j,:], marker='.', markersize=8, label=None, color=c_top[j], linewidth = 3)
             else:
                 ax.plot(ns, et[j,:], marker='.', markersize=8, color=c_top[j], linewidth = 3)
         elif j == 1:
             if i == 0:
-                ax.plot(ns, et[j,:], marker='.', markersize=8, label = alg_name_top[j], color=c_top[j], linewidth = 3)
+                ax.plot(ns, et[j,:], marker='.', markersize=8, label = alg_name_top[j], color=c_top[j])
             else:
                 ax.plot(ns, et[j,:], marker='.', markersize=8, color=c_top[j], linewidth = 3)
         else:
@@ -268,15 +213,12 @@ for i in range(task_num - 1):
                 ax.plot(ns, et[j,:], marker='.', markersize=8, color=c_top[j])
 
 
-for i in range(total_alg_top,total_alg_top+total_alg_bottom-1):
-    ax.plot(1,0,color=c_combined[i], marker='.', markersize=8,label=combined_alg_name[i])
-
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
-ax.set_ylabel('Backward Transfer Efficiency (BTE)', fontsize=fontsize)
+ax.set_ylabel('Backward Transfer Efficiency', fontsize=fontsize)
 
 ax.set_yticks([.4,.6,.8,.9,1, 1.1,1.2])
 ax.set_xticks(np.arange(1,11))
-ax.set_ylim(0.99, 1.2)
+ax.set_ylim(0.85, 1.23)
 ax.tick_params(labelsize=ticksize)
 #ax[0][1].grid(axis='x')
 
@@ -286,84 +228,6 @@ top_side = ax.spines["top"]
 top_side.set_visible(False)
 ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5)
 
-handles, labels_ = ax.get_legend_handles_labels()
-#ax.legend(loc='center left', bbox_to_anchor=(.8, 0.5), fontsize=legendsize+16)
-
-#########################################################
-ax = fig.add_subplot(gs[8:15,:7])
-
-for i, fte in enumerate(ftes_bottom):
-    if i == 0:
-        ax.plot(np.arange(1,11), fte, color=c_bottom[i], marker='.', markersize=12, label=alg_name_bottom[i], linewidth=3)
-        continue
-
-    if i == 1:
-        ax.plot(np.arange(1,11), fte, color=c_bottom[i], marker='.', markersize=12, label=alg_name_bottom[i], linewidth=3)
-        continue
-    
-    ax.plot(np.arange(1,11), fte, color=c_bottom[i], marker='.', markersize=12, label=alg_name_bottom[i])
-    
-ax.set_xticks(np.arange(1,11))
-ax.set_yticks([0.95, 1, 1.05])
-ax.set_ylim(0.95, 1.05)
-ax.tick_params(labelsize=ticksize)
-
-ax.set_ylabel('Resource Constrained FTE', fontsize=fontsize)
-ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
-
-right_side = ax.spines["right"]
-right_side.set_visible(False)
-top_side = ax.spines["top"]
-top_side.set_visible(False)
-ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5)
-
-#ax[0][0].grid(axis='x')
-ax = fig.add_subplot(gs[8:15,8:15])
-
-for i in range(task_num - 1):
-
-    et = np.zeros((total_alg_bottom,task_num-i))
-
-    for j in range(0,total_alg_bottom):
-        et[j,:] = np.asarray(btes_bottom[j][i])
-
-    ns = np.arange(i + 1, task_num + 1)
-    for j in range(0,total_alg_bottom):
-        if j == 0:
-            if i == 0:
-                ax.plot(ns, et[j,:], marker='.', markersize=8, label=None, color=c_bottom[j], linewidth = 3)
-            else:
-                ax.plot(ns, et[j,:], marker='.', markersize=8, color=c_bottom[j], linewidth = 3)
-        elif j == 1:
-            if i == 0:
-                ax.plot(ns, et[j,:], marker='.', markersize=8, label = alg_name_bottom[j], color=c_bottom[j])
-            else:
-                ax.plot(ns, et[j,:], marker='.', markersize=8, color=c_bottom[j], linewidth = 3)
-        else:
-            if i == 0:
-                ax.plot(ns, et[j,:], marker='.', markersize=8, label = alg_name_bottom[j], color=c_bottom[j])
-            else:
-                ax.plot(ns, et[j,:], marker='.', markersize=8, color=c_bottom[j])
-
-
-ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
-ax.set_ylabel('Resource Constrained BTE', fontsize=fontsize)
-
-ax.set_yticks([.4,.6,.8,.9,1, 1.1,1.2])
-ax.set_xticks(np.arange(1,11))
-ax.set_ylim(0.85, 1.17)
-ax.tick_params(labelsize=ticksize)
-#ax[0][1].grid(axis='x')
-
-right_side = ax.spines["right"]
-right_side.set_visible(False)
-top_side = ax.spines["top"]
-top_side.set_visible(False)
-ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5)
-
-
-fig.legend(handles, labels_, bbox_to_anchor=(.99, .6), fontsize=legendsize+12, frameon=False)
-plt.savefig('figs/cifar_benchmark.png',dpi=500)
-
+ax.legend(bbox_to_anchor=(1, .8),fontsize=legendsize, frameon=False)
+plt.savefig('figs/cifar_benchmark.png',dpi=300)
 # %%
-
