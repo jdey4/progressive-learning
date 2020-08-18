@@ -14,7 +14,7 @@ from sklearn.model_selection import StratifiedKFold
 from math import log2, ceil 
 
 import sys
-sys.path.append("../src_mapping_2/")
+sys.path.append("../src/")
 from lifelong_dnn import LifeLongDNN
 from joblib import Parallel, delayed
 from multiprocessing import Pool
@@ -107,8 +107,8 @@ def produce_heatmap_data(leaf_profile, posterior, delta=0.01):
 
 # %%
 reps = 1
-max_depth = 200
-sample_no = 200
+max_depth = 3
+sample_no = 20
 err = np.zeros(reps,dtype=float)
 fte = np.zeros(reps,dtype=float)
 bte = np.zeros(reps,dtype=float)
@@ -152,7 +152,7 @@ print(np.mean(fte), np.mean(bte))
 
 
 # %%
-#mkae the heatmap data matrix
+#make the heatmap data matrix
 task_no = len(l2f.voters_across_tasks_matrix)
 sns.set_context("talk")
 fig, axes = plt.subplots(2,2, figsize=(16,16))#, sharex=True, sharey=True)
@@ -181,11 +181,11 @@ for task_id in range(task_no):
 
         data = pd.DataFrame(data={'x':x[:,0], 'y':x[:,1], 'z':y})
         data = data.pivot(index='x', columns='y', values='z')
-        ax = sns.heatmap(data,ax=axes[task_id][voter_id])
+        ax = sns.heatmap(data,ax=axes[task_id][voter_id], vmin=0, vmax=1,)
         ax.set_xticklabels(['0','' , '', '', '', '', '','','','.5','','' , '', '', '', '', '','','1'])
         ax.set_yticklabels(['0','' , '', '', '', '', '','','','','','.5','','' , '', '', '', '', '','','','','1'])
         ax.set_xlabel('transformer task '+str(voter_id+1)+' decider task '+str(task_id+1),fontsize=20)
         ax.set_ylabel('')
         #ax.set_xticks([0,.5,1])
-plt.savefig('result/figs/heatmap_mapping'+str(max_depth)+'_'+str(sample_no)+'.pdf')
+plt.savefig('result/figs/heatmap_without_mapping'+str(max_depth)+'_'+str(sample_no)+'.pdf')
 # %%

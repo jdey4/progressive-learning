@@ -237,13 +237,14 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                         oob_samples = np.delete(range(len(nodes)), self.estimators_samples_[tree_idx])
                         cal_nodes = nodes#[oob_samples] if fitting else nodes
                         y_cal = y#[oob_samples] if fitting else y                    
-                        
+                        all_nodes = np.array(list(self.tree_id_to_leaf_profile[tree_idx].keys()))
+
                         #create a map from the unique node ids to their classwise posteriors
                         node_ids_to_posterior_map = {}
                         node_ids_to_sample_count_map = {}
 
                         #fill in the posteriors 
-                        for node_id in np.unique(nodes):
+                        for node_id in np.unique(all_nodes):
                             cal_idxs_of_node_id = np.where(cal_nodes == node_id)[0]
                             cal_ys_of_node = y_cal[cal_idxs_of_node_id]
                             class_counts = [len(np.where(cal_ys_of_node == y)[0]) for y in np.unique(y) ]
