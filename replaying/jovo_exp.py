@@ -14,7 +14,7 @@ from sklearn.model_selection import StratifiedKFold
 from math import log2, ceil 
 
 import sys
-sys.path.append("../src/")
+sys.path.append("../src_mapping_2/")
 from lifelong_dnn import LifeLongDNN
 from joblib import Parallel, delayed
 from multiprocessing import Pool
@@ -114,6 +114,7 @@ fte = np.zeros(reps,dtype=float)
 bte = np.zeros(reps,dtype=float)
 
 for i in range(reps):
+    np.random.seed(1)
     xor, label_xor = generate_gaussian_parity(sample_no,cov_scale=0.1,angle_params=0)
     test_xor, test_label_xor = generate_gaussian_parity(1000,cov_scale=0.1,angle_params=0)
 
@@ -133,7 +134,9 @@ for i in range(reps):
     test_nxor = (test_nxor-min_nxor)/max_nxor
 
     l2f = LifeLongDNN(parallel=False)
+    np.random.seed(2)
     l2f.new_forest(xor, label_xor, n_estimators=1, max_depth=max_depth)
+    np.random.seed(3)
     l2f.new_forest(nxor, label_nxor, n_estimators=1, max_depth=max_depth)
 
     l2f_task1 = l2f.predict(test_xor, representation='all', decider=0)
@@ -181,6 +184,8 @@ for task_id in range(task_no):
         ax = sns.heatmap(data,ax=axes[task_id][voter_id])
         ax.set_xticklabels(['0','' , '', '', '', '', '','','','.5','','' , '', '', '', '', '','','1'])
         ax.set_yticklabels(['0','' , '', '', '', '', '','','','','','.5','','' , '', '', '', '', '','','','','1'])
+        ax.set_xlabel('transformer task '+str(voter_id+1)+' decider task '+str(task_id+1),fontsize=20)
+        ax.set_ylabel('')
         #ax.set_xticks([0,.5,1])
-plt.savefig('result/figs/heatmap'+str(max_depth)+'_'+str(sample_no)+'.pdf')
+plt.savefig('result/figs/heatmap_mapping'+str(max_depth)+'_'+str(sample_no)+'.pdf')
 # %%
