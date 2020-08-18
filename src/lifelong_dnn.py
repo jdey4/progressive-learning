@@ -91,9 +91,9 @@ class LifeLongDNN():
             task_voter_under_new_transformation = unfit_task_voter_under_new_transformation.fit(
                 X_of_task_under_new_transform, 
                 y_of_task,
-                tree_id_to_leaf_profile = self.voters_across_tasks_matrix[task_idx][0].tree_id_to_leaf_profile
+                tree_id_to_leaf_profile = new_voter.tree_id_to_leaf_profile
                 )
-
+            
             self.voters_across_tasks_matrix[task_idx].append(task_voter_under_new_transformation)
             
         #add n_tasks voters to new task voter list under previous transformations 
@@ -104,13 +104,13 @@ class LifeLongDNN():
                 X_under_task_transformation = transformer_of_task.predict(X)
             if self.model == "uf":
                 X_under_task_transformation = transformer_of_task(X)
-            unfit_new_task_voter_under_task_transformation = clone(self.voters_across_tasks_matrix[task_idx][0])
+            unfit_new_task_voter_under_task_transformation = clone(self.voters_across_tasks_matrix[task_idx][task_idx])
             if self.model == "uf":
                 unfit_new_task_voter_under_task_transformation.classes_ = new_voter.classes_
             new_task_voter_under_task_transformation = unfit_new_task_voter_under_task_transformation.fit(
                 X_under_task_transformation,
                 y,
-                tree_id_to_leaf_profile = new_voter.tree_id_to_leaf_profile
+                tree_id_to_leaf_profile = self.voters_across_tasks_matrix[task_idx][task_idx].tree_id_to_leaf_profile
                 )
             new_voters_under_previous_task_transformation.append(new_task_voter_under_task_transformation)
             
