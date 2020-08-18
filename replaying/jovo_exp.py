@@ -84,9 +84,28 @@ def generate_gaussian_parity(n, mean=np.array([-1, -1]), cov_scale=1, angle_para
        
     return X, Y.astype(int)
 
+#%%
+def produce_heatmap_data(leaf_profile, posterior, delta=0.001):
+    x = np.arange(leaf_profile[0][0],leaf_profile[0][1],step=delta)
+    y = np.arange(leaf_profile[1][0],leaf_profile[1][1],step=delta)
+    x,y = np.meshgrid(x,y)
+
+    points = np.concatenate(
+                (
+                    x.reshape(-1,1),
+                    y.reshape(-1,1)
+                ),
+                axis=1
+            )
+    prob = posterior*np.ones(
+        len(x),
+        dtype=float
+    )
+
+    return points, prob
 
 # %%
-reps = 100
+reps = 1
 err = np.zeros(reps,dtype=float)
 fte = np.zeros(reps,dtype=float)
 bte = np.zeros(reps,dtype=float)
@@ -95,12 +114,24 @@ for i in range(reps):
     xor, label_xor = generate_gaussian_parity(200,cov_scale=0.1,angle_params=0)
     test_xor, test_label_xor = generate_gaussian_parity(1000,cov_scale=0.1,angle_params=0)
 
+    min_xor = np.min(xor)
+    xor = (xor - min_xor)
+    max_xor = np.max(xor)
+    xor = xor/max_xor
+    test_xor = (test_xor-min_xor)/max_xor
+
     nxor, label_nxor = generate_gaussian_parity(500,cov_scale=0.1,angle_params=np.pi/2)
     test_nxor, test_label_nxor = generate_gaussian_parity(1000,cov_scale=0.1,angle_params=np.pi/2)
 
+    min_nxor = np.min(nxor)
+    nxor = (nxor - min_nxor)
+    max_nxor = np.max(nxor)
+    nxor = nxor/max_nxor
+    test_nxor = (test_nxor-min_nxor)/max_nxor
+
     l2f = LifeLongDNN(parallel=False)
-    l2f.new_forest(xor, label_xor, n_estimators=1, max_depth=30)
-    l2f.new_forest(nxor, label_nxor, n_estimators=1, max_depth=30)
+    l2f.new_forest(xor, label_xor, n_estimators=1, max_depth=3)
+    l2f.new_forest(nxor, label_nxor, n_estimators=1, max_depth=3)
 
     l2f_task1 = l2f.predict(test_xor, representation='all', decider=0)
     uf_task1 = l2f.predict(test_xor, representation=0, decider=0)
@@ -114,4 +145,36 @@ for i in range(reps):
 print(np.mean(fte), np.mean(bte))
 
 
+# %%
+#mkae the heatmap data matrix
+task_no = len(l2f.voters_across_tasks_matrix)
+
+'''fig, axes = plt.subplot(
+    ncols=task_no, 
+    nrows=task_no, 
+    sharey=True, 
+    sharex=True
+    )'''
+
+for task_id in range(task_no):
+    for voter_id in range(task_no):
+        print(task_id, voter_id)
+        current_voter = l2f.voters_across_tasks_matrix[task_id][voter_id]
+        posterior_map = current_voter.tree_idx_to_node_ids_to_posterior_map
+        leaf_map = current_voter.tree_id_to_leaf_profile
+
+        for tree_id in list(leaf_map.keys()):
+            tree_leaf_map = leaf_map[tree_id]
+
+            for no, leaf_id in enumerate(list(tree_leaf_map.keys())):
+                points, prb = produce_heatmap_data(
+                    tree_leaf_map[leaf_id],
+                    posterior_map[tree_id][leaf_id][0]
+                )
+                if no == 0:
+                    x = points
+                    y = prb
+                else:
+                    x = np.concatenate((x,points),axis=0)
+                    y = np.concatenate((y,prb),axis=0)
 # %%

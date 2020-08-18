@@ -94,7 +94,7 @@ class LifeLongDNN():
                 #X_of_task_under_new_transform = new_transformer(X_of_task) 
              #   estimators_of_task = self.estimators_across_tasks[task_idx]
                 
-            unfit_task_voter_under_new_transformation = clone(new_voter)
+            unfit_task_voter_under_new_transformation = clone(self.voters_across_tasks_matrix[task_idx][0])
             #print(unfit_task_voter_under_new_transformation.tree_idx_to_node_ids_to_sample_count_map)
             #posterior_map_to_be_mapped = self.voters_across_tasks_matrix[task_idx][task_idx].tree_idx_to_node_ids_to_posterior_map
             voters_to_be_mapped = []
@@ -106,8 +106,8 @@ class LifeLongDNN():
             if self.model == "uf":
                 unfit_task_voter_under_new_transformation.classes_ = self.voters_across_tasks_matrix[task_idx][0].classes_
             task_voter_under_new_transformation = unfit_task_voter_under_new_transformation.fit(
-                estimators = new_voter.estimators,
-                tree_id_to_leaf_profile = new_voter.tree_id_to_leaf_profile,
+                estimators = self.voters_across_tasks_matrix[task_idx][task_idx].estimators,
+                tree_id_to_leaf_profile = self.voters_across_tasks_matrix[task_idx][task_idx].tree_id_to_leaf_profile,
                 voters_to_be_mapped=voters_to_be_mapped,
                 map=True
             )
@@ -137,13 +137,12 @@ class LifeLongDNN():
                 X_under_task_transformation = transformer_of_task.predict(X)
             if self.model == "uf":
                 X_under_task_transformation = transformer_of_task(X)
-            unfit_new_task_voter_under_task_transformation = clone(self.voters_across_tasks_matrix[task_idx][0])
+            unfit_new_task_voter_under_task_transformation = clone(new_voter)
             if self.model == "uf":
                 unfit_new_task_voter_under_task_transformation.classes_ = new_voter.classes_
             new_task_voter_under_task_transformation = unfit_new_task_voter_under_task_transformation.fit(
-                estimators = self.voters_across_tasks_matrix[task_idx][task_idx].estimators,
-                tree_id_to_leaf_profile = self.voters_across_tasks_matrix[task_idx][task_idx].tree_id_to_leaf_profile,
-                tree_idx_to_node_ids_to_sample_count_map = self.voters_across_tasks_matrix[task_idx][task_idx].tree_idx_to_node_ids_to_sample_count_map,
+                estimators = new_voter.estimators,
+                tree_id_to_leaf_profile = new_voter.tree_id_to_leaf_profile,
                 nodes_across_trees=X_under_task_transformation, 
                 y=y
                 )

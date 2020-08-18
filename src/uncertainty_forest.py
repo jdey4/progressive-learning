@@ -200,18 +200,24 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
         
         #fit the ensemble
         self.ensemble.fit(X, y)
+        self._feature_dimension = X.shape[1]
         #profile trees for partition mapping
         self._profile_leaf()
 
         class Voter(BaseEstimator):
-            def __init__(self, estimators_samples_, classes, parallel, n_jobs):
+            def __init__(self, estimators_samples_, tree_id_to_leaf_profile, classes, parallel, n_jobs):
                 self.n_estimators = len(estimators_samples_)
                 self.classes_ = classes
                 self.parallel = parallel
                 self.estimators_samples_ = estimators_samples_
+                self.tree_id_to_leaf_profile = tree_id_to_leaf_profile
                 self.n_jobs = n_jobs
             
-            def fit(self, nodes_across_trees, y, fitting = False):
+            def fit(self, nodes_across_trees, y, tree_id_to_leaf_profile=None, fitting = False):
+
+                if tree_id_to_leaf_profile != None:
+                    self.tree_id_to_leaf_profile = tree_id_to_leaf_profile
+
                 self.tree_idx_to_node_ids_to_posterior_map = {}
 
                 def worker(tree_idx):
@@ -276,7 +282,7 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                 
         #get the nodes of the calibration set
         nodes_across_trees = self.transform(X) 
-        self.voter = Voter(estimators_samples_ = self.ensemble.estimators_samples_, classes = self.classes_, parallel = self.parallel, n_jobs = self.n_jobs)
+        self.voter = Voter(estimators_samples_ = self.ensemble.estimators_samples_, tree_id_to_leaf_profile = self.tree_id_to_leaf_profile, classes = self.classes_, parallel = self.parallel, n_jobs = self.n_jobs)
         self.voter.fit(nodes_across_trees, y, fitting = True)
         self.fitted = True
 
