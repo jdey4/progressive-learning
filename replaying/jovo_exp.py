@@ -1,6 +1,7 @@
 #%%
 import random
 import matplotlib.pyplot as plt
+import seaborn as sns
 import tensorflow as tf
 import tensorflow.keras as keras
 from itertools import product
@@ -85,7 +86,7 @@ def generate_gaussian_parity(n, mean=np.array([-1, -1]), cov_scale=1, angle_para
     return X, Y.astype(int)
 
 #%%
-def produce_heatmap_data(leaf_profile, posterior, delta=0.001):
+def produce_heatmap_data(leaf_profile, posterior, delta=0.01):
     x = np.arange(leaf_profile[0][0],leaf_profile[0][1],step=delta)
     y = np.arange(leaf_profile[1][0],leaf_profile[1][1],step=delta)
     x,y = np.meshgrid(x,y)
@@ -98,10 +99,10 @@ def produce_heatmap_data(leaf_profile, posterior, delta=0.001):
                 axis=1
             )
     prob = posterior*np.ones(
-        len(x),
+        points.shape[0],
         dtype=float
     )
-
+    #print(points.shape,prob.shape)
     return points, prob
 
 # %%
@@ -120,7 +121,7 @@ for i in range(reps):
     xor = xor/max_xor
     test_xor = (test_xor-min_xor)/max_xor
 
-    nxor, label_nxor = generate_gaussian_parity(500,cov_scale=0.1,angle_params=np.pi/2)
+    nxor, label_nxor = generate_gaussian_parity(200,cov_scale=0.1,angle_params=np.pi/2)
     test_nxor, test_label_nxor = generate_gaussian_parity(1000,cov_scale=0.1,angle_params=np.pi/2)
 
     min_nxor = np.min(nxor)
@@ -130,8 +131,8 @@ for i in range(reps):
     test_nxor = (test_nxor-min_nxor)/max_nxor
 
     l2f = LifeLongDNN(parallel=False)
-    l2f.new_forest(xor, label_xor, n_estimators=1, max_depth=3)
-    l2f.new_forest(nxor, label_nxor, n_estimators=1, max_depth=3)
+    l2f.new_forest(xor, label_xor, n_estimators=1, max_depth=10)
+    l2f.new_forest(nxor, label_nxor, n_estimators=1, max_depth=10)
 
     l2f_task1 = l2f.predict(test_xor, representation='all', decider=0)
     uf_task1 = l2f.predict(test_xor, representation=0, decider=0)
@@ -148,17 +149,12 @@ print(np.mean(fte), np.mean(bte))
 # %%
 #mkae the heatmap data matrix
 task_no = len(l2f.voters_across_tasks_matrix)
-
-'''fig, axes = plt.subplot(
-    ncols=task_no, 
-    nrows=task_no, 
-    sharey=True, 
-    sharex=True
-    )'''
+sns.set_context("talk")
+fig, axes = plt.subplots(2,2, figsize=(16,16), sharex=True, sharey=True)
 
 for task_id in range(task_no):
     for voter_id in range(task_no):
-        print(task_id, voter_id)
+        #print(task_id, voter_id)
         current_voter = l2f.voters_across_tasks_matrix[task_id][voter_id]
         posterior_map = current_voter.tree_idx_to_node_ids_to_posterior_map
         leaf_map = current_voter.tree_id_to_leaf_profile
@@ -177,4 +173,12 @@ for task_id in range(task_no):
                 else:
                     x = np.concatenate((x,points),axis=0)
                     y = np.concatenate((y,prb),axis=0)
+
+        data = pd.DataFrame(data={'x':x[:,0], 'y':x[:,1], 'z':y})
+        data = data.pivot(index='x', columns='y', values='z')
+        ax = sns.heatmap(data,ax=axes[task_id][voter_id])
+        ax.set_xticklabels(['0','' , '', '', '', '', '','','','.5','','' , '', '', '', '', '','','1'])
+        ax.set_yticklabels(['0','' , '', '', '', '', '','','','','','.5','','' , '', '', '', '', '','','','','1'])
+        #ax.set_xticks([0,.5,1])
+plt.show()
 # %%
