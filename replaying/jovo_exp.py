@@ -107,12 +107,14 @@ def produce_heatmap_data(leaf_profile, posterior, delta=0.01):
 
 # %%
 reps = 1
+max_depth = 200
+sample_no = 200
 err = np.zeros(reps,dtype=float)
 fte = np.zeros(reps,dtype=float)
 bte = np.zeros(reps,dtype=float)
 
 for i in range(reps):
-    xor, label_xor = generate_gaussian_parity(200,cov_scale=0.1,angle_params=0)
+    xor, label_xor = generate_gaussian_parity(sample_no,cov_scale=0.1,angle_params=0)
     test_xor, test_label_xor = generate_gaussian_parity(1000,cov_scale=0.1,angle_params=0)
 
     min_xor = np.min(xor)
@@ -121,7 +123,7 @@ for i in range(reps):
     xor = xor/max_xor
     test_xor = (test_xor-min_xor)/max_xor
 
-    nxor, label_nxor = generate_gaussian_parity(200,cov_scale=0.1,angle_params=np.pi/2)
+    nxor, label_nxor = generate_gaussian_parity(sample_no,cov_scale=0.1,angle_params=np.pi/2)
     test_nxor, test_label_nxor = generate_gaussian_parity(1000,cov_scale=0.1,angle_params=np.pi/2)
 
     min_nxor = np.min(nxor)
@@ -131,8 +133,8 @@ for i in range(reps):
     test_nxor = (test_nxor-min_nxor)/max_nxor
 
     l2f = LifeLongDNN(parallel=False)
-    l2f.new_forest(xor, label_xor, n_estimators=1, max_depth=10)
-    l2f.new_forest(nxor, label_nxor, n_estimators=1, max_depth=10)
+    l2f.new_forest(xor, label_xor, n_estimators=1, max_depth=max_depth)
+    l2f.new_forest(nxor, label_nxor, n_estimators=1, max_depth=max_depth)
 
     l2f_task1 = l2f.predict(test_xor, representation='all', decider=0)
     uf_task1 = l2f.predict(test_xor, representation=0, decider=0)
@@ -150,7 +152,7 @@ print(np.mean(fte), np.mean(bte))
 #mkae the heatmap data matrix
 task_no = len(l2f.voters_across_tasks_matrix)
 sns.set_context("talk")
-fig, axes = plt.subplots(2,2, figsize=(16,16), sharex=True, sharey=True)
+fig, axes = plt.subplots(2,2, figsize=(16,16))#, sharex=True, sharey=True)
 
 for task_id in range(task_no):
     for voter_id in range(task_no):
@@ -180,5 +182,5 @@ for task_id in range(task_no):
         ax.set_xticklabels(['0','' , '', '', '', '', '','','','.5','','' , '', '', '', '', '','','1'])
         ax.set_yticklabels(['0','' , '', '', '', '', '','','','','','.5','','' , '', '', '', '', '','','','','1'])
         #ax.set_xticks([0,.5,1])
-plt.show()
+plt.savefig('result/figs/heatmap'+str(max_depth)+'_'+str(sample_no)+'.pdf')
 # %%
