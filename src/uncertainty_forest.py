@@ -225,19 +225,30 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                     oob_samples = np.delete(range(len(nodes)), self.estimators_samples_[tree_idx])
                     cal_nodes = nodes#[oob_samples] if fitting else nodes
                     y_cal = y#[oob_samples] if fitting else y                    
-                    
+                    all_nodes = np.array(list(self.tree_id_to_leaf_profile[tree_idx].keys()))
+                    #print(all_nodes,'kkukkuta')
                     #create a map from the unique node ids to their classwise posteriors
                     node_ids_to_posterior_map = {}
 
                     #fill in the posteriors 
-                    for node_id in np.unique(cal_nodes):
+                    for node_id in np.unique(all_nodes):
                         cal_idxs_of_node_id = np.where(cal_nodes == node_id)[0]
                         cal_ys_of_node = y_cal[cal_idxs_of_node_id]
                         class_counts = [len(np.where(cal_ys_of_node == y)[0]) for y in np.unique(y) ]
-                        posteriors = np.nan_to_num(np.array(class_counts) / np.sum(class_counts))
+                        sample_no = np.sum(class_counts)
+
+                        if sample_no != 0:
+                            posteriors = np.nan_to_num(np.array(class_counts) / sample_no)
+                        else:
+                            posteriors = np.zeros(len(self.classes_),dtype=float)
 
                         #finite sample correction
-                        posteriors_corrected = _finite_sample_correction(posteriors, len(cal_idxs_of_node_id), len(self.classes_))
+                        total_samples = len(cal_idxs_of_node_id)
+
+                        if total_samples == 0:
+                            total_samples = 1
+                                
+                        posteriors_corrected = _finite_sample_correction(posteriors, total_samples, len(self.classes_))
                         node_ids_to_posterior_map[node_id] = posteriors_corrected
 
                     #add the node_ids_to_posterior_map to the overall tree_idx map 
