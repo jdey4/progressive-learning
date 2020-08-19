@@ -14,7 +14,7 @@ from sklearn.model_selection import StratifiedKFold
 from math import log2, ceil 
 
 import sys
-sys.path.append("../src/")
+sys.path.append("../src_mapping_2/")
 from lifelong_dnn import LifeLongDNN
 from joblib import Parallel, delayed
 from multiprocessing import Pool
@@ -107,8 +107,8 @@ def produce_heatmap_data(leaf_profile, posterior, delta=0.01):
 
 # %%
 reps = 1
-max_depth = 3
-sample_no = 20
+max_depth = 200
+sample_no = 1000
 err = np.zeros(reps,dtype=float)
 fte = np.zeros(reps,dtype=float)
 bte = np.zeros(reps,dtype=float)
@@ -187,5 +187,5 @@ for task_id in range(task_no):
         ax.set_xlabel('transformer task '+str(voter_id+1)+' decider task '+str(task_id+1),fontsize=20)
         ax.set_ylabel('')
         #ax.set_xticks([0,.5,1])
-plt.savefig('result/figs/heatmap_without_mapping'+str(max_depth)+'_'+str(sample_no)+'.pdf')
+plt.savefig('result/figs/heatmap_mapping'+str(max_depth)+'_'+str(sample_no)+'.pdf')
 # %%
