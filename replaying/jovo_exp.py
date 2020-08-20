@@ -14,8 +14,8 @@ from sklearn.model_selection import StratifiedKFold
 from math import log2, ceil 
 
 import sys
-sys.path.append("../src_mapping_2/")
-#sys.path.append("../src/")
+#sys.path.append("../src_mapping_2/")
+sys.path.append("../src/")
 from lifelong_dnn import LifeLongDNN
 from joblib import Parallel, delayed
 from multiprocessing import Pool
@@ -218,5 +218,5 @@ for task_id in range(task_no):
         #ax.set_xticks([0,.5,1])
 fig.colorbar(matplotlib.cm.ScalarMappable(cmap='gray'),ax=ax[0][1]).set_ticklabels([0,.2,.4,.6,.8,1])
 fig.colorbar(matplotlib.cm.ScalarMappable(cmap='gray'),ax=ax[1][1]).set_ticklabels([0,.2,.4,.6,.8,1])
-plt.savefig('result/figs/heatmap_mapping'+str(max_depth)+'_'+str(sample_no)+'.pdf')
+plt.savefig('result/figs/heatmap_without_mapping'+str(max_depth)+'_'+str(sample_no)+'.pdf')
 # %%
