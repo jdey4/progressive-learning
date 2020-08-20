@@ -9,12 +9,13 @@ import pandas as pd
 
 import numpy as np
 import pickle
-
+import matplotlib
 from sklearn.model_selection import StratifiedKFold
 from math import log2, ceil 
 
 import sys
 sys.path.append("../src_mapping_2/")
+#sys.path.append("../src/")
 from lifelong_dnn import LifeLongDNN
 from joblib import Parallel, delayed
 from multiprocessing import Pool
@@ -86,24 +87,49 @@ def generate_gaussian_parity(n, mean=np.array([-1, -1]), cov_scale=1, angle_para
     return X, Y.astype(int)
 
 #%%
-def produce_heatmap_data(leaf_profile, posterior, delta=0.01):
+def produce_heatmap_data(leaf_profile, posterior, delta=0.001):
     x = np.arange(leaf_profile[0][0],leaf_profile[0][1],step=delta)
     y = np.arange(leaf_profile[1][0],leaf_profile[1][1],step=delta)
+    #print(leaf_profile[0][0],leaf_profile[0][1],leaf_profile[1][0],leaf_profile[1][1])
     x,y = np.meshgrid(x,y)
 
-    points = np.concatenate(
+    '''points = np.concatenate(
                 (
                     x.reshape(-1,1),
                     y.reshape(-1,1)
                 ),
                 axis=1
-            )
+            )'''
+
+    if x.shape[0] == 1:
+        x = np.concatenate(
+            (x,x),
+            axis=0
+        )
+    
+    if x.shape[1] == 1:
+        x = np.concatenate(
+            (x,x),
+            axis=1
+        )
+
+    if y.shape[0] == 1:
+        y = np.concatenate(
+            (y,y),
+            axis=0
+        )
+    if y.shape[1] == 1:
+        y = np.concatenate(
+            (y,y),
+            axis=1
+        )
+
     prob = posterior*np.ones(
-        points.shape[0],
+        x.shape,
         dtype=float
     )
-    #print(points.shape,prob.shape)
-    return points, prob
+    #print(x.shape,prob.shape)
+    return x, y, prob
 
 # %%
 reps = 1
@@ -134,9 +160,9 @@ for i in range(reps):
     test_nxor = (test_nxor-min_nxor)/max_nxor
 
     l2f = LifeLongDNN(parallel=False)
-    np.random.seed(2)
-    l2f.new_forest(xor, label_xor, n_estimators=1, max_depth=max_depth)
     np.random.seed(3)
+    l2f.new_forest(xor, label_xor, n_estimators=1, max_depth=max_depth)
+    np.random.seed(4)
     l2f.new_forest(nxor, label_nxor, n_estimators=1, max_depth=max_depth)
 
     l2f_task1 = l2f.predict(test_xor, representation='all', decider=0)
@@ -155,7 +181,7 @@ print(np.mean(fte), np.mean(bte))
 #make the heatmap data matrix
 task_no = len(l2f.voters_across_tasks_matrix)
 sns.set_context("talk")
-fig, axes = plt.subplots(2,2, figsize=(16,16))#, sharex=True, sharey=True)
+fig, ax = plt.subplots(2,2, figsize=(16,16))#, sharex=True, sharey=True)
 
 for task_id in range(task_no):
     for voter_id in range(task_no):
@@ -168,24 +194,29 @@ for task_id in range(task_no):
             tree_leaf_map = leaf_map[tree_id]
 
             for no, leaf_id in enumerate(list(tree_leaf_map.keys())):
-                points, prb = produce_heatmap_data(
+                x, y, prb = produce_heatmap_data(
                     tree_leaf_map[leaf_id],
                     posterior_map[tree_id][leaf_id][0]
                 )
-                if no == 0:
+                '''if no == 0:
                     x = points
                     y = prb
                 else:
                     x = np.concatenate((x,points),axis=0)
-                    y = np.concatenate((y,prb),axis=0)
+                    y = np.concatenate((y,prb),axis=0)'''
 
-        data = pd.DataFrame(data={'x':x[:,0], 'y':x[:,1], 'z':y})
-        data = data.pivot(index='x', columns='y', values='z')
-        ax = sns.heatmap(data,ax=axes[task_id][voter_id], vmin=0, vmax=1,)
-        ax.set_xticklabels(['0','' , '', '', '', '', '','','','.5','','' , '', '', '', '', '','','1'])
-        ax.set_yticklabels(['0','' , '', '', '', '', '','','','','','.5','','' , '', '', '', '', '','','','','1'])
-        ax.set_xlabel('transformer task '+str(voter_id+1)+' decider task '+str(task_id+1),fontsize=20)
-        ax.set_ylabel('')
+                axs = ax[task_id][voter_id].contourf(x,y,prb,cmap='gray')#,alpha=prb[0][0])
+        ax[task_id][voter_id].set_xticks([0,.2,.4,.6,.8,1])
+        ax[task_id][voter_id].set_yticks([0,.2,.4,.6,.8,1])
+        #data = pd.DataFrame(data={'x':x[:,0], 'y':x[:,1], 'z':y})
+        #data = data.pivot(index='x', columns='y', values='z')
+        #ax = sns.heatmap(data,ax=axes[task_id][voter_id], vmin=0, vmax=1,)
+        #ax.set_xticklabels(['0','' , '', '', '', '', '','','','.5','','' , '', '', '', '', '','','1'])
+        #ax.set_yticklabels(['0','' , '', '', '', '', '','','','','','.5','','' , '', '', '', '', '','','','','1'])
+        #ax.set_xlabel('transformer task '+str(voter_id+1)+' decider task '+str(task_id+1),fontsize=20)
+        #ax.set_ylabel('')
         #ax.set_xticks([0,.5,1])
+fig.colorbar(matplotlib.cm.ScalarMappable(cmap='gray'),ax=ax[0][1]).set_ticklabels([0,.2,.4,.6,.8,1])
+fig.colorbar(matplotlib.cm.ScalarMappable(cmap='gray'),ax=ax[1][1]).set_ticklabels([0,.2,.4,.6,.8,1])
 plt.savefig('result/figs/heatmap_mapping'+str(max_depth)+'_'+str(sample_no)+'.pdf')
 # %%
