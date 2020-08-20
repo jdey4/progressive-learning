@@ -14,8 +14,8 @@ from sklearn.model_selection import StratifiedKFold
 from math import log2, ceil 
 
 import sys
-#sys.path.append("../src_mapping_2/")
-sys.path.append("../src/")
+sys.path.append("../src_mapping_2/")
+#sys.path.append("../src/")
 from lifelong_dnn import LifeLongDNN
 from joblib import Parallel, delayed
 from multiprocessing import Pool
@@ -160,9 +160,9 @@ for i in range(reps):
     test_nxor = (test_nxor-min_nxor)/max_nxor
 
     l2f = LifeLongDNN(parallel=False)
-    np.random.seed(3)
+    np.random.seed(2)
     l2f.new_forest(xor, label_xor, n_estimators=1, max_depth=max_depth)
-    np.random.seed(4)
+    np.random.seed(3)
     l2f.new_forest(nxor, label_nxor, n_estimators=1, max_depth=max_depth)
 
     l2f_task1 = l2f.predict(test_xor, representation='all', decider=0)
@@ -218,5 +218,5 @@ for task_id in range(task_no):
         #ax.set_xticks([0,.5,1])
 fig.colorbar(matplotlib.cm.ScalarMappable(cmap='gray'),ax=ax[0][1]).set_ticklabels([0,.2,.4,.6,.8,1])
 fig.colorbar(matplotlib.cm.ScalarMappable(cmap='gray'),ax=ax[1][1]).set_ticklabels([0,.2,.4,.6,.8,1])
-plt.savefig('result/figs/heatmap_without_mapping'+str(max_depth)+'_'+str(sample_no)+'.pdf')
+plt.savefig('result/figs/heatmap_mapping'+str(max_depth)+'_'+str(sample_no)+'.pdf')
 # %%
