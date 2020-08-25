@@ -12,7 +12,8 @@ from sklearn.model_selection import StratifiedKFold
 from math import log2, ceil 
 
 import sys
-sys.path.append("../src/")
+#sys.path.append("../src/")
+sys.path.append("../src_sampling/")
 from lifelong_dnn import LifeLongDNN
 from joblib import Parallel, delayed
 
@@ -139,7 +140,7 @@ def experiment(n_xor, n_nxor, n_test, reps, n_trees, max_depth, acorn=None):
         else:
             l2f.new_forest(xor, label_xor, n_estimators=n_trees,max_depth=max_depth)
 
-            '''delta = .01
+            delta = .01
             #sample the grid
             x = np.arange(0,1,step=delta)
             y = np.arange(0,1,step=delta)
@@ -151,9 +152,10 @@ def experiment(n_xor, n_nxor, n_test, reps, n_trees, max_depth, acorn=None):
                 ),
                 axis=1
             )
-            sample_label = l2f.predict(sample, representation=0,decider=0)
+            #sample_label = l2f.predict(sample, representation=0,decider=0)
+            sample_label = l2f._estimate_posteriors(sample, representation='all', decider=0)
             l2f.X_across_tasks[0] = sample
-            l2f.y_across_tasks[0] = sample_label'''
+            l2f.y_across_tasks[0] = sample_label
             ############################
 
             l2f.new_forest(nxor, label_nxor, n_estimators=n_trees,max_depth=max_depth)
@@ -430,6 +432,6 @@ ax.set_yticks([])
 ax.set_title('Gaussian N-XOR', fontsize=30)
 ax.axis('off')
 #plt.tight_layout()
-plt.savefig('./result/figs/xor_nxor_exp_dishonest_trees_approach2.pdf')
+plt.savefig('./result/figs/xor_nxor_exp_sampling.pdf')
 
 # %%
