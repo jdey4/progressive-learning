@@ -236,8 +236,14 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                             cal_idxs_of_node_id = np.where(cal_nodes == node_id)[0]
                             cal_ys_of_node = y_cal[cal_idxs_of_node_id]
 
-                            posteriors = np.nan_to_num(np.mean(cal_ys_of_node,axis=0))
-                            print(posteriors,'hlw')
+                            temp_post = np.nan_to_num(np.mean(cal_ys_of_node,axis=0))
+
+                            if len(temp_post != len(self.classes_)):
+                                posteriors = np.zeros(len(self.classes_),dtype=float)
+                            else:
+                                posteriors = temp_post
+                                
+                            #print(posteriors,'hlw')
                             #finite sample correction      
                             posteriors_corrected = _finite_sample_correction(posteriors, 1, len(self.classes_))
                             node_ids_to_posterior_map[node_id] = posteriors_corrected
