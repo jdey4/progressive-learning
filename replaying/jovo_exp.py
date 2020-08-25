@@ -134,12 +134,12 @@ def produce_heatmap_data(leaf_profile, posterior, delta=0.001):
 # %%
 reps = 1
 max_depth = 200
-sample_no = 1000
+sample_no = 750
 err = np.zeros(reps,dtype=float)
 fte = np.zeros(reps,dtype=float)
 bte = np.zeros(reps,dtype=float)
 
-np.random.seed(1)
+#np.random.seed(1)
 xor, label_xor = generate_gaussian_parity(sample_no,cov_scale=0.1,angle_params=0)
 test_xor, test_label_xor = generate_gaussian_parity(1000,cov_scale=0.1,angle_params=0)
 
@@ -149,7 +149,7 @@ max_xor = np.max(xor)
 xor = xor/max_xor
 test_xor = (test_xor-min_xor)/max_xor'''
 
-nxor, label_nxor = generate_gaussian_parity(sample_no,cov_scale=0.1,angle_params=np.pi/2)
+nxor, label_nxor = generate_gaussian_parity(50,cov_scale=0.1,angle_params=np.pi/2)
 test_nxor, test_label_nxor = generate_gaussian_parity(1000,cov_scale=0.1,angle_params=np.pi/2)
 
 '''min_nxor = np.min(nxor)

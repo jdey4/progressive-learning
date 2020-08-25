@@ -232,7 +232,7 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
 
                     #fill in the posteriors 
                     if mapper:
-                        for node_id in np.unique(all_nodes):
+                        for node_id in np.unique(cal_nodes):
                             cal_idxs_of_node_id = np.where(cal_nodes == node_id)[0]
                             cal_ys_of_node = y_cal[cal_idxs_of_node_id]
                             
