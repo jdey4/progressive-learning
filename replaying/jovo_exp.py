@@ -159,8 +159,8 @@ nxor = nxor/max_nxor
 test_nxor = (test_nxor-min_nxor)/max_nxor'''
 
 l2f = LifeLongDNN(parallel=False)
-np.random.seed(2)
-l2f.new_forest(xor, label_xor, n_estimators=1, max_depth=max_depth)
+#np.random.seed(2)
+l2f.new_forest(xor, label_xor, n_estimators=10, max_depth=max_depth)
 
 delta = .001
 #sample the grid
@@ -180,8 +180,8 @@ sample_label = l2f._estimate_posteriors(sample, representation='all', decider=0)
 l2f.X_across_tasks[0] = sample
 l2f.y_across_tasks[0] = sample_label
 
-np.random.seed(3)
-l2f.new_forest(nxor, label_nxor, n_estimators=1, max_depth=max_depth)
+#np.random.seed(3)
+l2f.new_forest(nxor, label_nxor, n_estimators=10, max_depth=max_depth)
 
 l2f_task1 = l2f.predict(test_xor, representation='all', decider=0)
 uf_task1 = l2f.predict(test_xor, representation=0, decider=0)
