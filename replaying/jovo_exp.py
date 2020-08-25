@@ -132,7 +132,7 @@ def produce_heatmap_data(leaf_profile, posterior, delta=0.001):
     return x, y, prob
 
 # %%
-reps = 1
+reps = 100
 max_depth = 200
 sample_no = 750
 err = np.zeros(reps,dtype=float)
@@ -140,59 +140,59 @@ fte = np.zeros(reps,dtype=float)
 bte = np.zeros(reps,dtype=float)
 
 #np.random.seed(1)
-xor, label_xor = generate_gaussian_parity(sample_no,cov_scale=0.1,angle_params=0)
-test_xor, test_label_xor = generate_gaussian_parity(1000,cov_scale=0.1,angle_params=0)
+for i in range(reps):
+    xor, label_xor = generate_gaussian_parity(sample_no,cov_scale=0.1,angle_params=0)
+    test_xor, test_label_xor = generate_gaussian_parity(1000,cov_scale=0.1,angle_params=0)
 
-''' min_xor = np.min(xor)
-xor = (xor - min_xor)
-max_xor = np.max(xor)
-xor = xor/max_xor
-test_xor = (test_xor-min_xor)/max_xor'''
+    ''' min_xor = np.min(xor)
+    xor = (xor - min_xor)
+    max_xor = np.max(xor)
+    xor = xor/max_xor
+    test_xor = (test_xor-min_xor)/max_xor'''
 
-nxor, label_nxor = generate_gaussian_parity(50,cov_scale=0.1,angle_params=np.pi/2)
-test_nxor, test_label_nxor = generate_gaussian_parity(1000,cov_scale=0.1,angle_params=np.pi/2)
+    nxor, label_nxor = generate_gaussian_parity(50,cov_scale=0.1,angle_params=np.pi/2)
+    test_nxor, test_label_nxor = generate_gaussian_parity(1000,cov_scale=0.1,angle_params=np.pi/2)
 
-'''min_nxor = np.min(nxor)
-nxor = (nxor - min_nxor)
-max_nxor = np.max(nxor)
-nxor = nxor/max_nxor
-test_nxor = (test_nxor-min_nxor)/max_nxor'''
+    '''min_nxor = np.min(nxor)
+    nxor = (nxor - min_nxor)
+    max_nxor = np.max(nxor)
+    nxor = nxor/max_nxor
+    test_nxor = (test_nxor-min_nxor)/max_nxor'''
 
-l2f = LifeLongDNN(parallel=False)
-#np.random.seed(2)
-l2f.new_forest(xor, label_xor, n_estimators=10, max_depth=max_depth)
+    l2f = LifeLongDNN(parallel=False)
+    #np.random.seed(2)
+    l2f.new_forest(xor, label_xor, n_estimators=1, max_depth=max_depth)
 
-delta = .001
-#sample the grid
-x = np.arange(-1,1,step=delta)
-y = np.arange(-1,1,step=delta)
-x,y = np.meshgrid(x,y)
-sample = np.concatenate(
-        (
-            x.reshape(-1,1),
-            y.reshape(-1,1)
-        ),
-        axis=1
-    )
+    delta = .001
+    #sample the grid
+    x = np.arange(-1,1,step=delta)
+    y = np.arange(-1,1,step=delta)
+    x,y = np.meshgrid(x,y)
+    sample = np.concatenate(
+            (
+                x.reshape(-1,1),
+                y.reshape(-1,1)
+            ),
+            axis=1
+        )
 
-#%%
-sample_label = l2f._estimate_posteriors(sample, representation='all', decider=0)
-l2f.X_across_tasks[0] = sample
-l2f.y_across_tasks[0] = sample_label
+    sample_label = l2f._estimate_posteriors(sample, representation='all', decider=0)
+    l2f.X_across_tasks[0] = sample
+    l2f.y_across_tasks[0] = sample_label
 
-#np.random.seed(3)
-l2f.new_forest(nxor, label_nxor, n_estimators=10, max_depth=max_depth)
+    #np.random.seed(3)
+    l2f.new_forest(nxor, label_nxor, n_estimators=1, max_depth=max_depth)
 
-l2f_task1 = l2f.predict(test_xor, representation='all', decider=0)
-uf_task1 = l2f.predict(test_xor, representation=0, decider=0)
+    l2f_task1 = l2f.predict(test_xor, representation='all', decider=0)
+    uf_task1 = l2f.predict(test_xor, representation=0, decider=0)
 
-l2f_task2 = l2f.predict(test_nxor, representation='all', decider=1)
-uf_task2 = l2f.predict(test_nxor, representation=1, decider=1)
+    l2f_task2 = l2f.predict(test_nxor, representation='all', decider=1)
+    uf_task2 = l2f.predict(test_nxor, representation=1, decider=1)
 
-fte = (1-np.mean(uf_task2 == test_label_nxor))/(1-np.mean(l2f_task2 == test_label_nxor))
-bte = (1-np.mean(uf_task1 == test_label_xor))/(1-np.mean(l2f_task1 == test_label_xor))
+    fte = (1-np.mean(uf_task2 == test_label_nxor))/(1-np.mean(l2f_task2 == test_label_nxor))
+    bte = (1-np.mean(uf_task1 == test_label_xor))/(1-np.mean(l2f_task1 == test_label_xor))
 
-print(np.mean(fte), np.mean(bte))
+    print(np.mean(fte), np.mean(bte))
 
 
 # %%
