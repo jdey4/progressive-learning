@@ -95,7 +95,8 @@ def experiment(n_xor, n_nxor, n_test, reps, n_trees, max_depth, acorn=None):
     
     for i in range(reps):
         l2f = LifeLongDNN(parallel=False)
-        uf = LifeLongDNN(parallel=False)
+        uf1 = LifeLongDNN(parallel=False)
+        uf2 = LifeLongDNN(parallel=False)
         #source data
         xor, label_xor = generate_gaussian_parity(n_xor,cov_scale=0.1,angle_params=0)
         test_xor, test_label_xor = generate_gaussian_parity(n_test,cov_scale=0.1,angle_params=0)
@@ -160,12 +161,12 @@ def experiment(n_xor, n_nxor, n_test, reps, n_trees, max_depth, acorn=None):
 
             l2f.new_forest(nxor, label_nxor, n_estimators=n_trees,max_depth=max_depth)
             
-            uf.new_forest(xor, label_xor, n_estimators=n_trees,max_depth=max_depth)
-            uf.new_forest(nxor, label_nxor, n_estimators=n_trees,max_depth=max_depth)
+            uf1.new_forest(xor, label_xor, n_estimators=n_trees,max_depth=max_depth)
+            uf2.new_forest(nxor, label_nxor, n_estimators=n_trees,max_depth=max_depth)
 
-            uf_task1=uf.predict(test_xor, representation=0, decider=0)
+            uf_task1=uf1.predict(test_xor, representation=0, decider=0)
             l2f_task1=l2f.predict(test_xor, representation='all', decider=0)
-            uf_task2=uf.predict(test_nxor, representation=1, decider=1)
+            uf_task2=uf2.predict(test_nxor, representation=0, decider=0)
             l2f_task2=l2f.predict(test_nxor, representation='all', decider=1)
             
             errors[i,0] = 1 - np.sum(uf_task1 == test_label_xor)/n_test
