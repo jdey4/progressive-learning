@@ -150,7 +150,7 @@ for i in range(reps):
     xor = xor/max_xor
     test_xor = (test_xor-min_xor)/max_xor'''
 
-    nxor, label_nxor = generate_gaussian_parity(50,cov_scale=0.1,angle_params=np.pi/2)
+    nxor, label_nxor = generate_gaussian_parity(150,cov_scale=0.1,angle_params=np.pi/2)
     test_nxor, test_label_nxor = generate_gaussian_parity(1000,cov_scale=0.1,angle_params=np.pi/2)
 
     '''min_nxor = np.min(nxor)

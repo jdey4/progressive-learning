@@ -141,7 +141,7 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
 
         profile_mat = np.concatenate(
             (
-                np.zeros((self._feature_dimension,1),dtype=float),
+                -1*np.ones((self._feature_dimension,1),dtype=float),
                 np.ones((self._feature_dimension,1),dtype=float)
             ),
             axis = 1
