@@ -101,21 +101,21 @@ def experiment(n_xor, n_nxor, n_test, reps, n_trees, max_depth, acorn=None):
         xor, label_xor = generate_gaussian_parity(n_xor,cov_scale=0.1,angle_params=0)
         test_xor, test_label_xor = generate_gaussian_parity(n_test,cov_scale=0.1,angle_params=0)
 
-        min_xor = np.min(xor)
+        '''min_xor = np.min(xor)
         xor = (xor - min_xor)
         max_xor = np.max(xor)
         xor = xor/max_xor
-        test_xor = (test_xor-min_xor)/max_xor
+        test_xor = (test_xor-min_xor)/max_xor'''
         #target data
         if n_nxor!=0:
             nxor, label_nxor = generate_gaussian_parity(n_nxor,cov_scale=0.1,angle_params=np.pi/2)
             test_nxor, test_label_nxor = generate_gaussian_parity(n_test,cov_scale=0.1,angle_params=np.pi/2)
 
-            min_nxor = np.min(nxor)
+            '''min_nxor = np.min(nxor)
             nxor = (nxor - min_nxor)
             max_nxor = np.max(nxor)
             nxor = nxor/max_nxor
-            test_nxor = (test_nxor-min_nxor)/max_nxor
+            test_nxor = (test_nxor-min_nxor)/max_nxor'''
 
         if n_xor == 0:
             l2f.new_forest(nxor, label_nxor, n_estimators=n_trees,max_depth=max_depth)
@@ -141,10 +141,10 @@ def experiment(n_xor, n_nxor, n_test, reps, n_trees, max_depth, acorn=None):
         else:
             l2f.new_forest(xor, label_xor, n_estimators=n_trees,max_depth=max_depth)
 
-            delta = .01
+            delta = .001
             #sample the grid
-            x = np.arange(0,1,step=delta)
-            y = np.arange(0,1,step=delta)
+            x = np.arange(-1,1,step=delta)
+            y = np.arange(-1,1,step=delta)
             x,y = np.meshgrid(x,y)
             sample = np.concatenate(
                 (
