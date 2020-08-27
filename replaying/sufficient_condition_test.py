@@ -124,11 +124,11 @@ for i, n1 in enumerate(n_xor):
     )
     error[i] = np.mean(err)
 
-'''with open('result/true_data_res.pickle','wb') as f:
-    pickle.dump(error,f)'''
-
-with open('result/mapping_res.pickle','wb') as f:
+with open('result/true_data_res.pickle','wb') as f:
     pickle.dump(error,f)
+
+'''with open('result/mapping_res.pickle','wb') as f:
+    pickle.dump(error,f)'''
 
 #%%
 '''res_without_map = unpickle('result/true_data_res.pickle')
