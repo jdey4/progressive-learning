@@ -14,8 +14,8 @@ from sklearn.model_selection import StratifiedKFold
 from math import log2, ceil 
 
 import sys
-sys.path.append("../src/")
-#sys.path.append("../src_mapping_1/")
+#sys.path.append("../src/")
+sys.path.append("../src_mapping_1/")
 from lifelong_dnn import LifeLongDNN
 from joblib import Parallel, delayed
 from multiprocessing import Pool
@@ -124,5 +124,8 @@ for i, n1 in enumerate(n_xor):
     )
     error[i] = np.mean(err)
 
-with open('result/true_data_res.pickle','wb') as f:
+'''with open('result/true_data_res.pickle','wb') as f:
+    pickle.dump(error,f)'''
+
+with open('result/mapping_res.pickle','wb') as f:
     pickle.dump(error,f)
