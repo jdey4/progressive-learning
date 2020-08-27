@@ -14,8 +14,8 @@ from sklearn.model_selection import StratifiedKFold
 from math import log2, ceil 
 
 import sys
-#sys.path.append("../src/")
-sys.path.append("../src_mapping_1/")
+sys.path.append("../src/")
+#sys.path.append("../src_mapping_1/")
 from lifelong_dnn import LifeLongDNN
 from joblib import Parallel, delayed
 from multiprocessing import Pool
