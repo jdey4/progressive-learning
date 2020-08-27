@@ -109,7 +109,7 @@ def experiment(n_xor, n_nxor, n_test, n_trees, acorn=None):
 ####main hyperparameters#####
 n_trees = 1
 reps = 1000
-n_xor = (100*np.arange(0.5, 30, step=0.25)).astype(int)
+n_xor = (100*np.arange(0.5, 50, step=0.25)).astype(int)
 n_nxor = 750
 n_test = 1000
 
@@ -131,11 +131,11 @@ with open('result/mapping_res.pickle','wb') as f:
     pickle.dump(error,f)
 
 #%%
-res_without_map = unpickle('result/true_data_res.pickle')
+'''res_without_map = unpickle('result/true_data_res.pickle')
 res_with_map = unpickle('result/mapping_res.pickle')
 # %%
 sns.set_context('talk')
-fig, ax = plt.subplots(1,1, figsize=(8,8))
+fig, ax = plt.subplots(1,1, figsize=(8,9))
 ax.plot(n_xor, res_without_map, label='without mapping', c='k', lw=2)
 ax.plot(n_xor, res_with_map, label='with mapping', c='r', lw=2)
 ax.legend(loc='top right', fontsize=22)
@@ -147,5 +147,5 @@ right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
 
-plt.savefig('result/figs/sufficient_condition.pdf')
+plt.savefig('result/figs/sufficient_condition.pdf')'''
 # %%
