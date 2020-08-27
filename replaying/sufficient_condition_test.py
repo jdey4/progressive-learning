@@ -86,7 +86,7 @@ def generate_gaussian_parity(n, mean=np.array([-1, -1]), cov_scale=1, angle_para
     return X, Y.astype(int)
 
 # %%
-def experiment(n_xor, n_nxor, n_test, n_trees, max_depth, acorn=None):
+def experiment(n_xor, n_nxor, n_test, n_trees, acorn=None):
     
     if acorn != None:
         np.random.seed(acorn)
