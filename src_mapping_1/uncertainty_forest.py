@@ -1,8 +1,3 @@
-'''
-Primary Author: Will LeVine
-Email: levinewill@icloud.com
-'''
-
 #Model
 from sklearn.ensemble import BaggingClassifier
 from sklearn.tree import DecisionTreeClassifier
@@ -142,7 +137,7 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
 
         profile_mat = np.concatenate(
             (
-                np.zeros((self._feature_dimension,1),dtype=float),
+                -1*np.ones((self._feature_dimension,1),dtype=float),
                 np.ones((self._feature_dimension,1),dtype=float)
             ),
             axis = 1
@@ -368,7 +363,7 @@ class UncertaintyForest(BaseEstimator, ClassifierMixin):
                             posterior_, axis=0
                         )
 
-                     #################################################################################      
+                    #################################################################################      
                     tree_idx = list(self.tree_id_to_leaf_profile.keys())
                     node_ids_to_posterior_map = {}
                     for idx in tree_idx: 
