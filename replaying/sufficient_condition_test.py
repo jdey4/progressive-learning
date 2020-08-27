@@ -131,7 +131,7 @@ with open('result/true_data_res.pickle','wb') as f:
     pickle.dump(error,f)'''
 
 #%%
-'''res_without_map = unpickle('result/true_data_res.pickle')
+res_without_map = unpickle('result/true_data_res.pickle')
 res_with_map = unpickle('result/mapping_res.pickle')
 # %%
 sns.set_context('talk')
@@ -139,13 +139,13 @@ fig, ax = plt.subplots(1,1, figsize=(8,9))
 ax.plot(n_xor, res_without_map, label='without mapping', c='k', lw=2)
 ax.plot(n_xor, res_with_map, label='with mapping', c='r', lw=2)
 ax.legend(loc='top right', fontsize=22)
-ax.set_xlabel('xor sample number',fontsize=20)
-ax.set_ylabel('error', fontsize=20)
+ax.set_xlabel('xor sample number',fontsize=24)
+ax.set_ylabel('error', fontsize=24)
 
 right_side = ax.spines["right"]
 right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
 
-plt.savefig('result/figs/sufficient_condition.pdf')'''
+plt.savefig('result/figs/sufficient_condition.pdf')
 # %%
