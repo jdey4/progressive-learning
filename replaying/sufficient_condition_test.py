@@ -122,7 +122,7 @@ for i, n1 in enumerate(n_xor):
         delayed(experiment)(n1,n_nxor,n_test,n_trees=n_trees) for _ in range(reps)
     )
     )
-    error[i] = err
+    error[i] = np.mean(err)
 
 with open('result/true_data_res.pickle','wb') as f:
     pickle.dump(error,f)
