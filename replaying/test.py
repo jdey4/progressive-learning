@@ -284,7 +284,7 @@ ax1.set_xlabel('Total Sample Size', fontsize=fontsize)
 ax1.tick_params(labelsize=labelsize)
 ax1.set_yticks([0.15, 0.2])
 ax1.set_xticks([250,750, 1500])
-ax1.axvline(x=1500, c='gray', linewidth=1.5, linestyle="dashed")
+ax1.axvline(x=750, c='gray', linewidth=1.5, linestyle="dashed")
 ax1.set_title('XOR', fontsize=30)
 
 right_side = ax1.spines["right"]
@@ -292,8 +292,8 @@ right_side.set_visible(False)
 top_side = ax1.spines["top"]
 top_side.set_visible(False)
 
-ax1.text(400, np.mean(ax1.get_ylim()), "%s"%(TASK1), fontsize=26)
-ax1.text(2000, np.mean(ax1.get_ylim()), "%s"%(TASK2), fontsize=26)
+ax1.text(250, np.mean(ax1.get_ylim()), "%s"%(TASK1), fontsize=26)
+ax1.text(900, np.mean(ax1.get_ylim()), "%s"%(TASK2), fontsize=26)
 
 #plt.tight_layout()
 
@@ -336,7 +336,7 @@ ax1.tick_params(labelsize=labelsize)
 # ax1.set_yticks([0.15, 0.25, 0.35])
 ax1.set_yticks([0.15, 0.2])
 ax1.set_xticks([250,750, 1500])
-ax1.axvline(x=1500, c='gray', linewidth=1.5, linestyle="dashed")
+ax1.axvline(x=750, c='gray', linewidth=1.5, linestyle="dashed")
 
 ax1.set_ylim(0.11, 0.21)
 
@@ -347,8 +347,8 @@ top_side = ax1.spines["top"]
 top_side.set_visible(False)
 
 # ax1.set_ylim(0.14, 0.36)
-ax1.text(400, np.mean(ax1.get_ylim()), "%s"%(TASK1), fontsize=26)
-ax1.text(2000, np.mean(ax1.get_ylim()), "%s"%(TASK2), fontsize=26)
+ax1.text(250, np.mean(ax1.get_ylim()), "%s"%(TASK1), fontsize=26)
+ax1.text(900, np.mean(ax1.get_ylim()), "%s"%(TASK2), fontsize=26)
 
 ax1.set_title('N-XOR', fontsize=30)
 #plt.tight_layout()
@@ -391,15 +391,15 @@ ax1.set_xlabel('Total Sample Size', fontsize=fontsize)
 ax1.tick_params(labelsize=labelsize)
 ax1.set_yticks([1,1.2,1.4])
 ax1.set_xticks([250,750, 1500])
-ax1.axvline(x=1500, c='gray', linewidth=1.5, linestyle="dashed")
+ax1.axvline(x=750, c='gray', linewidth=1.5, linestyle="dashed")
 right_side = ax1.spines["right"]
 right_side.set_visible(False)
 top_side = ax1.spines["top"]
 top_side.set_visible(False)
 ax1.hlines(1, 50,1500, colors='gray', linestyles='dashed',linewidth=1.5)
 
-ax1.text(400, np.mean(ax1.get_ylim()), "%s"%(TASK1), fontsize=26)
-ax1.text(2000, np.mean(ax1.get_ylim()), "%s"%(TASK2), fontsize=26)
+ax1.text(250, np.mean(ax1.get_ylim()), "%s"%(TASK1), fontsize=26)
+ax1.text(900, np.mean(ax1.get_ylim()), "%s"%(TASK2), fontsize=26)
 
 #plt.tight_layout()
 
