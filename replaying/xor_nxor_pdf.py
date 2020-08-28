@@ -22,13 +22,13 @@ def pdf(x):
     inv_cov = np.linalg.inv(cov) 
 
     p0 = (
-        np.exp((x - mu01)@inv_cov@(x-mu01).T) 
-        + np.exp((x - mu02)@inv_cov@(x-mu02).T)
+        np.exp(-(x - mu01)@inv_cov@(x-mu01).T) 
+        + np.exp(-(x - mu02)@inv_cov@(x-mu02).T)
     )/(2*np.pi*np.sqrt(np.linalg.det(cov)))
 
     p1 = (
-        np.exp((x - mu11)@inv_cov@(x-mu11).T) 
-        + np.exp((x - mu12)@inv_cov@(x-mu12).T)
+        np.exp(-(x - mu11)@inv_cov@(x-mu11).T) 
+        + np.exp(-(x - mu12)@inv_cov@(x-mu12).T)
     )/(2*np.pi*np.sqrt(np.linalg.det(cov)))
 
     return p0/(p0+p1)
@@ -52,11 +52,15 @@ for ii,x in enumerate(sample):
 data = pd.DataFrame(data={'x':sample[:,0], 'y':sample[:,1], 'z':z})
 data = data.pivot(index='x', columns='y', values='z')
 
+sns.set_context("talk")
 fig, ax = plt.subplots(1,1, figsize=(8,8))
-ax1 = sns.heatmap(data, ax=ax, vmin=-1, vmax=1)
-ax1.set_xticklabels(['-1','' , '', '', '', '', '','','','' , '', '', '', '', '', '', '0','','' , '', '', '', '', '','','','','','','','','','','1'])
-ax1.set_yticklabels(['-1','' , '', '', '', '', '','','','' , '', '', '', '', '', '','','','','', '0','','' , '', '', '', '', '','','','','','','','','','','','','1'])
-ax.set_title('True PDF of xor-nxor simulation data')
+cmap= sns.diverging_palette(240, 10, n=9)
+ax1 = sns.heatmap(data, ax=ax, vmin=0, vmax=1,cmap=cmap)
+ax1.set_xticklabels(['-1','' , '', '', '', '', '','','','','0','','','','','','','','','1'])
+ax1.set_yticklabels(['-1','' , '', '', '', '', '','','','','','','0','','','','','','','','','','','','1'])
+#ax1.set_yticklabels(['-1','' , '', '', '', '', '','','','' , '', '', '', '', '', '','','','','', '0','','' , '', '', '', '', '','','','','','','','','','','','','1'])
+ax.set_title('True PDF of xor-nxor simulation data',fontsize=24)
+ax.invert_yaxis()
 plt.savefig('result/figs/true_pdf.pdf')
 
 # %%
