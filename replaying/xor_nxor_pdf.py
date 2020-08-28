@@ -103,7 +103,7 @@ ax1 = sns.heatmap(data, ax=ax, vmin=0, vmax=1,cmap=cmap)
 ax1.set_xticklabels(['-1','' , '', '', '', '', '','','','','0','','','','','','','','','1'])
 ax1.set_yticklabels(['-1','' , '', '', '', '', '','','','','','','0','','','','','','','','','','','','1'])
 #ax1.set_yticklabels(['-1','' , '', '', '', '', '','','','' , '', '', '', '', '', '','','','','', '0','','' , '', '', '', '', '','','','','','','','','','','','','1'])
-ax.set_title('True PDF of xor-nxor simulation data',fontsize=24)
+ax.set_title('True PDF of xor-rxor simulation data',fontsize=24)
 ax.invert_yaxis()
 plt.savefig('result/figs/true_pdf_xor_rxor.pdf')
 # %%
