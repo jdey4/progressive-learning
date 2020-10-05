@@ -486,8 +486,8 @@ top_side = ax1.spines["top"]
 top_side.set_visible(False)
 ax[1][2].hlines(1, 50,1500, colors='gray', linestyles='dashed',linewidth=1.5)
 
-ax[1][2].text(150, np.mean(ax1.get_ylim()), "%s"%(TASK1), fontsize=26)
-ax[1][2].text(900, np.mean(ax1.get_ylim()), "%s"%(TASK2), fontsize=26)
+ax[1][2].text(150, np.mean(ax[1][2].get_ylim()), "%s"%(TASK1), fontsize=26)
+ax[1][2].text(900, np.mean(ax[1][2].get_ylim()), "%s"%(TASK2), fontsize=26)
 
 right_side = ax[1][2].spines["right"]
 right_side.set_visible(False)
