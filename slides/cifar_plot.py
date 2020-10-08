@@ -273,7 +273,7 @@ for i in range(0,total_alg_top+total_alg_bottom-1):
 handles, labels_ = ax.get_legend_handles_labels()
 fig.legend(handles, labels_, bbox_to_anchor=(.99, .93), fontsize=legendsize+12, frameon=False)
 
-plt.savefig('figs/cifar-100-FTE.svg')
+plt.savefig('figs/cifar-100-FTE.pdf')
 
 # %%
 
@@ -391,7 +391,7 @@ ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5)
 
 
 fig.legend(handles, labels_, bbox_to_anchor=(.99, .93), fontsize=legendsize+12, frameon=False)
-plt.savefig('figs/cifar-100-BTE.svg')
+plt.savefig('figs/cifar-100-BTE.pdf')
 
 
 # %%
