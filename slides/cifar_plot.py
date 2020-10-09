@@ -79,7 +79,19 @@ def get_error_matrix(filename):
 
     return single_err, err
 
-def stratified_scatter(te_dict,axis_handle,s,color):
+def sum_error_matrix(error_mat1, error_mat2):
+    err = [[] for _ in range(10)]
+
+    for ii in range(10):
+        err[ii].extend(
+            list(
+                np.asarray(error_mat1[ii]) +
+                np.asarray(error_mat2[ii])
+            )
+        )
+    return err
+
+def stratified_scatter(te_dict,axis_handle,s,color,style):
     algo = list(te_dict.keys())
     total_alg = len(algo)
 
@@ -94,7 +106,8 @@ def stratified_scatter(te_dict,axis_handle,s,color):
                 pivot_points[algo_no]+interval*no,
                 te_dict[alg][no],
                 s=s,
-                c='k'
+                c='k',
+                marker=style[algo_no]
                 )
 
 
@@ -105,12 +118,12 @@ slots = 10
 task_num = 10
 shifts = 6
 total_alg_top = 4
-total_alg_bottom = 5
+total_alg_bottom = 8
 alg_name_top = ['L2N','L2F','Prog-NN', 'DF-CNN']
-alg_name_bottom = ['L2F','LwF','EWC','O-EWC','SI']
-combined_alg_name = ['L2N','L2F','Prog-NN', 'DF-CNN','LwF','EWC','O-EWC','SI']
+alg_name_bottom = ['L2F','LwF','EWC','O-EWC','SI', 'Replay (increasing amount)', 'Replay (fixed amount)', 'None']
+combined_alg_name = ['L2N','L2F','Prog-NN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Replay (increasing amount)', 'Replay (fixed amount)', 'None']
 model_file_top = ['dnn0','fixed_uf10','Prog_NN','DF_CNN']
-model_file_bottom = ['uf10','LwF','EWC','Online_EWC','SI']
+model_file_bottom = ['uf10', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
 btes_top = [[] for i in range(total_alg_top)]
 ftes_top = [[] for i in range(total_alg_top)]
 tes_top = [[] for i in range(total_alg_top)]
@@ -118,39 +131,52 @@ btes_bottom = [[] for i in range(total_alg_bottom)]
 ftes_bottom = [[] for i in range(total_alg_bottom)]
 tes_bottom = [[] for i in range(total_alg_bottom)]
 
-########################
+combined_alg_name = ['L2N','L2F','Prog-NN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Replay (increasing amount)', 'Replay (fixed amount)', 'None']
+model_file_combined = ['dnn0','fixed_uf10','Prog_NN','DF_CNN', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
 
-#%% code for 500 samples
+
+#######################
+
+# %%
 reps = slots*shifts
 
 for alg in range(total_alg_top): 
     count = 0 
     bte_tmp = [[] for _ in range(reps)]
     fte_tmp = [[] for _ in range(reps)] 
-    te_tmp = [[] for _ in range(reps)] 
+    te_tmp = [[] for _ in range(reps)]
 
     for slot in range(slots):
         for shift in range(shifts):
             if alg < 2:
-                filename = '../experiments/cifar_exp/result/result/'+model_file_top[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
+                filename = '../experiments/cifar_exp/result/result/'+model_file_combined[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
+            elif alg == 2 or alg == 3:
+                filename = '../experiments/cifar_exp/benchmarking_algorthms_result/'+model_file_combined[alg]+'-'+str(shift+1)+'-'+str(slot+1)+'.pickle'
             else:
-                filename = '../experiments/cifar_exp/benchmarking_algorthms_result/'+model_file_top[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
+                filename = '../experiments/cifar_exp/benchmarking_algorthms_result/'+model_file_combined[alg]+'-'+str(slot+1)+'-'+str(shift+1)+'.pickle'
 
             multitask_df, single_task_df = unpickle(filename)
 
-            single_err, err = get_error_matrix(filename)
-            fte, bte, te = get_fte_bte(err,single_err)
-            
-            bte_tmp[count].extend(bte)
-            fte_tmp[count].extend(fte)
-            te_tmp[count].extend(te)
-            count+=1
-    
-    btes_top[alg].extend(calc_mean_bte(bte_tmp,reps=reps))
-    ftes_top[alg].extend(calc_mean_fte(fte_tmp,reps=reps))
-    tes_top[alg].extend(calc_mean_te(te_tmp,reps=reps))
+            single_err_, err_ = get_error_matrix(filename)
 
-# %%
+            if count == 0:
+                single_err, err = single_err_, err_
+            else:
+                err = sum_error_matrix(err, err_)
+                single_err = list(
+                    np.asarray(single_err) + np.asarray(single_err_)
+                )
+
+            count += 1
+    #single_err /= reps
+    #err /= reps
+    fte, bte, te = get_fte_bte(err,single_err)
+    
+    btes_top[alg].extend(bte)
+    ftes_top[alg].extend(fte)
+    tes_top[alg].extend(te)
+
+#%%
 reps = slots*shifts
 
 for alg in range(total_alg_bottom): 
@@ -161,29 +187,39 @@ for alg in range(total_alg_bottom):
 
     for slot in range(slots):
         for shift in range(shifts):
-            if alg < 1:
-                filename = '../experiments/cifar_exp/result/result/'+model_file_bottom[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
+            if alg < 2:
+                filename = '../experiments/cifar_exp/result/result/'+model_file_combined[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
+            elif alg == 2 or alg == 3:
+                filename = '../experiments/cifar_exp/benchmarking_algorthms_result/'+model_file_combined[alg]+'-'+str(shift+1)+'-'+str(slot+1)+'.pickle'
             else:
-                filename = '../experiments/cifar_exp/benchmarking_algorthms_result/'+model_file_bottom[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
+                filename = '../experiments/cifar_exp/benchmarking_algorthms_result/'+model_file_combined[alg]+'-'+str(slot+1)+'-'+str(shift+1)+'.pickle'
 
             multitask_df, single_task_df = unpickle(filename)
 
-            single_err, err = get_error_matrix(filename)
-            fte, bte, te = get_fte_bte(err,single_err)
-            
-            bte_tmp[count].extend(bte)
-            fte_tmp[count].extend(fte)
-            te_tmp[count].extend(te)
-            count+=1
+            single_err_, err_ = get_error_matrix(filename)
+
+            if count == 0:
+                single_err, err = single_err_, err_
+            else:
+                err = sum_error_matrix(err, err_)
+                single_err = list(
+                    np.asarray(single_err) + np.asarray(single_err_)
+                )
+
+            count += 1
+    #single_err /= reps
+    #err /= reps
+    fte, bte, te = get_fte_bte(err,single_err)
     
-    btes_bottom[alg].extend(calc_mean_bte(bte_tmp,reps=reps))
-    ftes_bottom[alg].extend(calc_mean_fte(fte_tmp,reps=reps))
-    tes_bottom[alg].extend(calc_mean_te(te_tmp,reps=reps))
+    btes_bottom[alg].extend(bte)
+    ftes_bottom[alg].extend(fte)
+    tes_bottom[alg].extend(te)
 
 #%%
 te_500 = {'L2N':np.zeros(10,dtype=float), 'L2F':np.zeros(10,dtype=float), 'Prog-NN':np.zeros(10,dtype=float),
-        'DF-CNN':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
-        'EWC':np.zeros(10,dtype=float), 'Online EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float)}
+        'DF-CNN':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float), 'EWC':np.zeros(10,dtype=float),
+        'O-EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float),
+        'Replay (increasing amount)':np.zeros(10,dtype=float), 'Replay (fixed amount)':np.zeros(10,dtype=float), 'None':np.zeros(10,dtype=float)}
 
 for count,name in enumerate(te_500.keys()):
     for i in range(10):
@@ -192,20 +228,25 @@ for count,name in enumerate(te_500.keys()):
         elif count>3:
             te_500[name][i] = tes_bottom[count-3][i][9-i]
 
+
 df_500 = pd.DataFrame.from_dict(te_500)
 df_500 = pd.melt(df_500,var_name='Algorithms', value_name='Transfer Efficieny')
 
 # %%
-fig = plt.figure(constrained_layout=True,figsize=(16,6))
-gs = fig.add_gridspec(6, 16)
+fig = plt.figure(constrained_layout=True,figsize=(20,6))
+gs = fig.add_gridspec(6, 20)
 
 clr_top = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3"]
 c_top = sns.color_palette(clr_top, n_colors=len(clr_top))
 
-clr_bottom = ["#e41a1c", "#ff7f00", "#ffff33", "#a65628", "#f781bf"]
+clr_bottom = ["#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
 c_bottom = sns.color_palette(clr_bottom, n_colors=len(clr_bottom))
 
-clr_combined = [ "#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#ff7f00", "#ffff33", "#a65628", "#f781bf"]
+marker_style_top = ['.', '.', '.', '.']
+marker_style_bottom = ['.', '.', '+', 'o', '*', '.', '+', 'o']
+marker_style = ['.', '.', '.', '.', '.', '+', 'o', '*', '.', '+', 'o']
+
+clr_combined = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
 c_combined = sns.color_palette(clr_combined, n_colors=total_alg_top+total_alg_bottom)
 
 fontsize=25
@@ -216,14 +257,14 @@ ax = fig.add_subplot(gs[:6,:6])
 
 for i, fte in enumerate(ftes_top):
     if i == 0:
-        ax.plot(np.arange(1,11), fte, color=c_top[i], marker='.', markersize=12, label=alg_name_top[i], linewidth=3)
+        ax.plot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], markersize=12, label=alg_name_top[i], linewidth=3)
         continue
 
     if i == 1:
-        ax.plot(np.arange(1,11), fte, color=c_top[i], marker='.', markersize=12, label=alg_name_top[i], linewidth=3)
+        ax.plot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], markersize=12, label=alg_name_top[i], linewidth=3)
         continue
     
-    ax.plot(np.arange(1,11), fte, color=c_top[i], marker='.', markersize=12, label=alg_name_top[i])
+    ax.plot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], markersize=12, label=alg_name_top[i])
     
 ax.set_xticks(np.arange(1,11))
 ax.set_yticks([0.9, 1, 1.1, 1.2, 1.3,1.4])
@@ -244,18 +285,18 @@ ax = fig.add_subplot(gs[:6,7:13])
 
 for i, fte in enumerate(ftes_bottom):
     if i == 0:
-        ax.plot(np.arange(1,11), fte, color=c_bottom[i], marker='.', markersize=12, linewidth=3)
+        ax.plot(np.arange(1,11), fte, color=c_bottom[i], marker=marker_style_bottom[i], markersize=12, linewidth=3)
         continue
 
     if i == 1:
-        ax.plot(np.arange(1,11), fte, color=c_bottom[i], marker='.', markersize=12, linewidth=3)
+        ax.plot(np.arange(1,11), fte, color=c_bottom[i], marker=marker_style_bottom[i], markersize=12, linewidth=3)
         continue
     
-    ax.plot(np.arange(1,11), fte, color=c_bottom[i], marker='.', markersize=12)
+    ax.plot(np.arange(1,11), fte, color=c_bottom[i], marker=marker_style_bottom[i], markersize=12)
     
 ax.set_xticks(np.arange(1,11))
-ax.set_yticks([0.95, 1, 1.05])
-ax.set_ylim(0.95, 1.05)
+ax.set_yticks([0.75, 1, 1.25])
+ax.set_ylim(0.75, 1.32)
 ax.tick_params(labelsize=ticksize)
 
 ax.set_ylabel('Resource Constrained FTE', fontsize=fontsize)
@@ -268,25 +309,30 @@ top_side.set_visible(False)
 ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5)
 
 for i in range(0,total_alg_top+total_alg_bottom-1):
-    ax.plot(1,0,color=c_combined[i], marker='.', markersize=8,label=combined_alg_name[i])
+    ax.plot(1,0,color=c_combined[i], marker=marker_style[i], markersize=8,label=combined_alg_name[i])
 
 handles, labels_ = ax.get_legend_handles_labels()
-fig.legend(handles, labels_, bbox_to_anchor=(.99, .93), fontsize=legendsize+12, frameon=False)
+fig.legend(handles, labels_, bbox_to_anchor=(.995, .93), fontsize=legendsize+6, frameon=False)
 
-plt.savefig('figs/cifar-100-FTE.pdf')
+plt.savefig('figs/cifar-100-FTE.svg')
+
 
 # %%
 
-fig = plt.figure(constrained_layout=True,figsize=(16,7))
-gs = fig.add_gridspec(6, 16)
+fig = plt.figure(constrained_layout=True,figsize=(19,7))
+gs = fig.add_gridspec(6, 19)
 
 clr_top = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3"]
 c_top = sns.color_palette(clr_top, n_colors=len(clr_top))
 
-clr_bottom = ["#e41a1c", "#ff7f00", "#ffff33", "#a65628", "#f781bf"]
+clr_bottom = ["#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
 c_bottom = sns.color_palette(clr_bottom, n_colors=len(clr_bottom))
 
-clr_combined = [ "#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#ff7f00", "#ffff33", "#a65628", "#f781bf"]
+marker_style_top = ['.', '.', '.', '.']
+marker_style_bottom = ['.', '.', '+', 'o', '*', '.', '+', 'o']
+marker_style = ['.', '.', '.', '.', '.', '+', 'o', '*', '.', '+', 'o']
+
+clr_combined = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
 c_combined = sns.color_palette(clr_combined, n_colors=total_alg_top+total_alg_bottom)
 
 fontsize=25
@@ -308,30 +354,30 @@ for i in range(task_num - 1):
     for j in range(0,total_alg_top):
         if j == 0:
             if i == 0:
-                ax.plot(ns, et[j,:], marker='.', markersize=8, label = alg_name_top[j], color=c_top[j], linewidth = 3)
+                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, label = alg_name_top[j], color=c_top[j], linewidth = 3)
             else:
-                ax.plot(ns, et[j,:], marker='.', markersize=8, color=c_top[j], linewidth = 3)
+                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, color=c_top[j], linewidth = 3)
         elif j == 1:
             if i == 0:
-                ax.plot(ns, et[j,:], marker='.', markersize=8, label = alg_name_top[j], color=c_top[j], linewidth = 3)
+                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, label = alg_name_top[j], color=c_top[j], linewidth = 3)
             else:
-                ax.plot(ns, et[j,:], marker='.', markersize=8, color=c_top[j], linewidth = 3)
+                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, color=c_top[j], linewidth = 3)
         else:
             if i == 0:
-                ax.plot(ns, et[j,:], marker='.', markersize=8, label = alg_name_top[j], color=c_top[j])
+                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, label = alg_name_top[j], color=c_top[j])
             else:
-                ax.plot(ns, et[j,:], marker='.', markersize=8, color=c_top[j])
+                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, color=c_top[j])
 
 
 for i in range(total_alg_top,total_alg_top+total_alg_bottom-1):
-    ax.plot(1,0,color=c_combined[i], marker='.', markersize=8,label=combined_alg_name[i])
+    ax.plot(1,0,color=c_combined[i], marker=marker_style[i], markersize=8,label=combined_alg_name[i])
 
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 ax.set_ylabel('Backward Transfer Efficiency (BTE)', fontsize=fontsize)
 
 ax.set_yticks([.4,.6,.8,.9,1, 1.1,1.2])
 ax.set_xticks(np.arange(1,11))
-ax.set_ylim(0.99, 1.2)
+ax.set_ylim(0.96, 1.2)
 ax.tick_params(labelsize=ticksize)
 #ax[0][1].grid(axis='x')
 
@@ -359,27 +405,27 @@ for i in range(task_num - 1):
     for j in range(0,total_alg_bottom):
         if j == 0:
             if i == 0:
-                ax.plot(ns, et[j,:], marker='.', markersize=8, label=None, color=c_bottom[j], linewidth = 3)
+                ax.plot(ns, et[j,:], marker=marker_style_bottom[j], markersize=8, label=None, color=c_bottom[j], linewidth = 3)
             else:
-                ax.plot(ns, et[j,:], marker='.', markersize=8, color=c_bottom[j], linewidth = 3)
+                ax.plot(ns, et[j,:], marker=marker_style_bottom[j], markersize=8, color=c_bottom[j], linewidth = 3)
         elif j == 1:
             if i == 0:
-                ax.plot(ns, et[j,:], marker='.', markersize=8, label = alg_name_bottom[j], color=c_bottom[j])
+                ax.plot(ns, et[j,:], marker=marker_style_bottom[j], markersize=8, label = alg_name_bottom[j], color=c_bottom[j])
             else:
-                ax.plot(ns, et[j,:], marker='.', markersize=8, color=c_bottom[j], linewidth = 3)
+                ax.plot(ns, et[j,:], marker=marker_style_bottom[j], markersize=8, color=c_bottom[j], linewidth = 3)
         else:
             if i == 0:
-                ax.plot(ns, et[j,:], marker='.', markersize=8, label = alg_name_bottom[j], color=c_bottom[j])
+                ax.plot(ns, et[j,:], marker=marker_style_bottom[j], markersize=8, label = alg_name_bottom[j], color=c_bottom[j])
             else:
-                ax.plot(ns, et[j,:], marker='.', markersize=8, color=c_bottom[j])
+                ax.plot(ns, et[j,:], marker=marker_style_bottom[j], markersize=8, color=c_bottom[j])
 
 
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 ax.set_ylabel('Resource Constrained BTE', fontsize=fontsize)
 
-ax.set_yticks([.4,.6,.8,.9,1, 1.1,1.2])
+ax.set_yticks([.9,1, 1.1,1.2])
 ax.set_xticks(np.arange(1,11))
-ax.set_ylim(0.85, 1.17)
+ax.set_ylim(0.89, 1.2)
 ax.tick_params(labelsize=ticksize)
 #ax[0][1].grid(axis='x')
 
@@ -390,7 +436,7 @@ top_side.set_visible(False)
 ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5)
 
 
-fig.legend(handles, labels_, bbox_to_anchor=(.99, .93), fontsize=legendsize+12, frameon=False)
+fig.legend(handles, labels_, bbox_to_anchor=(1, .93), fontsize=legendsize+7, frameon=False)
 plt.savefig('figs/cifar-100-BTE.pdf')
 
 
@@ -399,7 +445,7 @@ fontsize=30
 labelsize=28
 
 fig = plt.figure(constrained_layout=True,figsize=(7,7))
-gs = fig.add_gridspec(6, 6)
+gs = fig.add_gridspec(7, 6)
 
 ax = fig.add_subplot(gs[:6,:6])
 ax.tick_params(labelsize=22)
@@ -407,18 +453,18 @@ ax_ = sns.boxplot(
     x="Algorithms", y="Transfer Efficieny", data=df_500, palette=c_combined, whis=np.inf,
     ax=ax, showfliers=False, notch=1
     )
-ax.hlines(1, -1,8, colors='grey', linestyles='dashed',linewidth=1.5)
+ax.hlines(1, -1,11, colors='grey', linestyles='dashed',linewidth=1.5)
 #sns.boxplot(x="Algorithms", y="Transfer Efficieny", data=mean_df, palette=c, linewidth=3, ax=ax[1][1])
 #ax_=sns.pointplot(x="Algorithms", y="Transfer Efficieny", data=df_500, join=False, color='grey', linewidth=1.5, ci='sd',ax=ax)
 #ax_.set_yticks([.4,.6,.8,1, 1.2,1.4])
 ax_.set_xlabel('', fontsize=fontsize)
 ax.set_ylabel('Transfer Efficiency after 10 Tasks', fontsize=fontsize-5)
 ax_.set_xticklabels(
-    ['L2N','L2F','Prog-NN','DF-CNN','LwF','EWC','O-EWC','SI'],
-    fontsize=20,rotation=45,ha="right",rotation_mode='anchor'
+    ['L2N','L2F','Prog-NN','DF-CNN','LwF','EWC','O-EWC','SI','Replay \n (increasing amount)','Replay \n (fixed amount)', 'None'],
+    fontsize=11,rotation=45,ha="right",rotation_mode='anchor'
     )
 
-stratified_scatter(te_500,ax,16,c_combined)
+stratified_scatter(te_500,ax,16,c_combined,marker_style)
 
 right_side = ax.spines["right"]
 right_side.set_visible(False)
