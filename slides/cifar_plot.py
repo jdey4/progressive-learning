@@ -149,11 +149,11 @@ for alg in range(total_alg_top):
     for slot in range(slots):
         for shift in range(shifts):
             if alg < 2:
-                filename = '../experiments/cifar_exp/result/result/'+model_file_combined[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
+                filename = '../experiments/cifar_exp/result/result/'+model_file_top[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
             elif alg == 2 or alg == 3:
-                filename = '../experiments/cifar_exp/benchmarking_algorthms_result/'+model_file_combined[alg]+'-'+str(shift+1)+'-'+str(slot+1)+'.pickle'
+                filename = '../experiments/cifar_exp/benchmarking_algorthms_result/'+model_file_top[alg]+'-'+str(shift+1)+'-'+str(slot+1)+'.pickle'
             else:
-                filename = '../experiments/cifar_exp/benchmarking_algorthms_result/'+model_file_combined[alg]+'-'+str(slot+1)+'-'+str(shift+1)+'.pickle'
+                filename = '../experiments/cifar_exp/benchmarking_algorthms_result/'+model_file_top[alg]+'-'+str(slot+1)+'-'+str(shift+1)+'.pickle'
 
             multitask_df, single_task_df = unpickle(filename)
 
@@ -187,12 +187,10 @@ for alg in range(total_alg_bottom):
 
     for slot in range(slots):
         for shift in range(shifts):
-            if alg < 2:
-                filename = '../experiments/cifar_exp/result/result/'+model_file_combined[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
-            elif alg == 2 or alg == 3:
-                filename = '../experiments/cifar_exp/benchmarking_algorthms_result/'+model_file_combined[alg]+'-'+str(shift+1)+'-'+str(slot+1)+'.pickle'
+            if alg < 1:
+                filename = '../experiments/cifar_exp/result/result/'+model_file_bottom[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
             else:
-                filename = '../experiments/cifar_exp/benchmarking_algorthms_result/'+model_file_combined[alg]+'-'+str(slot+1)+'-'+str(shift+1)+'.pickle'
+                filename = '../experiments/cifar_exp/benchmarking_algorthms_result/'+model_file_bottom[alg]+'-'+str(slot+1)+'-'+str(shift+1)+'.pickle'
 
             multitask_df, single_task_df = unpickle(filename)
 
@@ -295,8 +293,8 @@ for i, fte in enumerate(ftes_bottom):
     ax.plot(np.arange(1,11), fte, color=c_bottom[i], marker=marker_style_bottom[i], markersize=12)
     
 ax.set_xticks(np.arange(1,11))
-ax.set_yticks([0.75, 1, 1.25])
-ax.set_ylim(0.75, 1.32)
+ax.set_yticks([0.85, 1, 1.1])
+ax.set_ylim(0.8, 1.05)
 ax.tick_params(labelsize=ticksize)
 
 ax.set_ylabel('Resource Constrained FTE', fontsize=fontsize)
@@ -314,7 +312,7 @@ for i in range(0,total_alg_top+total_alg_bottom-1):
 handles, labels_ = ax.get_legend_handles_labels()
 fig.legend(handles, labels_, bbox_to_anchor=(.995, .93), fontsize=legendsize+6, frameon=False)
 
-plt.savefig('figs/cifar-100-FTE.svg')
+plt.savefig('figs/cifar-100-FTE.pdf')
 
 
 # %%
@@ -425,7 +423,7 @@ ax.set_ylabel('Resource Constrained BTE', fontsize=fontsize)
 
 ax.set_yticks([.9,1, 1.1,1.2])
 ax.set_xticks(np.arange(1,11))
-ax.set_ylim(0.89, 1.2)
+ax.set_ylim(0.85, 1.15)
 ax.tick_params(labelsize=ticksize)
 #ax[0][1].grid(axis='x')
 
