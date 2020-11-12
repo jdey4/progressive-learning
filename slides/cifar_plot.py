@@ -254,6 +254,7 @@ legendsize=14
 ax = fig.add_subplot(gs[:6,:6])
 
 for i, fte in enumerate(ftes_top):
+    fte[0] = 1
     if i == 0:
         ax.plot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], markersize=12, label=alg_name_top[i], linewidth=3)
         continue
@@ -282,6 +283,7 @@ ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5)
 ax = fig.add_subplot(gs[:6,7:13])
 
 for i, fte in enumerate(ftes_bottom):
+    fte[0] = 1
     if i == 0:
         ax.plot(np.arange(1,11), fte, color=c_bottom[i], marker=marker_style_bottom[i], markersize=12, linewidth=3)
         continue
