@@ -147,11 +147,11 @@ for alg in range(total_alg_top):
     for slot in range(slots):
         for shift in range(shifts):
             if alg < 2:
-                filename = './result/result/'+model_file_top[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
+                filename = '../experiments/cifar_exp/result/result/'+model_file_top[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
             elif alg == 2 or alg == 3:
-                filename = './benchmarking_algorthms_result/'+model_file_top[alg]+'-'+str(shift+1)+'-'+str(slot+1)+'.pickle'
+                filename = '../experiments/cifar_exp/benchmarking_algorthms_result/'+model_file_top[alg]+'-'+str(shift+1)+'-'+str(slot+1)+'.pickle'
             else:
-                filename = './benchmarking_algorthms_result/'+model_file_top[alg]+'-'+str(slot+1)+'-'+str(shift+1)+'.pickle'
+                filename = '../experiments/cifar_exp/benchmarking_algorthms_result/'+model_file_top[alg]+'-'+str(slot+1)+'-'+str(shift+1)+'.pickle'
 
             multitask_df, single_task_df = unpickle(filename)
 
@@ -186,9 +186,9 @@ for alg in range(total_alg_bottom):
     for slot in range(slots):
         for shift in range(shifts):
             if alg < 1:
-                filename = './result/result/'+model_file_bottom[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
+                filename = '../experiments/cifar_exp/result/result/'+model_file_bottom[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
             else:
-                filename = './benchmarking_algorthms_result/'+model_file_bottom[alg]+'-'+str(slot+1)+'-'+str(shift+1)+'.pickle'
+                filename = '../experiments/cifar_exp/benchmarking_algorthms_result/'+model_file_bottom[alg]+'-'+str(slot+1)+'-'+str(shift+1)+'.pickle'
 
             multitask_df, single_task_df = unpickle(filename)
 
@@ -229,8 +229,8 @@ df_500 = pd.DataFrame.from_dict(te_500)
 df_500 = pd.melt(df_500,var_name='Algorithms', value_name='Transfer Efficieny')
 
 # %%
-fig = plt.figure(constrained_layout=True,figsize=(29,16))
-gs = fig.add_gridspec(16, 29)
+fig = plt.figure(constrained_layout=True,figsize=(22,16))
+gs = fig.add_gridspec(16, 22)
 
 clr_top = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3"]
 c_top = sns.color_palette(clr_top, n_colors=len(clr_top))
@@ -330,32 +330,6 @@ handles, labels_ = ax.get_legend_handles_labels()
 #ax.legend(loc='center left', bbox_to_anchor=(.8, 0.5), fontsize=legendsize+16)
 
 
-
-
-ax = fig.add_subplot(gs[:7,16:23])
-ax.tick_params(labelsize=22)
-ax_ = sns.boxplot(
-    x="Algorithms", y="Transfer Efficieny", data=df_500, palette=c_combined, whis=np.inf,
-    ax=ax, showfliers=False, notch=1
-    )
-ax.hlines(1, -1,11, colors='grey', linestyles='dashed',linewidth=1.5)
-#sns.boxplot(x="Algorithms", y="Transfer Efficieny", data=mean_df, palette=c, linewidth=3, ax=ax[1][1])
-#ax_=sns.pointplot(x="Algorithms", y="Transfer Efficieny", data=df_500, join=False, color='grey', linewidth=1.5, ci='sd',ax=ax)
-#ax_.set_yticks([.4,.6,.8,1, 1.2,1.4])
-ax_.set_xlabel('', fontsize=fontsize)
-ax.set_ylabel('Transfer Efficiency after 10 Tasks', fontsize=fontsize-5)
-ax_.set_xticklabels(
-    ['L2N','L2F','Prog-NN','DF-CNN','LwF','EWC','O-EWC','SI','Replay \n (increasing amount)','Replay \n (fixed amount)', 'None'],
-    fontsize=12,rotation=45,ha="right",rotation_mode='anchor'
-    )
-
-stratified_scatter(te_500,ax,16,c_combined,marker_style)
-
-right_side = ax.spines["right"]
-right_side.set_visible(False)
-top_side = ax.spines["top"]
-top_side.set_visible(False)
-
 #########################################################
 ax = fig.add_subplot(gs[8:15,:7])
 
@@ -373,7 +347,7 @@ for i, fte in enumerate(ftes_bottom):
     
 ax.set_xticks(np.arange(1,11))
 ax.set_yticks([0.85, 1, 1.15])
-ax.set_ylim(0.8, 1.19)
+ax.set_ylim(0.8, 1.05)
 ax.tick_params(labelsize=ticksize)
 
 ax.set_ylabel('Resource Constrained FTE', fontsize=fontsize)
@@ -437,54 +411,50 @@ ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5)
 
 ############################
 
-ax = fig.add_subplot(gs[8:15,16:23])
-mean_error, std_error = unpickle('../recruitment_exp/result/recruitment_exp_500.pickle')
-ns = 10*np.array([10, 50, 100, 200, 350, 500])
-clr = ["#e41a1c", "#377eb8", "#4daf4a", "#984ea3"]
-colors = sns.color_palette(clr, n_colors=len(clr))
-
-#labels = ['recruiting', 'Uncertainty Forest', 'hybrid', '50 Random', 'BF', 'building']
-labels = ['L2F (building)', 'UF (new)', 'recruiting', 'hybrid']
-algo = ['building', 'UF', 'recruiting', 'hybrid']
-adjust = 0
-for i,key in enumerate(algo):
-    err = np.array(mean_error[key])
-    ax.plot(ns, err, c=colors[i], label=labels[i])
-    #ax.fill_between(ns, 
-    #        acc + 1.96*np.array(std_error[key]), 
-    #        acc - 1.96*np.array(std_error[key]), 
-    #        where=acc + 1.96*np.array(std_error[key]) >= acc - 1.96*np.array(std_error[key]), 
-    #        facecolor=colors[i], 
-    #        alpha=0.15,
-    #        interpolate=False)
-
-
-#ax.set_title('CIFAR Recruitment Experiment', fontsize=30)
-ax.set_xscale('log')
-ax.get_xaxis().set_major_formatter(matplotlib.ticker.ScalarFormatter())
-ax.set_ylabel('Generalization Error (Task 10)', fontsize=fontsize)
-ax.set_xlabel('')
-ax.tick_params(labelsize=ticksize)
-#ax.set_ylim(0.325, 0.575)
-#ax.set_title("CIFAR Recruitment",fontsize=titlesize)
-ax.set_xticks([])
-ax.set_yticks([0.45, 0.55, 0.65,0.75])
-#ax.set_ylim([0.43,0.62])
-#ax.text(50, 1, "50", fontsize=ticksize)
-ax.text(100, 0.434, "100", fontsize=ticksize-2)
-ax.text(500, 0.434, "500", fontsize=ticksize-2)
-ax.text(5000, 0.434, "5000", fontsize=ticksize-2)
-ax.text(120, 0.417, "Number of Task 10 Samples", fontsize=fontsize-2)
-
-ax.legend(loc='lower left',fontsize=legendsize, frameon=False)
-
-right_side = ax.spines["right"]
-right_side.set_visible(False)
-top_side = ax.spines["top"]
-top_side.set_visible(False)
-
 fig.legend(handles, labels_, bbox_to_anchor=(.99, .93), fontsize=legendsize+12, frameon=False)
-plt.savefig('result/figs/cifar_exp_500_recruit.pdf')
+plt.savefig('./figs/cifar_exp_500.png',dpi=500)
 
 # %%
 
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%

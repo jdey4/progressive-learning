@@ -71,7 +71,7 @@ for alg in algs:
             single_task_accuracies = np.zeros(10,dtype=float)
 
             # find multitask accuracies
-            filename = '/data/Jayanta/final_LL_res/slot_res/'+alg+str(shift+1)+'_'+str(slot)+'.pickle'
+            filename = '/Users/jayantadey/Desktop/slot_res/'+alg+str(shift+1)+'_'+str(slot)+'.pickle'
             accuracy = np.asarray(unpickle(filename))
             accuracy = accuracy[epoch_indx,:]
             for base_task in range(total_tasks):
