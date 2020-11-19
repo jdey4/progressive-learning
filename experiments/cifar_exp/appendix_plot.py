@@ -9,97 +9,111 @@
  import seaborn as sns
  import matplotlib.gridspec as gridspec
  import matplotlib
- #%%
+ 
+ 
+# %%
  def unpickle(file):
-     with open(file, 'rb') as fo:
-         dict = pickle.load(fo, encoding='bytes')
-     return dict
+    with open(file, 'rb') as fo:
+        dict = pickle.load(fo, encoding='bytes')
+    return dict
 
- def get_fte_bte(err, single_err):
-     bte = [[] for i in range(10)]
-     te = [[] for i in range(10)]
-     fte = []
+def get_fte_bte(err, single_err):
+    bte = [[] for i in range(10)]
+    te = [[] for i in range(10)]
+    fte = []
+    
+    for i in range(10):
+        for j in range(i,10):
+            #print(err[j][i],j,i)
+            bte[i].append(err[i][i]/err[j][i])
+            te[i].append(single_err[i]/err[j][i])
+                
+    for i in range(10):
+        fte.append(single_err[i]/err[i][i])
+            
+            
+    return fte,bte,te
 
-     for i in range(10):
-         for j in range(i,10):
-             #print(err[j][i],j,i)
-             bte[i].append(err[i][i]/err[j][i])
-             te[i].append(single_err[i]/err[j][i])
-
-     for i in range(10):
-         fte.append(single_err[i]/err[i][i])
-
-
-     return fte,bte,te
-
- def calc_mean_bte(btes,task_num=10,reps=6):
-     mean_bte = [[] for i in range(task_num)]
-
-
-     for j in range(task_num):
-         tmp = 0
-         for i in range(reps):
-             tmp += np.array(btes[i][j])
-
-         tmp=tmp/reps
-         mean_bte[j].extend(tmp)
-
-     return mean_bte     
-
- def calc_mean_te(tes,task_num=10,reps=6):
-     mean_te = [[] for i in range(task_num)]
-
-     for j in range(task_num):
-         tmp = 0
-         for i in range(reps):
-             tmp += np.array(tes[i][j])
-
-         tmp=tmp/reps
-         mean_te[j].extend(tmp)
-
-     return mean_te 
-
- def calc_mean_fte(ftes,task_num=10,reps=6):
-     fte = np.asarray(ftes)
-
-     return list(np.mean(np.asarray(fte),axis=0))
-
- def get_error_matrix(filename):
-     multitask_df, single_task_df = unpickle(filename)
-
-     err = [[] for _ in range(10)]
-
-     for ii in range(10):
-         err[ii].extend(
-             1 - np.array(
-                 multitask_df[multitask_df['base_task']==ii+1]['accuracy']
-                 )
-             )
-     single_err = 1 - np.array(single_task_df['accuracy'])
-
-     return single_err, err
-
- def stratified_scatter(te_dict,axis_handle,s,color):
-     algo = list(te_dict.keys())
-     total_alg = len(algo)
-
-     total_points = len(te_dict[algo[0]])
-
-     pivot_points = np.arange(-.25, (total_alg+1)*1, step=1)
-     interval = .7/(total_points-1)
-
-     for algo_no,alg in enumerate(algo):
-         for no,points in enumerate(te_dict[alg]):
-             axis_handle.scatter(
-                 pivot_points[algo_no]+interval*no,
-                 te_dict[alg][no],
-                 s=s,
-                 c='k'
-                 )
+def calc_mean_bte(btes,task_num=10,reps=6):
+    mean_bte = [[] for i in range(task_num)]
 
 
+    for j in range(task_num):
+        tmp = 0
+        for i in range(reps):
+            tmp += np.array(btes[i][j])
+        
+        tmp=tmp/reps
+        mean_bte[j].extend(tmp)
+            
+    return mean_bte     
 
- #%%
+def calc_mean_te(tes,task_num=10,reps=6):
+    mean_te = [[] for i in range(task_num)]
+
+    for j in range(task_num):
+        tmp = 0
+        for i in range(reps):
+            tmp += np.array(tes[i][j])
+        
+        tmp=tmp/reps
+        mean_te[j].extend(tmp)
+            
+    return mean_te 
+
+def calc_mean_fte(ftes,task_num=10,reps=6):
+    fte = np.asarray(ftes)
+    
+    return list(np.mean(np.asarray(fte),axis=0))
+
+def get_error_matrix(filename):
+    multitask_df, single_task_df = unpickle(filename)
+
+    err = [[] for _ in range(10)]
+
+    for ii in range(10):
+        err[ii].extend(
+            1 - np.array(
+                multitask_df[multitask_df['base_task']==ii+1]['accuracy']
+                )
+            )
+    single_err = 1 - np.array(single_task_df['accuracy'])
+
+    return single_err, err
+
+def sum_error_matrix(error_mat1, error_mat2):
+    err = [[] for _ in range(10)]
+
+    for ii in range(10):
+        err[ii].extend(
+            list(
+                np.asarray(error_mat1[ii]) +
+                np.asarray(error_mat2[ii])
+            )
+        )
+    return err
+
+def stratified_scatter(te_dict,axis_handle,s,color,style):
+    algo = list(te_dict.keys())
+    total_alg = len(algo)
+
+    total_points = len(te_dict[algo[0]])
+
+    pivot_points = np.arange(-.25, (total_alg+1)*1, step=1)
+    interval = .7/(total_points-1)
+
+    for algo_no,alg in enumerate(algo):
+        for no,points in enumerate(te_dict[alg]):
+            axis_handle.scatter(
+                pivot_points[algo_no]+interval*no,
+                te_dict[alg][no],
+                s=s,
+                c='k',
+                marker=style[algo_no]
+                )
+
+
+# %%
  ### MAIN HYPERPARAMS ###
  ntrees = 10
  slots = 10
@@ -119,33 +133,38 @@
 
  for alg in range(total_alg): 
      count = 0 
-     te_tmp = [[] for _ in range(reps)]
-     bte_tmp = [[] for _ in range(reps)]
-     fte_tmp = [[] for _ in range(reps)] 
 
      for shift in range(shifts):
-         if alg < 2:
-             filename = 'result/result/'+model_file_5000[alg]+'_'+str(shift+1)+'.pickle'
-         elif alg<4:
-             filename = 'benchmarking_algorthms_result/'+model_file_5000[alg]+'_'+str(shift+1)+'.pickle'
-         else:
-             filename = 'benchmarking_algorthms_result/'+model_file_5000[alg]+'-'+str(shift+1)+'.pickle'
+        if alg < 2:
+            filename = 'result/result/'+model_file_5000[alg]+'_'+str(shift+1)+'.pickle'
+        elif alg<4:
+            filename = 'benchmarking_algorthms_result/'+model_file_5000[alg]+'_'+str(shift+1)+'.pickle'
+        else:
+            filename = 'benchmarking_algorthms_result/'+model_file_5000[alg]+'-'+str(shift+1)+'.pickle'
 
-         multitask_df, single_task_df = unpickle(filename)
+        multitask_df, single_task_df = unpickle(filename)
 
-         single_err, err = get_error_matrix(filename)
-         fte, bte, te = get_fte_bte(err,single_err)
+        single_err_, err_ = get_error_matrix(filename)
 
-         te_tmp[count].extend(te)
-         bte_tmp[count].extend(bte)
-         fte_tmp[count].extend(fte)
-         count+=1
+            if count == 0:
+                single_err, err = single_err_, err_
+            else:
+                err = sum_error_matrix(err, err_)
+                single_err = list(
+                    np.asarray(single_err) + np.asarray(single_err_)
+                )
 
-     tes_5000[alg].extend(calc_mean_te(te_tmp,reps=reps))
-     btes_5000[alg].extend(calc_mean_bte(bte_tmp,reps=reps))
-     ftes_5000[alg].extend(calc_mean_fte(fte_tmp,reps=reps))
+            count += 1
+    #single_err /= reps
+    #err /= reps
+     fte, bte, te = get_fte_bte(err,single_err)
 
- #%%
+     tes_5000[alg].extend(te)
+     btes_5000[alg].extend(bte)
+     ftes_5000[alg].extend(fte)
+
+
+# %%
  #te_5000 = {'L2N':np.zeros(10,dtype=float), 'L2F':np.zeros(10,dtype=float), 'Prog-NN':np.zeros(10,dtype=float), 'DF-CNN':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),'EWC':np.zeros(10,dtype=float), 'Online EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float)}
 
  te_5000 = {'L2N':np.zeros(10,dtype=float), 'L2F':np.zeros(10,dtype=float), 'Prog-NN':np.zeros(10,dtype=float),
@@ -162,11 +181,13 @@
  df_5000 = pd.DataFrame.from_dict(te_5000)
  df_5000 = pd.melt(df_5000,var_name='Algorithms', value_name='Transfer Efficieny')
 
- #%%
+
+# %%
  fig = plt.figure(constrained_layout=True,figsize=(16,16))
  gs = fig.add_gridspec(16, 16)
- clr = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#ff7f00", "#ffff33", "#a65628", "#f781bf"]
+ clr = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
  c = sns.color_palette(clr, n_colors=len(clr))
+ marker_style = ['.', '.', '.', '.', '.', '+', 'o', '*', '.', '+', 'o']
 
  fontsize=24
  ticksize=20
@@ -175,14 +196,14 @@
  ax = fig.add_subplot(gs[:7,:7])
  for i, fte in enumerate(ftes_5000):
      if i == 0:
-         ax.plot(np.arange(1,11), fte, color=clr[i], marker='.', markersize=12, label=alg_name[i], linewidth=3)
+         ax.plot(np.arange(1,11), fte, color=clr[i], marker=marker_style[i], markersize=12, label=alg_name[i], linewidth=3)
          continue
 
      if i == 1:
-         ax.plot(np.arange(1,11), fte, color=clr[i], marker='.', markersize=12, label=alg_name[i], linewidth=3)
+         ax.plot(np.arange(1,11), fte, color=clr[i], marker=marker_style[i], markersize=12, label=alg_name[i], linewidth=3)
          continue
 
-     ax.plot(np.arange(1,11), fte, color=clr[i], marker='.', markersize=12, label=alg_name[i])
+     ax.plot(np.arange(1,11), fte, color=clr[i], marker=marker_style[i], markersize=12, label=alg_name[i])
 
  ax.set_xticks(np.arange(1,11))
  ax.set_yticks([0.9, 1, 1.1, 1.2, 1.3,1.4])
@@ -329,3 +350,4 @@
 
 
  plt.savefig('result/figs/benchmark_5000.pdf', dpi=500)
+# %%
