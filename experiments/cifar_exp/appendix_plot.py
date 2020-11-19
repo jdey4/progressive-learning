@@ -105,9 +105,9 @@ ntrees = 10
 slots = 10
 task_num = 10
 shifts = 6
-total_alg = 8
-alg_name = ['L2N','L2F','Prog-NN', 'DF-CNN','LwF','EWC','O-EWC','SI']
-model_file_5000 = ['dnn0','fixed_uf5000_40','Prog_NN','DF_CNN', 'LwF','EWC', 'Online_EWC', 'SI']
+total_alg = 11
+alg_name = ['L2N','L2F','Prog-NN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Replay \n (increasing amount)', 'Replay \n (fixed amount)', 'None']
+model_file_5000 = ['dnn0','uf10','Prog_NN','DF_CNN', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
 
 btes_5000 = [[] for i in range(total_alg)]
 ftes_5000 = [[] for i in range(total_alg)]
@@ -125,9 +125,11 @@ for alg in range(total_alg):
 
     for shift in range(shifts):
         if alg < 2:
-            filename = 'result/result/'+model_file_5000[alg]+'_'+str(shift+1)+'_0'+'.pickle'
-        else:
+            filename = 'result/result/'+model_file_5000[alg]+'_'+str(shift+1)+'.pickle'
+        elif alg<4:
             filename = 'benchmarking_algorthms_result/'+model_file_5000[alg]+'_'+str(shift+1)+'.pickle'
+        else:
+            filename = 'benchmarking_algorthms_result/'+model_file_5000[alg]+'-'+str(shift+1)+'.pickle'
 
         multitask_df, single_task_df = unpickle(filename)
 
@@ -144,10 +146,17 @@ for alg in range(total_alg):
     ftes_5000[alg].extend(calc_mean_fte(fte_tmp,reps=reps))
 
 #%%
-te_5000 = {'L2N':np.zeros(10,dtype=float), 'L2F':np.zeros(10,dtype=float), 'Prog-NN':np.zeros(10,dtype=float), 'DF-CNN':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),'EWC':np.zeros(10,dtype=float), 'Online EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float)}
+#te_5000 = {'L2N':np.zeros(10,dtype=float), 'L2F':np.zeros(10,dtype=float), 'Prog-NN':np.zeros(10,dtype=float), 'DF-CNN':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),'EWC':np.zeros(10,dtype=float), 'Online EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float)}
+
+te_5000 = {'L2N':np.zeros(10,dtype=float), 'L2F':np.zeros(10,dtype=float), 'Prog-NN':np.zeros(10,dtype=float),
+        'DF-CNN':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float), 'EWC':np.zeros(10,dtype=float),
+        'O-EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float),
+        'Replay (increasing amount)':np.zeros(10,dtype=float), 'Replay (fixed amount)':np.zeros(10,dtype=float), 'None':np.zeros(10,dtype=float)}
+
 
 for count,name in enumerate(te_5000.keys()):
     for i in range(10):
+        #print(name)
         te_5000[name][i] = tes_5000[count][i][9-i]
 
 df_5000 = pd.DataFrame.from_dict(te_5000)
