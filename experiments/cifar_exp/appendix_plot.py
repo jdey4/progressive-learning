@@ -132,19 +132,23 @@ def stratified_scatter(te_dict,axis_handle,s,color,style):
  reps = shifts
 
  for alg in range(total_alg): 
-     count = 0 
+    count = 0 
+    bte_tmp = [[] for _ in range(reps)]
+    fte_tmp = [[] for _ in range(reps)] 
+    te_tmp = [[] for _ in range(reps)]
 
-     for shift in range(shifts):
-        if alg < 2:
-            filename = 'result/result/'+model_file_5000[alg]+'_'+str(shift+1)+'.pickle'
-        elif alg<4:
-            filename = 'benchmarking_algorthms_result/'+model_file_5000[alg]+'_'+str(shift+1)+'.pickle'
-        else:
-            filename = 'benchmarking_algorthms_result/'+model_file_5000[alg]+'-'+str(shift+1)+'.pickle'
+    for slot in range(slots):
+        for shift in range(shifts):
+            if alg < 2:
+                filename = 'result/result/'+model_file_5000[alg]+'_'+str(shift+1)+'.pickle'
+            elif alg<4:
+                filename = 'benchmarking_algorthms_result/'+model_file_5000[alg]+'_'+str(shift+1)+'.pickle'
+            else:
+                filename = 'benchmarking_algorthms_result/'+model_file_5000[alg]+'-'+str(shift+1)+'.pickle'
 
-        multitask_df, single_task_df = unpickle(filename)
+            multitask_df, single_task_df = unpickle(filename)
 
-        single_err_, err_ = get_error_matrix(filename)
+            single_err_, err_ = get_error_matrix(filename)
 
             if count == 0:
                 single_err, err = single_err_, err_
@@ -157,12 +161,11 @@ def stratified_scatter(te_dict,axis_handle,s,color,style):
             count += 1
     #single_err /= reps
     #err /= reps
-     fte, bte, te = get_fte_bte(err,single_err)
-
-     tes_5000[alg].extend(te)
-     btes_5000[alg].extend(bte)
-     ftes_5000[alg].extend(fte)
-
+    fte, bte, te = get_fte_bte(err,single_err)
+    
+    btes_5000[alg].extend(bte)
+    ftes_5000[alg].extend(fte)
+    tes_5000[alg].extend(te)
 
 # %%
  #te_5000 = {'L2N':np.zeros(10,dtype=float), 'L2F':np.zeros(10,dtype=float), 'Prog-NN':np.zeros(10,dtype=float), 'DF-CNN':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),'EWC':np.zeros(10,dtype=float), 'Online EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float)}
@@ -206,8 +209,8 @@ def stratified_scatter(te_dict,axis_handle,s,color,style):
      ax.plot(np.arange(1,11), fte, color=clr[i], marker=marker_style[i], markersize=12, label=alg_name[i])
 
  ax.set_xticks(np.arange(1,11))
- ax.set_yticks([0.9, 1, 1.1, 1.2, 1.3,1.4])
- ax.set_ylim(0.9, 1.37)
+ ax.set_yticks([0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3,1.4])
+ ax.set_ylim(0.7, 1.37)
  ax.tick_params(labelsize=ticksize)
  # ax[0].legend(algos, loc='upper left', fontsize=14)
  # ax[0].legend(algos, bbox_to_anchor=(1.2, -.2), loc=2, borderaxespad=0)
@@ -237,19 +240,19 @@ def stratified_scatter(te_dict,axis_handle,s,color,style):
      for j in range(0,total_alg):
          if j == 0:
              if i == 0:
-                 ax.plot(ns, et[j,:], marker='.', markersize=8, label = alg_name[j], color=clr[j], linewidth = 3)
+                 ax.plot(ns, et[j,:], marker=marker_style[j], markersize=8, label = alg_name[j], color=clr[j], linewidth = 3)
              else:
-                 ax.plot(ns, et[j,:], marker='.', markersize=8, color=clr[j], linewidth = 3)
+                 ax.plot(ns, et[j,:], marker=marker_style[j], markersize=8, color=clr[j], linewidth = 3)
          elif j == 1:
              if i == 0:
-                 ax.plot(ns, et[j,:], marker='.', markersize=8, label = alg_name[j], color=clr[j], linewidth = 3)
+                 ax.plot(ns, et[j,:], marker=marker_style[j], markersize=8, label = alg_name[j], color=clr[j], linewidth = 3)
              else:
-                 ax.plot(ns, et[j,:], marker='.', markersize=8, color=clr[j], linewidth = 3)
+                 ax.plot(ns, et[j,:], marker=marker_style[j], markersize=8, color=clr[j], linewidth = 3)
          else:
              if i == 0:
-                 ax.plot(ns, et[j,:], marker='.', markersize=8, label = alg_name[j], color=clr[j])
+                 ax.plot(ns, et[j,:], marker=marker_style[j], markersize=8, label = alg_name[j], color=clr[j])
              else:
-                 ax.plot(ns, et[j,:], marker='.', markersize=8, color=clr[j])
+                 ax.plot(ns, et[j,:], marker=marker_style[j], markersize=8, color=clr[j])
 
 
  # ax[1].set_title(ttle, fontsize=20)
@@ -263,7 +266,7 @@ def stratified_scatter(te_dict,axis_handle,s,color,style):
  #ax[0][1].legend(loc='center left', bbox_to_anchor=(1,0.5), fontsize=22)
  ax.set_yticks([.4,.6,.8,.9,1, 1.1,1.2])
  ax.set_xticks(np.arange(1,11))
- ax.set_ylim(0.85, 1.19)
+ ax.set_ylim(0.85, 1.25)
  ax.tick_params(labelsize=ticksize)
  #ax[0][1].grid(axis='x')
 
@@ -278,7 +281,7 @@ def stratified_scatter(te_dict,axis_handle,s,color,style):
  ax = fig.add_subplot(gs[8:,:7])
  ax.tick_params(labelsize=22)
  #ax_ = sns.stripplot(x="Algorithms", y="Transfer Efficieny", data=df, palette=c, size=6, ax=ax[1][1])
- ax.hlines(1, -1,8, colors='grey', linestyles='dashed',linewidth=1.5)
+ ax.hlines(1, -1,10, colors='grey', linestyles='dashed',linewidth=1.5)
  #sns.boxplot(x="Algorithms", y="Transfer Efficieny", data=mean_df, palette=c, linewidth=3, ax=ax[1][1])
  #ax_=sns.pointplot(x="Algorithms", y="Transfer Efficieny", data=df_5000, join=False, color='grey', linewidth=1.5, ci='sd',ax=ax)
  #ax_.set_yticks([.4,.6,.8,1, 1.2,1.4])
@@ -289,12 +292,11 @@ def stratified_scatter(te_dict,axis_handle,s,color,style):
  ax_.set_xlabel('', fontsize=fontsize)
  ax.set_ylabel('Transfer Efficiency after 10 Tasks', fontsize=fontsize)
  ax_.set_xticklabels(
-     ['L2N','L2F','Prog-NN','DF-CNN','LwF','EWC','O-EWC','SI'],
-     fontsize=20,rotation=45,ha="right",rotation_mode='anchor'
-     )
+    ['L2N','L2F','Prog-NN','DF-CNN','LwF','EWC','O-EWC','SI','Replay \n (increasing amount)','Replay \n (fixed amount)', 'None'],
+    fontsize=12,rotation=45,ha="right",rotation_mode='anchor'
+    )
 
- stratified_scatter(te_5000,ax,16,c)
-
+ stratified_scatter(te_5000,ax,16,c,marker_style)
 
  right_side = ax.spines["right"]
  right_side.set_visible(False)
