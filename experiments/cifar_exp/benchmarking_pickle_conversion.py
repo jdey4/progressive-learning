@@ -55,10 +55,11 @@ for alg in algs:
             with open(file_to_save, 'wb') as f:
                 pickle.dump(summary, f)
 #%% code for Prog-NN, DF-CNN
-algs = ["Prog_NN", "DF_CNN"]
+algs = ["DF_CNN"]
 shift_fold = 6
+slot_fold = 10
 total_tasks = 10
-epoch_indx = list(range(100,1100,100))
+epoch_indx = list(range(100,2100,200))
 
 for alg in algs:
     for shift in range(shift_fold):
@@ -71,7 +72,7 @@ for alg in algs:
             single_task_accuracies = np.zeros(10,dtype=float)
 
             # find multitask accuracies
-            filename = '/Users/jayantadey/Desktop/slot_res/'+alg+str(shift+1)+'_'+str(slot)+'.pickle'
+            filename = '/Users/jayantadey/Desktop/multitask/'+alg+str(shift+1)+'_'+str(slot)+'.pickle'
             accuracy = np.asarray(unpickle(filename))
             accuracy = accuracy[epoch_indx,:]
             for base_task in range(total_tasks):
@@ -88,7 +89,7 @@ for alg in algs:
 
             #find single task accuracies
             for task in range(total_tasks):
-                filename = '/data/Jayanta/final_LL_res/slot_single_task_res/'+alg+str(shift+1)+'_'+str(slot)+'_'+str(task+1)+'.pickle'
+                filename = '/Users/jayantadey/Desktop/single_task/'+alg+str(shift+1)+'_'+str(slot)+'_'+str(task+1)+'.pickle'
                 single_task_accuracies[task] = unpickle(filename)[99][0]
 
             df_single_task = pd.DataFrame()
