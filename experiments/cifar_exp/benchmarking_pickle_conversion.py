@@ -59,7 +59,8 @@ algs = ["DF_CNN"]
 shift_fold = 6
 slot_fold = 10
 total_tasks = 10
-epoch_indx = list(range(100,2100,200))
+interval = 200
+epoch_indx = list(range(100,2100,interval))
 
 for alg in algs:
     for shift in range(shift_fold):
@@ -90,7 +91,7 @@ for alg in algs:
             #find single task accuracies
             for task in range(total_tasks):
                 filename = '/Users/jayantadey/Desktop/single_task/'+alg+str(shift+1)+'_'+str(slot)+'_'+str(task+1)+'.pickle'
-                single_task_accuracies[task] = unpickle(filename)[99][0]
+                single_task_accuracies[task] = unpickle(filename)[interval-1][0]
 
             df_single_task = pd.DataFrame()
             df_single_task['task'] = range(1, 11)
