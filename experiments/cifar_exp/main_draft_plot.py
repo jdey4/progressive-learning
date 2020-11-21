@@ -121,8 +121,8 @@ total_alg_bottom = 8
 alg_name_top = ['L2N','L2F','Prog-NN', 'DF-CNN']
 alg_name_bottom = ['L2F','LwF','EWC','O-EWC','SI', 'Replay \n (increasing amount)', 'Replay \n (fixed amount)', 'None']
 combined_alg_name = ['L2N','L2F','Prog-NN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Replay \n (increasing amount)', 'Replay \n (fixed amount)', 'None']
-model_file_top = ['dnn0','fixed_uf10','Prog_NN','DF_CNN']
-model_file_bottom = ['uf10', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
+model_file_top = ['dnn0withrep','fixed_uf10withrep','Prog_NN','DF_CNN']
+model_file_bottom = ['uf10withrep', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
 btes_top = [[] for i in range(total_alg_top)]
 ftes_top = [[] for i in range(total_alg_top)]
 tes_top = [[] for i in range(total_alg_top)]
@@ -131,7 +131,7 @@ ftes_bottom = [[] for i in range(total_alg_bottom)]
 tes_bottom = [[] for i in range(total_alg_bottom)]
 
 #combined_alg_name = ['L2N','L2F','Prog-NN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Replay (increasing amount)', 'Replay (fixed amount)', 'None']
-model_file_combined = ['dnn0','fixed_uf10','Prog_NN','DF_CNN', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
+model_file_combined = ['dnn0withrep','fixed_uf10withrep','Prog_NN','DF_CNN', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
 
 ########################
 
@@ -484,6 +484,6 @@ top_side = ax.spines["top"]
 top_side.set_visible(False)
 
 fig.legend(handles, labels_, bbox_to_anchor=(.99, .93), fontsize=legendsize+12, frameon=False)
-plt.savefig('result/figs/cifar_exp_500_recruit.pdf')
+plt.savefig('result/figs/cifar_exp_500_recruit_with_rep.pdf')
 
 # %%
