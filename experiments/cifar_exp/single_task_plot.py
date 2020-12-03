@@ -91,26 +91,6 @@ def sum_error_matrix(error_mat1, error_mat2):
         )
     return err
 
-def stratified_scatter(te_dict,axis_handle,s,color,style):
-    algo = list(te_dict.keys())
-    total_alg = len(algo)
-
-    total_points = len(te_dict[algo[0]])
-
-    pivot_points = np.arange(-.25, (total_alg+1)*1, step=1)
-    interval = .7/(total_points-1)
-
-    for algo_no,alg in enumerate(algo):
-        for no,points in enumerate(te_dict[alg]):
-            axis_handle.scatter(
-                pivot_points[algo_no]+interval*no,
-                te_dict[alg][no],
-                s=s,
-                c='k',
-                marker=style[algo_no]
-                )
-
-#%%
 #%%
 ### MAIN HYPERPARAMS ###
 ntrees = 10
@@ -136,14 +116,39 @@ single_task = {
 count = 0
 for slot in range(slots):
     for shift in range(shifts):
-            filename = './result/result/uf10withrep'+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
-            _, single_task_df = unpickle(filename)
+            filename1 = './result/result/uf10withrep'+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
+            filename2 = './result/result/uf10'+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
+            _, single_task_df1 = unpickle(filename1)
+            _, single_task_df2 = unpickle(filename2)
             
             for ii in range(10):
                 key = 'task'+str(ii+1)
-                single_task[key][count] = single_task_df['accuracy'][ii]
+                single_task[key][count] = single_task_df2['accuracy'][ii] - single_task_df1['accuracy'][ii]
             
             count += 1
+
+single_task_data = pd.DataFrame.from_dict(single_task)
+single_task_data = pd.melt(single_task_data,var_name='Tasks', value_name='Accuracy')
+
+
 # %%
-fig = plt.figure(figsize=(8,8))
+fig, ax = plt.subplots(ncols=1, figsize=(8,8))
 sns.set_context("talk")
+
+marker_style = ['.', '.', '.', '.', '.', '+', 'o', '*', '.', '+']
+clr = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928"]
+c = sns.color_palette(clr, n_colors=10)
+
+sns.stripplot(
+    x="Tasks", y="Accuracy", data=single_task_data, palette=c, ax=ax
+    )
+ax.set_xticklabels(
+    ['T1','T2','T3','T4','T5','T6','T7','T8','T9','T10'],
+    fontsize=12,rotation=45,ha="right",rotation_mode='anchor'
+    )
+ax.set_title('without repacement - with replacement')
+ax.hlines(0, 0,9, colors='grey', linestyles='dashed',linewidth=1.5)
+
+plt.savefig('result/figs/single_task_accuracy.pdf')
+
+# %%
