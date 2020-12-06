@@ -64,17 +64,6 @@ def calc_mean_fte(ftes,task_num=10,reps=6):
     
     return list(np.mean(np.asarray(fte),axis=0))
 
-'''def get_error_matrix_(filename):
-    multitask_df = unpickle(filename)[0]
-    #print(np.array(multitask_df[multitask_df['base_task']==3]['accuracy']))
-    err = []
-
-    for ii in range(10):
-        tmp = np.array(multitask_df[multitask_df['base_task']==ii+1]['accuracy'])[0]
-        err.append(tmp)
-
-    return err'''
-
 
 def get_error_matrix(filename):
     multitask_df = unpickle(filename)
@@ -92,9 +81,9 @@ total_alg = 11
 slots = 10
 shifts = 6
 
-#%%
+#%% claculate TE for label shuffle
 reps = slots*shifts
-tes = [[] for i in range(total_alg)]
+tes_label_shuffle = [[] for i in range(total_alg)]
 
 for alg in range(total_alg): 
     err_ = np.zeros(10,dtype=float)
@@ -108,22 +97,28 @@ for alg in range(total_alg):
             else:
                 filename = './label_shuffle_result/'+model_file[alg]+'-'+str(slot+1)+'-'+str(shift+1)+'.pickle'
 
-            #multitask_df = unpickle(filename)[0]
-            print(filename)
             err_ += np.ravel(np.array(get_error_matrix(filename)))
     
     err_ /= reps
     te = err_[0] / err_
-    tes[alg].extend(te)
-    #single_err /= reps
-    #err /= reps
-    #fte, bte, te = get_fte_bte(err,single_err)
-    
-    #btes_top[alg].extend(bte)
-    #ftes_top[alg].extend(fte)
-    #tes_top[alg].extend(te)
+    tes_label_shuffle[alg].extend(te)
 
+#%% calculate TE for rotation experiment
+alg_name = ['PLN','PLF','LwF','EWC','O-EWC','SI', 'Replay \n (increasing amount)', 'Replay \n (fixed amount)', 'None']
+model_file = ['dnn','uf', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
+total_alg = 9
+angles = range(0,184,4)
+tes_angle = [[] for i in range(total_alg)]
 
+for alg in range(total_alg): 
+    for angle in angles:
+        if alg < 2:
+            filename = '../rotation_cifar/results/'+model_file[alg]+'-'+str(angle)+'.pickle'
+        else:
+            filename = '../rotation_cifar/benchmarking_algorthms_result/'+model_file[alg]+'-'+str(angle)+'.pickle'
+
+        err = unpickle(filename)
+        tes_angle[alg].extend([err[0]/err[1]])
 # %%
 fontsize=20
 ticksize=18
@@ -135,9 +130,9 @@ marker_style = ['.', '.', '.', '.', '.', '+', 'o', '*', '.', '+', 'o']
 
 for alg_no,alg in enumerate(alg_name):
     if alg_no<2:
-        ax[0].plot(np.arange(1,11),tes[alg_no], c=c[alg_no], label=alg_name[alg_no], linewidth=3, marker=marker_style[alg_no])
+        ax[0].plot(np.arange(1,11),tes_label_shuffle[alg_no], c=c[alg_no], label=alg_name[alg_no], linewidth=3, marker=marker_style[alg_no])
     else:
-        ax[0].plot(np.arange(1,11),tes[alg_no], c=c[alg_no], label=alg_name[alg_no], marker=marker_style[alg_no])
+        ax[0].plot(np.arange(1,11),tes_label_shuffle[alg_no], c=c[alg_no], label=alg_name[alg_no], marker=marker_style[alg_no])
 
 ax[0].set_yticks([.8,.9,1,1.1,1.2])
 #ax[0].set_ylim([0.91,1.17])
@@ -155,17 +150,16 @@ plt.tight_layout()
 
 
 
-tes = unpickle('rotation_result/res.pickle')
-angles = np.arange(0,180,2)
-alg_name = ['L2N','L2F','LwF','EWC','Online_EWC','SI']
-clr = ["#377eb8", "#e41a1c", "#ff7f00","#ffff33", "#a65628", "#f781bf"]
+angles = np.arange(0,184,4)
+alg_name = ['PLN','PLF','LwF','EWC','O-EWC','SI', 'Replay \n (increasing amount)', 'Replay \n (fixed amount)', 'None']
+clr = ["#377eb8", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
 c = sns.color_palette(clr, n_colors=len(clr))
 
 for alg_no,alg in enumerate(alg_name):
     if alg_no<2:
-        ax[1].plot(angles,tes[alg_no], c=c[alg_no], label=alg_name[alg_no], linewidth=3)
+        ax[1].plot(angles,tes_angle[alg_no], c=c[alg_no], label=alg_name[alg_no], linewidth=3)
     else:
-        ax[1].plot(angles,tes[alg_no], c=c[alg_no], label=alg_name[alg_no])
+        ax[1].plot(angles,tes_angle[alg_no], c=c[alg_no], label=alg_name[alg_no])
 
 ax[1].set_yticks([.9,.95, 1, 1.05,1.1])
 ax[1].set_ylim([0.85,1.13])
