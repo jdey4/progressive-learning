@@ -154,15 +154,16 @@ angles = np.arange(0,184,4)
 alg_name = ['PLN','PLF','LwF','EWC','O-EWC','SI', 'Replay \n (increasing amount)', 'Replay \n (fixed amount)', 'None']
 clr = ["#377eb8", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
 c = sns.color_palette(clr, n_colors=len(clr))
+marker_style = ['.', '.', '.', '+', 'o', '*', '.', '+', 'o']
 
 for alg_no,alg in enumerate(alg_name):
     if alg_no<2:
-        ax[1].plot(angles,tes_angle[alg_no], c=c[alg_no], label=alg_name[alg_no], linewidth=3)
+        ax[1].plot(angles,tes_angle[alg_no], c=c[alg_no], label=alg_name[alg_no], linewidth=3, marker=marker_style[alg_no])
     else:
-        ax[1].plot(angles,tes_angle[alg_no], c=c[alg_no], label=alg_name[alg_no])
+        ax[1].plot(angles,tes_angle[alg_no], c=c[alg_no], label=alg_name[alg_no], marker=marker_style[alg_no])
 
-ax[1].set_yticks([.9,.95, 1, 1.05,1.1])
-ax[1].set_ylim([0.85,1.13])
+#ax[1].set_yticks([.9,.95, 1, 1.05,1.1])
+#ax[1].set_ylim([0.85,1.13])
 ax[1].set_xticks([0,30,60,90,120,150,180])
 ax[1].hlines(1,0,180, colors='grey', linestyles='dashed',linewidth=1.5)
 ax[1].tick_params(labelsize=ticksize)
@@ -174,57 +175,6 @@ right_side.set_visible(False)
 top_side = ax[1].spines["top"]
 top_side.set_visible(False)
 plt.tight_layout()
-
-
-
-'''mean_error = unpickle('recruitment_result/recruitment_mean.pickle')
-std_error = unpickle('recruitment_result/recruitment_std.pickle')
-ns = 10*np.array([50, 100, 200, 350, 500])
-colors = sns.color_palette('Set1', n_colors=mean_error.shape[0]+2)
-
-#labels = ['recruiting', 'Uncertainty Forest', 'hybrid', '50 Random', 'BF', 'building']
-labels = ['hybrid', 'building', 'recruiting','50 Random', 'BF', 'Uncertainty Forest' ]
-not_included = ['BF', '50 Random']
-    
-adjust = 0
-for i, error_ in enumerate(mean_error[:-1]):
-    if labels[i] in not_included:
-        adjust +=1
-        continue
-    ax[1][1].plot(ns, mean_error[i], c=colors[i+1-adjust], label=labels[i])
-    ax[1][1].fill_between(ns, 
-            mean_error[i] + 1.96*std_error[i], 
-            mean_error[i] - 1.96*std_error[i], 
-            where=mean_error[i] + 1.96*std_error[i] >= mean_error[i] - 1.96*std_error[i], 
-            facecolor=colors[i+1-adjust], 
-            alpha=0.15,
-            interpolate=False)
-
-ax[1][1].plot(ns, mean_error[-1], c=colors[0], label=labels[-1])
-ax[1][1].fill_between(ns, 
-        mean_error[-1] + 1.96*std_error[-1], 
-        mean_error[-1] - 1.96*std_error[-1], 
-        where=mean_error[-1] + 1.96*std_error[i] >= mean_error[-1] - 1.96*std_error[-1], 
-        facecolor=colors[0], 
-        alpha=0.15,
-        interpolate=False)
-
-
-#ax.set_title('CIFAR Recruitment Experiment', fontsize=30)
-ax[1][1].set_ylabel('Accuracy', fontsize=fontsize)
-ax[1][1].set_xlabel('Number of Task 10 Samples', fontsize=fontsize)
-ax[1][1].tick_params(labelsize=ticksize)
-ax[1][1].set_ylim(0.325, 0.575)
-ax[1][1].set_title("CIFAR Recruitment",fontsize=fontsize)
-ax[1][1].set_xticks([500, 2000, 5000])
-ax[1][1].set_yticks([0.35, 0.45, 0.55])
-
-ax[1][1].legend(fontsize=12)
-
-right_side = ax[1][1].spines["right"]
-right_side.set_visible(False)
-top_side = ax[1][1].spines["top"]
-top_side.set_visible(False)'''
 
 plt.savefig('figs/adversary.pdf', dpi=500)
 
