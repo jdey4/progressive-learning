@@ -118,9 +118,9 @@ task_num = 10
 shifts = 6
 total_alg_top = 4
 total_alg_bottom = 8
-alg_name_top = ['L2N','L2F','Prog-NN', 'DF-CNN']
+alg_name_top = ['PLN','PLF','Prog-NN', 'DF-CNN']
 alg_name_bottom = ['L2F','LwF','EWC','O-EWC','SI', 'Replay \n (increasing amount)', 'Replay \n (fixed amount)', 'None']
-combined_alg_name = ['L2N','L2F','Prog-NN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Replay \n (increasing amount)', 'Replay \n (fixed amount)', 'None']
+combined_alg_name = ['PLN','PLF','Prog-NN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Replay \n (increasing amount)', 'Replay \n (fixed amount)', 'None']
 model_file_top = ['dnn0withrep','fixed_uf10withrep','Prog_NN','DF_CNN']
 model_file_bottom = ['uf10withrep', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
 btes_top = [[] for i in range(total_alg_top)]
@@ -212,7 +212,7 @@ for alg in range(total_alg_bottom):
     tes_bottom[alg].extend(te)
 
 #%%
-te_500 = {'L2N':np.zeros(10,dtype=float), 'L2F':np.zeros(10,dtype=float), 'Prog-NN':np.zeros(10,dtype=float),
+te_500 = {'PLN':np.zeros(10,dtype=float), 'PLF':np.zeros(10,dtype=float), 'Prog-NN':np.zeros(10,dtype=float),
         'DF-CNN':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float), 'EWC':np.zeros(10,dtype=float),
         'O-EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float),
         'Replay (increasing amount)':np.zeros(10,dtype=float), 'Replay (fixed amount)':np.zeros(10,dtype=float), 'None':np.zeros(10,dtype=float)}
@@ -372,8 +372,8 @@ for i, fte in enumerate(ftes_bottom):
     ax.plot(np.arange(1,11), fte, color=c_bottom[i], marker=marker_style_bottom[i], markersize=12)
     
 ax.set_xticks(np.arange(1,11))
-ax.set_yticks([0.85, 1, 1.15])
-ax.set_ylim(0.8, 1.19)
+ax.set_yticks([0.85, 1, 1.05])
+ax.set_ylim(0.8, 1.05)
 ax.tick_params(labelsize=ticksize)
 
 ax.set_ylabel('Resource Constrained FTE', fontsize=fontsize)
