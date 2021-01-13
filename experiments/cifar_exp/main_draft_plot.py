@@ -119,8 +119,8 @@ shifts = 6
 total_alg_top = 4
 total_alg_bottom = 8
 alg_name_top = ['PLN','PLF','Prog-NN', 'DF-CNN']
-alg_name_bottom = ['L2F','LwF','EWC','O-EWC','SI', 'Replay \n (increasing amount)', 'Replay \n (fixed amount)', 'None']
-combined_alg_name = ['PLN','PLF','Prog-NN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Replay \n (increasing amount)', 'Replay \n (fixed amount)', 'None']
+alg_name_bottom = ['PLF','LwF','EWC','O-EWC','SI', 'Replay \n (increasing)', 'Replay \n (fixed)', 'None']
+combined_alg_name = ['PLN','PLF','Prog-NN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Replay \n (increasing)', 'Replay \n (fixed)', 'None']
 model_file_top = ['dnn0withrep','fixed_uf10withrep','Prog_NN','DF_CNN']
 model_file_bottom = ['uf10withrep', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
 btes_top = [[] for i in range(total_alg_top)]
@@ -212,17 +212,21 @@ for alg in range(total_alg_bottom):
     tes_bottom[alg].extend(te)
 
 #%%
-te_500 = {'PLN':np.zeros(10,dtype=float), 'PLF':np.zeros(10,dtype=float), 'Prog-NN':np.zeros(10,dtype=float),
-        'DF-CNN':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float), 'EWC':np.zeros(10,dtype=float),
-        'O-EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float),
-        'Replay (increasing amount)':np.zeros(10,dtype=float), 'Replay (fixed amount)':np.zeros(10,dtype=float), 'None':np.zeros(10,dtype=float)}
+te_500 = {'PLN':np.zeros(10,dtype=float), 'PLF':np.zeros(10,dtype=float), 'PLF (constrained)':np.zeros(10,dtype=float), 
+          'Prog-NN':np.zeros(10,dtype=float), 'DF-CNN':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
+          'EWC':np.zeros(10,dtype=float), 'O-EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float),
+          'Replay (increasing)':np.zeros(10,dtype=float), 'Replay (fixed)':np.zeros(10,dtype=float), 'None':np.zeros(10,dtype=float)}
 
 for count,name in enumerate(te_500.keys()):
     for i in range(10):
-        if count <4:
+        if count == 2:
+            te_500[name][i] = tes_bottom[count-2][i][9-i]
+        elif count <2:
             te_500[name][i] = tes_top[count][i][9-i]
-        elif count>3:
-            te_500[name][i] = tes_bottom[count-3][i][9-i]
+        elif count <5:
+            te_500[name][i] = tes_top[count-1][i][9-i]
+        elif count>4:
+            te_500[name][i] = tes_bottom[count-5][i][9-i]
 
 
 df_500 = pd.DataFrame.from_dict(te_500)
@@ -241,9 +245,14 @@ c_bottom = sns.color_palette(clr_bottom, n_colors=len(clr_bottom))
 marker_style_top = ['.', '.', '.', '.']
 marker_style_bottom = ['.', '.', '+', 'o', '*', '.', '+', 'o']
 marker_style = ['.', '.', '.', '.', '.', '+', 'o', '*', '.', '+', 'o']
+marker_style_scatter = ['.', '.', '.', '.', '.', '.', '+', 'o', '*', '.', '+', 'o']
+
 
 clr_combined = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
 c_combined = sns.color_palette(clr_combined, n_colors=total_alg_top+total_alg_bottom)
+
+clr_combined_ = ["#377eb8", "#e41a1c", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
+c_combined_ = sns.color_palette(clr_combined_, n_colors=total_alg_top+total_alg_bottom+1)
 
 fontsize=25
 ticksize=22
@@ -335,7 +344,7 @@ handles, labels_ = ax.get_legend_handles_labels()
 ax = fig.add_subplot(gs[:7,16:23])
 ax.tick_params(labelsize=22)
 ax_ = sns.boxplot(
-    x="Algorithms", y="Transfer Efficieny", data=df_500, palette=c_combined, whis=np.inf,
+    x="Algorithms", y="Transfer Efficieny", data=df_500, palette=c_combined_, whis=np.inf,
     ax=ax, showfliers=False, notch=1
     )
 ax.hlines(1, -1,11, colors='grey', linestyles='dashed',linewidth=1.5)
@@ -345,11 +354,11 @@ ax.hlines(1, -1,11, colors='grey', linestyles='dashed',linewidth=1.5)
 ax_.set_xlabel('', fontsize=fontsize)
 ax.set_ylabel('Transfer Efficiency after 10 Tasks', fontsize=fontsize-5)
 ax_.set_xticklabels(
-    ['L2N','L2F','Prog-NN','DF-CNN','LwF','EWC','O-EWC','SI','Replay \n (increasing amount)','Replay \n (fixed amount)', 'None'],
+    ['PLN','PLF', 'PLF\n (constrained)', 'Prog-NN','DF-CNN','LwF','EWC','O-EWC','SI','Replay \n (increasing)','Replay \n (fixed)', 'None'],
     fontsize=12,rotation=45,ha="right",rotation_mode='anchor'
     )
 
-stratified_scatter(te_500,ax,16,c_combined,marker_style)
+stratified_scatter(te_500,ax,16,c_combined_,marker_style_scatter)
 
 right_side = ax.spines["right"]
 right_side.set_visible(False)
