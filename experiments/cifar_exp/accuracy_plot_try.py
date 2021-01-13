@@ -91,14 +91,14 @@ def sum_error_matrix(error_mat1, error_mat2):
         )
     return err
 
-def error_mean_over_task(err, reps):
+def accuracy_mean_over_task(err, reps):
     acc = np.zeros(10,dtype=float)
 
     for ii, err_ in enumerate(err):
         acc[ii] = 1 - np.mean(err_)/reps
 
     return acc
-    
+
 def stratified_scatter(te_dict,axis_handle,s,color,style):
     algo = list(te_dict.keys())
     total_alg = len(algo)
@@ -131,12 +131,11 @@ model_file = ['dnn0withrep','fixed_uf10withrep','Prog_NN','DF_CNN', 'LwF', 'EWC'
 
 #%% code for 500 samples
 reps = slots*shifts
+acc = [[] for _ in range(total_alg)]
+acc_all = [[] for _ in range(total_alg)]
 
 for alg in range(total_alg): 
     count = 0 
-    bte_tmp = [[] for _ in range(reps)]
-    fte_tmp = [[] for _ in range(reps)] 
-    te_tmp = [[] for _ in range(reps)]
 
     for slot in range(slots):
         for shift in range(shifts):
@@ -160,115 +159,52 @@ for alg in range(total_alg):
                 )
 
             count += 1
-    #single_err /= reps
-
-# %%
-reps = slots*shifts
-
-for alg in range(total_alg_bottom): 
-    count = 0 
-    bte_tmp = [[] for _ in range(reps)]
-    fte_tmp = [[] for _ in range(reps)] 
-    te_tmp = [[] for _ in range(reps)]
-
-    for slot in range(slots):
-        for shift in range(shifts):
-            if alg < 1:
-                filename = './result/result/'+model_file_bottom[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
-            else:
-                filename = './benchmarking_algorthms_result/'+model_file_bottom[alg]+'-'+str(slot+1)+'-'+str(shift+1)+'.pickle'
-
-            multitask_df, single_task_df = unpickle(filename)
-
-            single_err_, err_ = get_error_matrix(filename)
-
-            if count == 0:
-                single_err, err = single_err_, err_
-            else:
-                err = sum_error_matrix(err, err_)
-                single_err = list(
-                    np.asarray(single_err) + np.asarray(single_err_)
-                )
-
-            count += 1
-    #single_err /= reps
-    #err /= reps
-    fte, bte, te = get_fte_bte(err,single_err)
-    
-    btes_bottom[alg].extend(bte)
-    ftes_bottom[alg].extend(fte)
-    tes_bottom[alg].extend(te)
-
-#%%
-te_500 = {'PLN':np.zeros(10,dtype=float), 'PLF':np.zeros(10,dtype=float), 'PLF (constrained)':np.zeros(10,dtype=float), 
-          'Prog-NN':np.zeros(10,dtype=float), 'DF-CNN':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
-          'EWC':np.zeros(10,dtype=float), 'O-EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float),
-          'Full replay':np.zeros(10,dtype=float), 'Replay (fixed)':np.zeros(10,dtype=float), 'None':np.zeros(10,dtype=float)}
-
-for count,name in enumerate(te_500.keys()):
-    for i in range(10):
-        if count == 2:
-            te_500[name][i] = tes_bottom[count-2][i][9-i]
-        elif count <2:
-            te_500[name][i] = tes_top[count][i][9-i]
-        elif count <5:
-            te_500[name][i] = tes_top[count-1][i][9-i]
-        elif count>4:
-            te_500[name][i] = tes_bottom[count-5][i][9-i]
-
-
-df_500 = pd.DataFrame.from_dict(te_500)
-df_500 = pd.melt(df_500,var_name='Algorithms', value_name='Transfer Efficieny')
+    acc_all[alg].extend(err)
+    acc[alg].extend(accuracy_mean_over_task(err, reps))
 
 # %%
 fig, ax = plt.subplots(1,1, figsize=(8,8))
-
-clr_top = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3"]
-c_top = sns.color_palette(clr_top, n_colors=len(clr_top))
-
-clr_bottom = ["#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
-c_bottom = sns.color_palette(clr_bottom, n_colors=len(clr_bottom))
-
-marker_style_top = ['.', '.', '.', '.']
-marker_style_bottom = ['.', '.', '+', 'o', '*', '.', '+', 'o']
+sns.set_context('talk')
 marker_style = ['.', '.', '.', '.', '.', '+', 'o', '*', '.', '+', 'o']
-marker_style_scatter = ['.', '.', '.', '.', '.', '.', '+', 'o', '*', '.', '+', 'o']
-
-
-clr_combined = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
-c_combined = sns.color_palette(clr_combined, n_colors=total_alg_top+total_alg_bottom)
-
-clr_combined_ = ["#377eb8", "#e41a1c", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
-c_combined_ = sns.color_palette(clr_combined_, n_colors=total_alg_top+total_alg_bottom+1)
+clr = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
+c = sns.color_palette(clr, n_colors=total_alg)
 
 fontsize=25
 ticksize=22
 legendsize=14
 
-for i in range(task_num - 1):
+sample_no = list(range(500,5500,500))
+for i in range(total_alg):
+    ax.plot(sample_no, acc[i], color=c[i], label=alg_name[i], marker=marker_style[i])
 
-    et = np.zeros((total_alg_top,task_num-i))
+ax.legend()
+ax.set_xlabel('Sample #')
+ax.set_ylabel('Accuracy')
+plt.savefig('result/figs/accuracy.pdf')
+# %%
+fig, ax = plt.subplots(1,1, figsize=(8,8))
+sns.set_context('talk')
+marker_style = ['.', '.', '.', '.', '.', '+', 'o', '*', '.', '+', 'o']
+clr = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
+c = sns.color_palette(clr, n_colors=total_alg)
 
-    for j in range(0,total_alg_top):
-        et[j,:] = np.asarray(btes_top[j][i])
+algos = [0,1,4]
 
-    ns = np.arange(i + 1, task_num + 1)
-    for j in range(0,total_alg_top):
-        if j == 0:
-            if i == 0:
-                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, label = alg_name_top[j], color=c_top[j], linewidth = 3)
-            else:
-                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, color=c_top[j], linewidth = 3)
-        elif j == 1:
-            if i == 0:
-                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, label = alg_name_top[j], color=c_top[j], linewidth = 3)
-            else:
-                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, color=c_top[j], linewidth = 3)
+for alg in algos:
+    for i in range(10):
+        et = np.zeros(10-i,dtype=float)
+
+        for j in range(i,10):
+            et[j-i] = 1-acc_all[alg][j][i]/reps
+        print(et)
+        #ns = np.arange(i,10)
+        if i==0:
+            ax.plot(sample_no[i:10], et, c=clr[alg], label=alg_name[alg], marker = marker_style[alg])
         else:
-            if i == 0:
-                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, label = alg_name_top[j], color=c_top[j])
-            else:
-                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, color=c_top[j])
+            ax.plot(sample_no[i:10], et, c=clr[alg], marker = marker_style[alg])
 
-
+ax.set_xlabel('Sample #')
+ax.set_ylabel('Accuracy')
+ax.legend()
+plt.savefig('result/figs/accuracy_top3.pdf')
 # %%

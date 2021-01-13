@@ -118,9 +118,9 @@ task_num = 10
 shifts = 6
 total_alg_top = 4
 total_alg_bottom = 8
-alg_name_top = ['PLN','PLF','Prog-NN', 'DF-CNN']
-alg_name_bottom = ['PLF','LwF','EWC','O-EWC','SI', 'Replay \n (increasing)', 'Replay \n (fixed)', 'None']
-combined_alg_name = ['PLN','PLF','Prog-NN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Replay \n (increasing)', 'Replay \n (fixed)', 'None']
+alg_name_top = ['PLN','PLF','ProgNN', 'DF-CNN']
+alg_name_bottom = ['PLF','LwF','EWC','O-EWC','SI', 'Full replay', 'Replay \n (fixed)', 'None']
+combined_alg_name = ['PLN','PLF','ProgNN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Replay \n (increasing)', 'Replay \n (fixed)', 'None']
 model_file_top = ['dnn0withrep','fixed_uf10withrep','Prog_NN','DF_CNN']
 model_file_bottom = ['uf10withrep', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
 btes_top = [[] for i in range(total_alg_top)]
@@ -215,7 +215,7 @@ for alg in range(total_alg_bottom):
 te_500 = {'PLN':np.zeros(10,dtype=float), 'PLF':np.zeros(10,dtype=float), 'PLF (constrained)':np.zeros(10,dtype=float), 
           'Prog-NN':np.zeros(10,dtype=float), 'DF-CNN':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
           'EWC':np.zeros(10,dtype=float), 'O-EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float),
-          'Replay (increasing)':np.zeros(10,dtype=float), 'Replay (fixed)':np.zeros(10,dtype=float), 'None':np.zeros(10,dtype=float)}
+          'Full replay':np.zeros(10,dtype=float), 'Replay (fixed)':np.zeros(10,dtype=float), 'None':np.zeros(10,dtype=float)}
 
 for count,name in enumerate(te_500.keys()):
     for i in range(10):
@@ -354,7 +354,7 @@ ax.hlines(1, -1,11, colors='grey', linestyles='dashed',linewidth=1.5)
 ax_.set_xlabel('', fontsize=fontsize)
 ax.set_ylabel('Transfer Efficiency after 10 Tasks', fontsize=fontsize-5)
 ax_.set_xticklabels(
-    ['PLN','PLF', 'PLF\n (constrained)', 'Prog-NN','DF-CNN','LwF','EWC','O-EWC','SI','Replay \n (increasing)','Replay \n (fixed)', 'None'],
+    ['PLN','PLF', 'PLF\n (constrained)', 'ProgNN','DF-CNN','LwF','EWC','O-EWC','SI','Full replay','Replay \n (fixed)', 'None'],
     fontsize=12,rotation=45,ha="right",rotation_mode='anchor'
     )
 
@@ -453,7 +453,7 @@ clr = ["#e41a1c", "#377eb8", "#4daf4a", "#984ea3"]
 colors = sns.color_palette(clr, n_colors=len(clr))
 
 #labels = ['recruiting', 'Uncertainty Forest', 'hybrid', '50 Random', 'BF', 'building']
-labels = ['L2F (building)', 'UF (new)', 'recruiting', 'hybrid']
+labels = ['PLF (building)', 'UF (new)', 'recruiting', 'hybrid']
 algo = ['building', 'UF', 'recruiting', 'hybrid']
 adjust = 0
 for i,key in enumerate(algo):
