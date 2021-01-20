@@ -119,7 +119,7 @@ shifts = 6
 total_alg_top = 4
 total_alg_bottom = 8
 alg_name_top = ['PLN','PLF','ProgNN', 'DF-CNN']
-alg_name_bottom = ['PLF','LwF','EWC','O-EWC','SI', 'Full replay', 'Replay \n (fixed)', 'None']
+alg_name_bottom = ['PLF','LwF','EWC','O-EWC','SI', 'Full replay', 'Partial replay', 'None']
 combined_alg_name = ['PLN','PLF','ProgNN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Total Replay', 'Partial Replay', 'None']
 model_file_top = ['dnn0','fixed_uf10','Prog_NN','DF_CNN']
 model_file_bottom = ['uf10', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
@@ -208,21 +208,17 @@ for alg in range(total_alg_bottom):
     tes_bottom[alg].extend(te)
 
 #%%
-te_5000 = {'PLN':np.zeros(10,dtype=float), 'PLF':np.zeros(10,dtype=float), 'PLF (constrained)':np.zeros(10,dtype=float), 
-          'Prog-NN':np.zeros(10,dtype=float), 'DF-CNN':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
+te_5000 = {'PLN':np.zeros(10,dtype=float), 'PLF':np.zeros(10,dtype=float), 'Prog-NN':np.zeros(10,dtype=float),
+          'DF-CNN':np.zeros(10,dtype=float), 'PLF (constrained)':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
           'EWC':np.zeros(10,dtype=float), 'O-EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float),
           'Total Replay':np.zeros(10,dtype=float), 'Partial Replay':np.zeros(10,dtype=float), 'None':np.zeros(10,dtype=float)}
 
 for count,name in enumerate(te_5000.keys()):
     for i in range(10):
-        if count == 2:
-            te_5000[name][i] = tes_bottom[count-2][i][9-i]
-        elif count <2:
+        if count < 4:
             te_5000[name][i] = tes_top[count][i][9-i]
-        elif count <5:
-            te_5000[name][i] = tes_top[count-1][i][9-i]
-        elif count>4:
-            te_5000[name][i] = tes_bottom[count-5][i][9-i]
+        else:
+            te_5000[name][i] = tes_bottom[count-4][i][9-i]
 
 
 df_5000 = pd.DataFrame.from_dict(te_5000)
@@ -247,7 +243,7 @@ marker_style_scatter = ['.', '.', '.', '.', '.', '.', '+', 'o', '*', '.', '+', '
 clr_combined = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
 c_combined = sns.color_palette(clr_combined, n_colors=total_alg_top+total_alg_bottom)
 
-clr_combined_ = ["#377eb8", "#e41a1c", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
+clr_combined_ = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
 c_combined_ = sns.color_palette(clr_combined_, n_colors=total_alg_top+total_alg_bottom+1)
 
 fontsize=29
@@ -350,7 +346,7 @@ ax.hlines(1, -1,11, colors='grey', linestyles='dashed',linewidth=1.5)
 ax_.set_xlabel('', fontsize=fontsize)
 ax.set_ylabel('Transfer Efficiency after 10 Tasks', fontsize=fontsize-5)
 ax_.set_xticklabels(
-    ['PLN','PLF', 'PLF (constrained)', 'ProgNN','DF-CNN','LwF','EWC','O-EWC','SI','Total Replay','Partial Replay', 'None'],
+    ['PLN','PLF', 'ProgNN','DF-CNN', 'PLF (constrained)','LwF','EWC','O-EWC','SI','Total Replay','Partial Replay', 'None'],
     fontsize=18,rotation=65,ha="right",rotation_mode='anchor'
     )
 
@@ -377,8 +373,8 @@ for i, fte in enumerate(ftes_bottom):
     ax.plot(np.arange(1,11), fte, color=c_bottom[i], marker=marker_style_bottom[i], markersize=12)
     
 ax.set_xticks(np.arange(1,11))
-ax.set_yticks([0.85, 1, 1.05])
-ax.set_ylim(0.8, 1.05)
+ax.set_yticks([0.75, 1, 1.25])
+ax.set_ylim(0.7, 1.3)
 ax.tick_params(labelsize=ticksize)
 
 ax.set_ylabel('Resource Constrained FTE', fontsize=fontsize)
@@ -428,9 +424,9 @@ for i in range(task_num - 1):
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 ax.set_ylabel('Resource Constrained BTE', fontsize=fontsize)
 
-ax.set_yticks([.9,1, 1.1,1.2])
+ax.set_yticks([.8, 1, 1.25])
 ax.set_xticks(np.arange(1,11))
-ax.set_ylim(0.85, 1.15)
+ax.set_ylim(0.75, 1.28)
 ax.tick_params(labelsize=ticksize)
 #ax[0][1].grid(axis='x')
 
@@ -476,10 +472,10 @@ ax.set_xticks([])
 ax.set_yticks([0.45, 0.55, 0.65,0.75])
 #ax.set_ylim([0.43,0.62])
 #ax.text(50, 1, "50", fontsize=ticksize)
-ax.text(100, 0.426, "100", fontsize=ticksize-2)
-ax.text(500, 0.426, "500", fontsize=ticksize-2)
-ax.text(5000, 0.426, "5000", fontsize=ticksize-2)
-ax.text(120, 0.400, "Number of Task 10 Samples", fontsize=fontsize-1)
+ax.text(100, 0.410, "100", fontsize=ticksize-2)
+ax.text(500, 0.410, "500", fontsize=ticksize-2)
+ax.text(5000, 0.410, "5000", fontsize=ticksize-2)
+ax.text(120, 0.380, "Number of Task 10 Samples", fontsize=fontsize-1)
 
 ax.legend(loc='lower left',fontsize=legendsize+6, frameon=False)
 ax.set_title('Recruitment Experiment on Task 10', fontsize=fontsize)
@@ -491,5 +487,5 @@ top_side.set_visible(False)
 
 fig.legend(handles, labels_, bbox_to_anchor=(.97, .95), fontsize=legendsize+12, frameon=False)
 #plt.savefig('result/figs/cifar_exp_500_recruit_with_rep.pdf')
-
+plt.savefig('result/figs/benchmark_5000.pdf', dpi=500)
 # %%

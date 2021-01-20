@@ -351,5 +351,5 @@ def stratified_scatter(te_dict,axis_handle,s,color,style):
  top_side.set_visible(False)
 
 
- plt.savefig('result/figs/benchmark_5000.pdf', dpi=500)
+ #plt.savefig('result/figs/benchmark_5000.pdf', dpi=500)
 # %%

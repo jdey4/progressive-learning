@@ -212,21 +212,18 @@ for alg in range(total_alg_bottom):
     tes_bottom[alg].extend(te)
 
 #%%
-te_500 = {'PLN':np.zeros(10,dtype=float), 'PLF':np.zeros(10,dtype=float), 'PLF (constrained)':np.zeros(10,dtype=float), 
-          'Prog-NN':np.zeros(10,dtype=float), 'DF-CNN':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
+te_500 = {'PLN':np.zeros(10,dtype=float), 'PLF':np.zeros(10,dtype=float), 
+          'Prog-NN':np.zeros(10,dtype=float), 'DF-CNN':np.zeros(10,dtype=float), 
+          'PLF (constrained)':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
           'EWC':np.zeros(10,dtype=float), 'O-EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float),
           'Total Replay':np.zeros(10,dtype=float), 'Partial Replay':np.zeros(10,dtype=float), 'None':np.zeros(10,dtype=float)}
 
 for count,name in enumerate(te_500.keys()):
     for i in range(10):
-        if count == 2:
-            te_500[name][i] = tes_bottom[count-2][i][9-i]
-        elif count <2:
+        if count <4:
             te_500[name][i] = tes_top[count][i][9-i]
-        elif count <5:
-            te_500[name][i] = tes_top[count-1][i][9-i]
-        elif count>4:
-            te_500[name][i] = tes_bottom[count-5][i][9-i]
+        else:
+            te_500[name][i] = tes_bottom[count-4][i][9-i]
 
 
 df_500 = pd.DataFrame.from_dict(te_500)
@@ -251,7 +248,7 @@ marker_style_scatter = ['.', '.', '.', '.', '.', '.', '+', 'o', '*', '.', '+', '
 clr_combined = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
 c_combined = sns.color_palette(clr_combined, n_colors=total_alg_top+total_alg_bottom)
 
-clr_combined_ = ["#377eb8", "#e41a1c", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
+clr_combined_ = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
 c_combined_ = sns.color_palette(clr_combined_, n_colors=total_alg_top+total_alg_bottom+1)
 
 fontsize=29
@@ -354,7 +351,7 @@ ax.hlines(1, -1,11, colors='grey', linestyles='dashed',linewidth=1.5)
 ax_.set_xlabel('', fontsize=fontsize)
 ax.set_ylabel('Transfer Efficiency after 10 Tasks', fontsize=fontsize-5)
 ax_.set_xticklabels(
-    ['PLN','PLF', 'PLF (constrained)', 'ProgNN','DF-CNN','LwF','EWC','O-EWC','SI','Total Replay','Partial Replay', 'None'],
+    ['PLN','PLF', 'ProgNN','DF-CNN', 'PLF (constrained)','LwF','EWC','O-EWC','SI','Total Replay','Partial Replay', 'None'],
     fontsize=18,rotation=65,ha="right",rotation_mode='anchor'
     )
 
