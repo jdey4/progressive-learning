@@ -121,8 +121,8 @@ total_alg_bottom = 8
 alg_name_top = ['PLN','PLF','ProgNN', 'DF-CNN']
 alg_name_bottom = ['PLF','LwF','EWC','O-EWC','SI', 'Full replay', 'Replay \n (fixed)', 'None']
 combined_alg_name = ['PLN','PLF','ProgNN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Total Replay', 'Partial Replay', 'None']
-model_file_top = ['dnn0withrep','fixed_uf10withrep','Prog_NN','DF_CNN']
-model_file_bottom = ['uf10withrep', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
+model_file_top = ['dnn0','fixed_uf10','Prog_NN','DF_CNN']
+model_file_bottom = ['uf10', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
 btes_top = [[] for i in range(total_alg_top)]
 ftes_top = [[] for i in range(total_alg_top)]
 tes_top = [[] for i in range(total_alg_top)]
@@ -131,7 +131,7 @@ ftes_bottom = [[] for i in range(total_alg_bottom)]
 tes_bottom = [[] for i in range(total_alg_bottom)]
 
 #combined_alg_name = ['L2N','L2F','Prog-NN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Replay (increasing amount)', 'Replay (fixed amount)', 'None']
-model_file_combined = ['dnn0withrep','fixed_uf10withrep','Prog_NN','DF_CNN', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
+model_file_combined = ['dnn0','fixed_uf10','Prog_NN','DF_CNN', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
 
 ########################
 
@@ -144,28 +144,25 @@ for alg in range(total_alg_top):
     fte_tmp = [[] for _ in range(reps)] 
     te_tmp = [[] for _ in range(reps)]
 
-    for slot in range(slots):
-        for shift in range(shifts):
-            if alg < 2:
-                filename = './result/result/'+model_file_top[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
-            elif alg == 2 or alg == 3:
-                filename = './benchmarking_algorthms_result/'+model_file_top[alg]+'-'+str(shift+1)+'-'+str(slot+1)+'.pickle'
-            else:
-                filename = './benchmarking_algorthms_result/'+model_file_top[alg]+'-'+str(slot+1)+'-'+str(shift+1)+'.pickle'
+    for shift in range(shifts):
+        if alg < 2:
+            filename = './result/result/'+model_file_top[alg]+'_'+str(shift+1)+'.pickle'
+        elif alg <4:
+            filename = './benchmarking_algorthms_result/'+model_file_top[alg]+'_'+str(shift+1)+'.pickle'
 
-            multitask_df, single_task_df = unpickle(filename)
+        multitask_df, single_task_df = unpickle(filename)
 
-            single_err_, err_ = get_error_matrix(filename)
+        single_err_, err_ = get_error_matrix(filename)
 
-            if count == 0:
-                single_err, err = single_err_, err_
-            else:
-                err = sum_error_matrix(err, err_)
-                single_err = list(
-                    np.asarray(single_err) + np.asarray(single_err_)
-                )
+        if count == 0:
+            single_err, err = single_err_, err_
+        else:
+            err = sum_error_matrix(err, err_)
+            single_err = list(
+                np.asarray(single_err) + np.asarray(single_err_)
+            )
 
-            count += 1
+        count += 1
     #single_err /= reps
     #err /= reps
     fte, bte, te = get_fte_bte(err,single_err)
@@ -183,26 +180,25 @@ for alg in range(total_alg_bottom):
     fte_tmp = [[] for _ in range(reps)] 
     te_tmp = [[] for _ in range(reps)]
 
-    for slot in range(slots):
-        for shift in range(shifts):
-            if alg < 1:
-                filename = './result/result/'+model_file_bottom[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
-            else:
-                filename = './benchmarking_algorthms_result/'+model_file_bottom[alg]+'-'+str(slot+1)+'-'+str(shift+1)+'.pickle'
+    for shift in range(shifts):
+        if alg < 1:
+            filename = './result/result/'+model_file_bottom[alg]+'_'+str(shift+1)+'.pickle'
+        else:
+            filename = './benchmarking_algorthms_result/'+model_file_bottom[alg]+'-'+str(shift+1)+'.pickle'
 
-            multitask_df, single_task_df = unpickle(filename)
+        multitask_df, single_task_df = unpickle(filename)
 
-            single_err_, err_ = get_error_matrix(filename)
+        single_err_, err_ = get_error_matrix(filename)
 
-            if count == 0:
-                single_err, err = single_err_, err_
-            else:
-                err = sum_error_matrix(err, err_)
-                single_err = list(
-                    np.asarray(single_err) + np.asarray(single_err_)
-                )
+        if count == 0:
+            single_err, err = single_err_, err_
+        else:
+            err = sum_error_matrix(err, err_)
+            single_err = list(
+                np.asarray(single_err) + np.asarray(single_err_)
+            )
 
-            count += 1
+        count += 1
     #single_err /= reps
     #err /= reps
     fte, bte, te = get_fte_bte(err,single_err)
@@ -212,25 +208,25 @@ for alg in range(total_alg_bottom):
     tes_bottom[alg].extend(te)
 
 #%%
-te_500 = {'PLN':np.zeros(10,dtype=float), 'PLF':np.zeros(10,dtype=float), 'PLF (constrained)':np.zeros(10,dtype=float), 
+te_5000 = {'PLN':np.zeros(10,dtype=float), 'PLF':np.zeros(10,dtype=float), 'PLF (constrained)':np.zeros(10,dtype=float), 
           'Prog-NN':np.zeros(10,dtype=float), 'DF-CNN':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
           'EWC':np.zeros(10,dtype=float), 'O-EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float),
           'Total Replay':np.zeros(10,dtype=float), 'Partial Replay':np.zeros(10,dtype=float), 'None':np.zeros(10,dtype=float)}
 
-for count,name in enumerate(te_500.keys()):
+for count,name in enumerate(te_5000.keys()):
     for i in range(10):
         if count == 2:
-            te_500[name][i] = tes_bottom[count-2][i][9-i]
+            te_5000[name][i] = tes_bottom[count-2][i][9-i]
         elif count <2:
-            te_500[name][i] = tes_top[count][i][9-i]
+            te_5000[name][i] = tes_top[count][i][9-i]
         elif count <5:
-            te_500[name][i] = tes_top[count-1][i][9-i]
+            te_5000[name][i] = tes_top[count-1][i][9-i]
         elif count>4:
-            te_500[name][i] = tes_bottom[count-5][i][9-i]
+            te_5000[name][i] = tes_bottom[count-5][i][9-i]
 
 
-df_500 = pd.DataFrame.from_dict(te_500)
-df_500 = pd.melt(df_500,var_name='Algorithms', value_name='Transfer Efficieny')
+df_5000 = pd.DataFrame.from_dict(te_5000)
+df_5000 = pd.melt(df_5000,var_name='Algorithms', value_name='Transfer Efficieny')
 
 # %%
 fig = plt.figure(constrained_layout=True,figsize=(29,16))
@@ -344,7 +340,7 @@ handles, labels_ = ax.get_legend_handles_labels()
 ax = fig.add_subplot(gs[:7,16:23])
 ax.tick_params(labelsize=22)
 ax_ = sns.boxplot(
-    x="Algorithms", y="Transfer Efficieny", data=df_500, palette=c_combined_, whis=np.inf,
+    x="Algorithms", y="Transfer Efficieny", data=df_5000, palette=c_combined_, whis=np.inf,
     ax=ax, showfliers=False, notch=1
     )
 ax.hlines(1, -1,11, colors='grey', linestyles='dashed',linewidth=1.5)
@@ -358,7 +354,7 @@ ax_.set_xticklabels(
     fontsize=18,rotation=65,ha="right",rotation_mode='anchor'
     )
 
-stratified_scatter(te_500,ax,16,c_combined_,marker_style_scatter)
+stratified_scatter(te_5000,ax,16,c_combined_,marker_style_scatter)
 
 right_side = ax.spines["right"]
 right_side.set_visible(False)
@@ -447,7 +443,7 @@ ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5)
 ############################
 
 ax = fig.add_subplot(gs[8:15,16:23])
-mean_error, std_error = unpickle('../recruitment_exp/result/recruitment_exp_500.pickle')
+mean_error, std_error = unpickle('../recruitment_exp/result/recruitment_exp_5000.pickle')
 ns = 10*np.array([10, 50, 100, 200, 350, 500])
 clr = ["#e41a1c", "#377eb8", "#4daf4a", "#984ea3"]
 colors = sns.color_palette(clr, n_colors=len(clr))
@@ -494,6 +490,6 @@ top_side = ax.spines["top"]
 top_side.set_visible(False)
 
 fig.legend(handles, labels_, bbox_to_anchor=(.97, .95), fontsize=legendsize+12, frameon=False)
-plt.savefig('result/figs/cifar_exp_500_recruit_with_rep.pdf')
+#plt.savefig('result/figs/cifar_exp_500_recruit_with_rep.pdf')
 
 # %%

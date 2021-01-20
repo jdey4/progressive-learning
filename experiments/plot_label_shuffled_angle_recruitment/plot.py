@@ -124,62 +124,67 @@ for alg in range(total_alg):
         err = unpickle(filename)
         tes_angle[alg].extend([err[0]/err[1]])
 # %%
-fontsize=20
-ticksize=18
-fig, ax = plt.subplots(1,2, figsize=(10,5))
+fontsize=24
+ticksize=22
+fig = plt.figure(constrained_layout=True,figsize=(18,6))
+gs = fig.add_gridspec(6, 18)
 
 clr = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
 c = sns.color_palette(clr, n_colors=len(clr))
 marker_style = ['.', '.', '.', '.', '.', '+', 'o', '*', '.', '+', 'o']
 
+ax = fig.add_subplot(gs[:6,:6])
+
 for alg_no,alg in enumerate(alg_name):
     if alg_no<2:
-        ax[0].plot(np.arange(1,11),tes_label_shuffle[alg_no], c=c[alg_no], label=alg_name[alg_no], linewidth=3, marker=marker_style[alg_no])
+        ax.plot(np.arange(1,11),tes_label_shuffle[alg_no], c=c[alg_no], label=alg_name[alg_no], linewidth=3, marker=marker_style[alg_no])
     else:
-        ax[0].plot(np.arange(1,11),tes_label_shuffle[alg_no], c=c[alg_no], label=alg_name[alg_no], marker=marker_style[alg_no])
+        ax.plot(np.arange(1,11),tes_label_shuffle[alg_no], c=c[alg_no], label=alg_name[alg_no], marker=marker_style[alg_no])
 
-ax[0].set_yticks([.8,.9,1,1.1,1.2])
+ax.set_yticks([.8,.9,1,1.1,1.2])
 #ax[0].set_ylim([0.91,1.17])
-ax[0].set_xticks(np.arange(1,11))
-ax[0].tick_params(labelsize=ticksize)
-ax[0].set_xlabel('Number of tasks seen', fontsize=fontsize)
-ax[0].set_ylabel('Backward Transfer Efficiency', fontsize=fontsize)
-ax[0].set_title("Label Shuffled CIFAR", fontsize = fontsize)
-ax[0].hlines(1,1,10, colors='grey', linestyles='dashed',linewidth=1.5)
-right_side = ax[0].spines["right"]
+ax.set_xticks(np.arange(1,11))
+ax.tick_params(labelsize=ticksize)
+ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
+ax.set_ylabel('Backward Transfer Efficiency', fontsize=fontsize)
+ax.set_title("A. Label Shuffled CIFAR", fontsize = fontsize)
+ax.hlines(1,1,10, colors='grey', linestyles='dashed',linewidth=1.5)
+right_side = ax.spines["right"]
 right_side.set_visible(False)
-top_side = ax[0].spines["top"]
+top_side = ax.spines["top"]
 top_side.set_visible(False)
 plt.tight_layout()
 
 
-
+ax = fig.add_subplot(gs[:6,8:14])
 angles = np.arange(0,184,4)
-alg_name = ['PLN','PLF','LwF','EWC','O-EWC','SI', 'Replay \n (increasing amount)', 'Replay \n (fixed amount)', 'None']
+alg_name = ['PLN','PLF','LwF','EWC','O-EWC','SI', 'Full replay', 'Replay \n (fixed amount)', 'None']
 clr = ["#377eb8", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
 c = sns.color_palette(clr, n_colors=len(clr))
 marker_style = ['.', '.', '.', '+', 'o', '*', '.', '+', 'o']
 
 for alg_no,alg in enumerate(alg_name):
     if alg_no<2:
-        ax[1].plot(angles,tes_angle[alg_no], c=c[alg_no], label=alg_name[alg_no], linewidth=3, marker=marker_style[alg_no])
+        ax.plot(angles,tes_angle[alg_no], c=c[alg_no], label=alg_name[alg_no], linewidth=3, marker=marker_style[alg_no])
     else:
-        ax[1].plot(angles,tes_angle[alg_no], c=c[alg_no], label=alg_name[alg_no], marker=marker_style[alg_no])
+        ax.plot(angles,tes_angle[alg_no], c=c[alg_no], label=alg_name[alg_no], marker=marker_style[alg_no])
 
 #ax[1].set_yticks([.9,.95, 1, 1.05,1.1])
 #ax[1].set_ylim([0.85,1.13])
-ax[1].set_xticks([0,30,60,90,120,150,180])
-ax[1].hlines(1,0,180, colors='grey', linestyles='dashed',linewidth=1.5)
-ax[1].tick_params(labelsize=ticksize)
-ax[1].set_xlabel('Angle of Rotation (Degrees)', fontsize=fontsize)
-ax[1].set_ylabel('Backward Transfer Efficiency', fontsize=fontsize)
-ax[1].set_title("Rotation Experiment", fontsize=fontsize)
-right_side = ax[1].spines["right"]
+ax.set_xticks([0,30,60,90,120,150,180])
+ax.hlines(1,0,180, colors='grey', linestyles='dashed',linewidth=1.5)
+ax.tick_params(labelsize=ticksize)
+ax.set_xlabel('Angle of Rotation (Degrees)', fontsize=fontsize)
+ax.set_ylabel('Backward Transfer Efficiency', fontsize=fontsize)
+ax.set_title("B. Rotation Experiment", fontsize=fontsize)
+handles, labels_ = ax.get_legend_handles_labels()
+right_side = ax.spines["right"]
 right_side.set_visible(False)
-top_side = ax[1].spines["top"]
+top_side = ax.spines["top"]
 top_side.set_visible(False)
 plt.tight_layout()
 
+fig.legend(handles, labels_, bbox_to_anchor=(.99, .93), fontsize=20, frameon=False)
 plt.savefig('figs/adversary.pdf', dpi=500)
 
 # %%
