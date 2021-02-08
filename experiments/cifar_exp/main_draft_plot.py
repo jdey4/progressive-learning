@@ -56,7 +56,7 @@ def calc_mean_te(tes,task_num=10,reps=6):
         
         tmp=tmp/reps
         mean_te[j].extend(tmp)
-            
+                                             
     return mean_te 
 
 def calc_mean_fte(ftes,task_num=10,reps=6):
@@ -271,7 +271,22 @@ for i, fte in enumerate(ftes_top):
     
 ax.set_xticks(np.arange(1,11))
 ax.set_yticks([0.9, 1, 1.1, 1.2, 1.3])
+#ax.set_yticks([])
+#ax.text(0, np.mean(ax.get_ylim()), "%s" % str(0), fontsize=26)
+#ax.yaxis.set_major_locator(plt.LogLocator(subs=(0.9, 1, 1.1, 1.2, 1.3)))
 ax.set_ylim(0.89, 1.31)
+
+log_lbl = np.round(
+    np.log([0.9,1,1.1,1.2,1.3]),
+    2
+)
+labels = [item.get_text() for item in ax.get_yticklabels()]
+
+for ii,_ in enumerate(labels):
+    labels[ii] = str(log_lbl[ii])
+
+ax.set_yticklabels(labels)
+
 ax.tick_params(labelsize=ticksize)
 
 ax.set_ylabel('Forward Transfer Efficiency (FTE)', fontsize=fontsize)
@@ -491,6 +506,6 @@ top_side = ax.spines["top"]
 top_side.set_visible(False)
 
 fig.legend(handles, labels_, bbox_to_anchor=(.97, .95), fontsize=legendsize+12, frameon=False)
-plt.savefig('result/figs/cifar_exp_500_recruit_with_rep.pdf')
+plt.savefig('result/figs/cifar_exp_500_recruit_with_rep_log.pdf')
 
 # %%
