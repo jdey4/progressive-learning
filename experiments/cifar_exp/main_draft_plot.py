@@ -289,7 +289,7 @@ ax.set_yticklabels(labels)
 
 ax.tick_params(labelsize=ticksize)
 
-ax.set_ylabel('Forward Transfer Efficiency (FTE)', fontsize=fontsize)
+ax.set_ylabel('Log Forward TE', fontsize=fontsize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 
 right_side = ax.spines["right"]
@@ -333,11 +333,23 @@ for i in range(total_alg_top,total_alg_top+total_alg_bottom-1):
     ax.plot(1,0,color=c_combined[i], marker=marker_style[i], markersize=8,label=combined_alg_name[i])
 
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
-ax.set_ylabel('Backward Transfer Efficiency (BTE)', fontsize=fontsize)
+ax.set_ylabel('Log Backward TE', fontsize=fontsize)
 
-ax.set_yticks([.4,.6,.8,.9,1, 1.1,1.2])
+ax.set_yticks([.8,.9,1, 1.1,1.2])
 ax.set_xticks(np.arange(1,11))
 ax.set_ylim(0.76, 1.25)
+
+log_lbl = np.round(
+    np.log([.8,.9,1,1.1,1.2]),
+    2
+)
+labels = [item.get_text() for item in ax.get_yticklabels()]
+
+for ii,_ in enumerate(labels):
+    labels[ii] = str(log_lbl[ii])
+
+ax.set_yticklabels(labels)
+
 ax.tick_params(labelsize=ticksize)
 #ax[0][1].grid(axis='x')
 
@@ -397,8 +409,19 @@ ax.set_yticks([0.85, 1, 1.05])
 ax.set_ylim(0.8, 1.05)
 ax.tick_params(labelsize=ticksize)
 
-ax.set_ylabel('Resource Constrained FTE', fontsize=fontsize)
+ax.set_ylabel('Resource Constrained log FTE', fontsize=fontsize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
+
+log_lbl = np.round(
+    np.log([0.85,1,1.05]),
+    2
+)
+labels = [item.get_text() for item in ax.get_yticklabels()]
+
+for ii,_ in enumerate(labels):
+    labels[ii] = str(log_lbl[ii])
+
+ax.set_yticklabels(labels)
 
 right_side = ax.spines["right"]
 right_side.set_visible(False)
@@ -442,11 +465,23 @@ for i in range(task_num - 1):
 
 
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
-ax.set_ylabel('Resource Constrained BTE', fontsize=fontsize)
+ax.set_ylabel('Resource Constrained log BTE', fontsize=fontsize)
 
 ax.set_yticks([.9,1, 1.1,1.2])
 ax.set_xticks(np.arange(1,11))
 ax.set_ylim(0.85, 1.15)
+
+log_lbl = np.round(
+    np.log([0.9,1,1.1,1.2]),
+    2
+)
+labels = [item.get_text() for item in ax.get_yticklabels()]
+
+for ii,_ in enumerate(labels):
+    labels[ii] = str(log_lbl[ii])
+
+ax.set_yticklabels(labels)
+
 ax.tick_params(labelsize=ticksize)
 #ax[0][1].grid(axis='x')
 
@@ -506,6 +541,6 @@ top_side = ax.spines["top"]
 top_side.set_visible(False)
 
 fig.legend(handles, labels_, bbox_to_anchor=(.97, .95), fontsize=legendsize+12, frameon=False)
-plt.savefig('result/figs/cifar_exp_500_recruit_with_rep_log.pdf')
+plt.savefig('result/figs/cifar_exp_500_recruit_with_rep.pdf')
 
 # %%
