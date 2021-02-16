@@ -118,9 +118,9 @@ task_num = 10
 shifts = 6
 total_alg_top = 4
 total_alg_bottom = 8
-alg_name_top = ['PLN','PLF','ProgNN', 'DF-CNN']
-alg_name_bottom = ['PLF','LwF','EWC','O-EWC','SI', 'Full replay', 'Partial replay', 'None']
-combined_alg_name = ['PLN','PLF','ProgNN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Total Replay', 'Partial Replay', 'None']
+alg_name_top = ['Odin','Odif','ProgNN', 'DF-CNN']
+alg_name_bottom = ['Odif','LwF','EWC','O-EWC','SI', 'Full replay', 'Partial replay', 'None']
+combined_alg_name = ['Odin','Odif','ProgNN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Total Replay', 'Partial Replay', 'None']
 model_file_top = ['dnn0','fixed_uf10','Prog_NN','DF_CNN']
 model_file_bottom = ['uf10', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
 btes_top = [[] for i in range(total_alg_top)]
@@ -208,17 +208,17 @@ for alg in range(total_alg_bottom):
     tes_bottom[alg].extend(te)
 
 #%%
-te_5000 = {'PLN':np.zeros(10,dtype=float), 'PLF':np.zeros(10,dtype=float), 'Prog-NN':np.zeros(10,dtype=float),
-          'DF-CNN':np.zeros(10,dtype=float), 'PLF (constrained)':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
+te_5000 = {'Odin':np.zeros(10,dtype=float), 'Odif':np.zeros(10,dtype=float), 'Prog-NN':np.zeros(10,dtype=float),
+          'DF-CNN':np.zeros(10,dtype=float), 'Odif (constrained)':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
           'EWC':np.zeros(10,dtype=float), 'O-EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float),
           'Total Replay':np.zeros(10,dtype=float), 'Partial Replay':np.zeros(10,dtype=float), 'None':np.zeros(10,dtype=float)}
 
 for count,name in enumerate(te_5000.keys()):
     for i in range(10):
         if count < 4:
-            te_5000[name][i] = tes_top[count][i][9-i]
+            te_5000[name][i] = np.log(tes_top[count][i][9-i])
         else:
-            te_5000[name][i] = tes_bottom[count-4][i][9-i]
+            te_5000[name][i] = np.log(tes_bottom[count-4][i][9-i])
 
 
 df_5000 = pd.DataFrame.from_dict(te_5000)
@@ -267,9 +267,21 @@ for i, fte in enumerate(ftes_top):
 ax.set_xticks(np.arange(1,11))
 ax.set_yticks([0.9, 1, 1.1, 1.2, 1.3])
 ax.set_ylim(0.89, 1.31)
+
+log_lbl = np.round(
+    np.log([0.9,1,1.1,1.2,1.3]),
+    2
+)
+labels = [item.get_text() for item in ax.get_yticklabels()]
+
+for ii,_ in enumerate(labels):
+    labels[ii] = str(log_lbl[ii])
+
+ax.set_yticklabels(labels)
+
 ax.tick_params(labelsize=ticksize)
 
-ax.set_ylabel('Forward Transfer Efficiency (FTE)', fontsize=fontsize)
+ax.set_ylabel('log Forward TE', fontsize=fontsize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 
 right_side = ax.spines["right"]
@@ -313,11 +325,23 @@ for i in range(total_alg_top,total_alg_top+total_alg_bottom-1):
     ax.plot(1,0,color=c_combined[i], marker=marker_style[i], markersize=8,label=combined_alg_name[i])
 
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
-ax.set_ylabel('Backward Transfer Efficiency (BTE)', fontsize=fontsize)
+ax.set_ylabel('log Backward TE', fontsize=fontsize)
 
-ax.set_yticks([.4,.6,.8,.9,1, 1.1,1.2])
+ax.set_yticks([.8,.9,1, 1.1,1.2])
 ax.set_xticks(np.arange(1,11))
 ax.set_ylim(0.76, 1.25)
+
+log_lbl = np.round(
+    np.log([.8,.9,1,1.1,1.2]),
+    2
+)
+labels = [item.get_text() for item in ax.get_yticklabels()]
+
+for ii,_ in enumerate(labels):
+    labels[ii] = str(log_lbl[ii])
+
+ax.set_yticklabels(labels)
+
 ax.tick_params(labelsize=ticksize)
 #ax[0][1].grid(axis='x')
 
@@ -339,14 +363,14 @@ ax_ = sns.boxplot(
     x="Algorithms", y="Transfer Efficieny", data=df_5000, palette=c_combined_, whis=np.inf,
     ax=ax, showfliers=False, notch=1
     )
-ax.hlines(1, -1,11, colors='grey', linestyles='dashed',linewidth=1.5)
+ax.hlines(0, -1,11, colors='grey', linestyles='dashed',linewidth=1.5)
 #sns.boxplot(x="Algorithms", y="Transfer Efficieny", data=mean_df, palette=c, linewidth=3, ax=ax[1][1])
 #ax_=sns.pointplot(x="Algorithms", y="Transfer Efficieny", data=df_500, join=False, color='grey', linewidth=1.5, ci='sd',ax=ax)
 #ax_.set_yticks([.4,.6,.8,1, 1.2,1.4])
 ax_.set_xlabel('', fontsize=fontsize)
-ax.set_ylabel('Transfer Efficiency after 10 Tasks', fontsize=fontsize-5)
+ax.set_ylabel('log TE after 10 Tasks', fontsize=fontsize-5)
 ax_.set_xticklabels(
-    ['PLN','PLF', 'ProgNN','DF-CNN', 'PLF (constrained)','LwF','EWC','O-EWC','SI','Total Replay','Partial Replay', 'None'],
+    ['Odin','Odif', 'ProgNN','DF-CNN', 'Odif (constrained)','LwF','EWC','O-EWC','SI','Total Replay','Partial Replay', 'None'],
     fontsize=18,rotation=65,ha="right",rotation_mode='anchor'
     )
 
@@ -375,9 +399,21 @@ for i, fte in enumerate(ftes_bottom):
 ax.set_xticks(np.arange(1,11))
 ax.set_yticks([0.75, 1, 1.25])
 ax.set_ylim(0.7, 1.3)
+
+log_lbl = np.round(
+    np.log([.75,1,1.25]),
+    2
+)
+labels = [item.get_text() for item in ax.get_yticklabels()]
+
+for ii,_ in enumerate(labels):
+    labels[ii] = str(log_lbl[ii])
+
+ax.set_yticklabels(labels)
+
 ax.tick_params(labelsize=ticksize)
 
-ax.set_ylabel('Resource Constrained FTE', fontsize=fontsize)
+ax.set_ylabel('Resource Constrained log FTE', fontsize=fontsize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 
 right_side = ax.spines["right"]
@@ -422,11 +458,23 @@ for i in range(task_num - 1):
 
 
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
-ax.set_ylabel('Resource Constrained BTE', fontsize=fontsize)
+ax.set_ylabel('Resource Constrained log BTE', fontsize=fontsize)
 
 ax.set_yticks([.8, 1, 1.25])
 ax.set_xticks(np.arange(1,11))
 ax.set_ylim(0.75, 1.28)
+
+log_lbl = np.round(
+    np.log([.8,1,1.25]),
+    2
+)
+labels = [item.get_text() for item in ax.get_yticklabels()]
+
+for ii,_ in enumerate(labels):
+    labels[ii] = str(log_lbl[ii])
+
+ax.set_yticklabels(labels)
+
 ax.tick_params(labelsize=ticksize)
 #ax[0][1].grid(axis='x')
 
@@ -445,7 +493,7 @@ clr = ["#e41a1c", "#377eb8", "#4daf4a", "#984ea3"]
 colors = sns.color_palette(clr, n_colors=len(clr))
 
 #labels = ['recruiting', 'Uncertainty Forest', 'hybrid', '50 Random', 'BF', 'building']
-labels = ['PLF (building)', 'UF (new)', 'recruiting', 'hybrid']
+labels = ['Odif (building)', 'UF (new)', 'recruiting', 'hybrid']
 algo = ['building', 'UF', 'recruiting', 'hybrid']
 adjust = 0
 for i,key in enumerate(algo):

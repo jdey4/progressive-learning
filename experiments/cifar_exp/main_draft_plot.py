@@ -118,9 +118,9 @@ task_num = 10
 shifts = 6
 total_alg_top = 4
 total_alg_bottom = 8
-alg_name_top = ['PLN','PLF','ProgNN', 'DF-CNN']
-alg_name_bottom = ['PLF','LwF','EWC','O-EWC','SI', 'Full replay', 'Replay \n (fixed)', 'None']
-combined_alg_name = ['PLN','PLF','ProgNN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Total Replay', 'Partial Replay', 'None']
+alg_name_top = ['Odin','Odif','ProgNN', 'DF-CNN']
+alg_name_bottom = ['Odif','LwF','EWC','O-EWC','SI', 'Full replay', 'Replay \n (fixed)', 'None']
+combined_alg_name = ['Odin','Odif','ProgNN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Total Replay', 'Partial Replay', 'None']
 model_file_top = ['dnn0withrep','fixed_uf10withrep','Prog_NN','DF_CNN']
 model_file_bottom = ['uf10withrep', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
 btes_top = [[] for i in range(total_alg_top)]
@@ -212,9 +212,9 @@ for alg in range(total_alg_bottom):
     tes_bottom[alg].extend(te)
 
 #%%
-te_500 = {'PLN':np.zeros(10,dtype=float), 'PLF':np.zeros(10,dtype=float), 
+te_500 = {'Odin':np.zeros(10,dtype=float), 'Odif':np.zeros(10,dtype=float), 
           'Prog-NN':np.zeros(10,dtype=float), 'DF-CNN':np.zeros(10,dtype=float), 
-          'PLF (constrained)':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
+          'Odif (constrained)':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
           'EWC':np.zeros(10,dtype=float), 'O-EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float),
           'Total Replay':np.zeros(10,dtype=float), 'Partial Replay':np.zeros(10,dtype=float), 'None':np.zeros(10,dtype=float)}
 
@@ -289,7 +289,7 @@ ax.set_yticklabels(labels)
 
 ax.tick_params(labelsize=ticksize)
 
-ax.set_ylabel('Log Forward TE', fontsize=fontsize)
+ax.set_ylabel('log Forward TE', fontsize=fontsize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 
 right_side = ax.spines["right"]
@@ -333,7 +333,7 @@ for i in range(total_alg_top,total_alg_top+total_alg_bottom-1):
     ax.plot(1,0,color=c_combined[i], marker=marker_style[i], markersize=8,label=combined_alg_name[i])
 
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
-ax.set_ylabel('Log Backward TE', fontsize=fontsize)
+ax.set_ylabel('log Backward TE', fontsize=fontsize)
 
 ax.set_yticks([.8,.9,1, 1.1,1.2])
 ax.set_xticks(np.arange(1,11))
@@ -378,7 +378,7 @@ ax.hlines(1, -1,11, colors='grey', linestyles='dashed',linewidth=1.5)
 ax_.set_xlabel('', fontsize=fontsize)
 ax.set_ylabel('Transfer Efficiency after 10 Tasks', fontsize=fontsize-5)
 ax_.set_xticklabels(
-    ['PLN','PLF', 'ProgNN','DF-CNN', 'PLF (constrained)','LwF','EWC','O-EWC','SI','Total Replay','Partial Replay', 'None'],
+    ['Odin','Odif', 'ProgNN','DF-CNN', 'Odif (constrained)','LwF','EWC','O-EWC','SI','Total Replay','Partial Replay', 'None'],
     fontsize=18,rotation=65,ha="right",rotation_mode='anchor'
     )
 
@@ -500,7 +500,7 @@ clr = ["#e41a1c", "#377eb8", "#4daf4a", "#984ea3"]
 colors = sns.color_palette(clr, n_colors=len(clr))
 
 #labels = ['recruiting', 'Uncertainty Forest', 'hybrid', '50 Random', 'BF', 'building']
-labels = ['PLF (building)', 'UF (new)', 'recruiting', 'hybrid']
+labels = ['Odif (building)', 'UF (new)', 'recruiting', 'hybrid']
 algo = ['building', 'UF', 'recruiting', 'hybrid']
 adjust = 0
 for i,key in enumerate(algo):

@@ -75,7 +75,7 @@ def get_error_matrix(filename):
     return err
 
 #%%
-alg_name = ['PLN','PLF','Prog_NN', 'DF_CNN','LwF','EWC','O-EWC','SI', 'Replay \n (increasing amount)', 'Replay \n (fixed amount)', 'None']
+alg_name = ['Odin','Odif','Prog_NN', 'DF_CNN','LwF','EWC','O-EWC','SI', 'Total Replay', 'Partial Replay', 'None']
 model_file = ['dnn0','uf10','Prog_NN','DF_CNN', 'LwF', 'EWC', 'OEWC', 'SI', 'offline', 'exact', 'None']
 total_alg = 11
 slots = 10
@@ -108,7 +108,7 @@ for alg in range(total_alg):
         tes_label_shuffle[alg].extend(te)
 
 #%% calculate TE for rotation experiment
-alg_name = ['PLN','PLF','LwF','EWC','O-EWC','SI', 'Replay \n (increasing amount)', 'Replay \n (fixed amount)', 'None']
+alg_name = ['Odin','Odif','LwF','EWC','O-EWC','SI', 'Total Replay', 'Partial Replay', 'None']
 model_file = ['dnn','uf', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
 total_alg = 9
 angles = range(0,184,4)
@@ -142,11 +142,24 @@ for alg_no,alg in enumerate(alg_name):
         ax.plot(np.arange(1,11),tes_label_shuffle[alg_no], c=c[alg_no], label=alg_name[alg_no], marker=marker_style[alg_no])
 
 ax.set_yticks([.8,.9,1,1.1,1.2])
-#ax[0].set_ylim([0.91,1.17])
+ax.set_ylim([0.79,1.21])
 ax.set_xticks(np.arange(1,11))
+
+log_lbl = np.round(
+    np.log([0.8,0.9, 1, 1.1, 1.2]),
+    2
+)
+labels = [item.get_text() for item in ax.get_yticklabels()]
+
+for ii,_ in enumerate(labels):
+    labels[ii] = str(log_lbl[ii])
+
+ax.set_yticklabels(labels)
+
+
 ax.tick_params(labelsize=ticksize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
-ax.set_ylabel('Backward Transfer Efficiency', fontsize=fontsize)
+ax.set_ylabel('log Backward TE', fontsize=fontsize)
 ax.set_title("A. Label Shuffled CIFAR", fontsize = fontsize)
 ax.hlines(1,1,10, colors='grey', linestyles='dashed',linewidth=1.5)
 right_side = ax.spines["right"]
@@ -158,7 +171,7 @@ plt.tight_layout()
 
 ax = fig.add_subplot(gs[:6,8:14])
 angles = np.arange(0,184,4)
-alg_name = ['PLN','PLF','LwF','EWC','O-EWC','SI', 'Full replay', 'Replay \n (fixed amount)', 'None']
+alg_name = ['Odin','Odif','LwF','EWC','O-EWC','SI', 'Total Replay', 'Partial Replay', 'None']
 clr = ["#377eb8", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
 c = sns.color_palette(clr, n_colors=len(clr))
 marker_style = ['.', '.', '.', '+', 'o', '*', '.', '+', 'o']
@@ -169,13 +182,25 @@ for alg_no,alg in enumerate(alg_name):
     else:
         ax.plot(angles,tes_angle[alg_no], c=c[alg_no], label=alg_name[alg_no], marker=marker_style[alg_no])
 
-#ax[1].set_yticks([.9,.95, 1, 1.05,1.1])
-#ax[1].set_ylim([0.85,1.13])
+ax.set_yticks([.85,.9,.95,1,1.05,1.1])
+ax.set_ylim([0.83,1.11])
 ax.set_xticks([0,30,60,90,120,150,180])
 ax.hlines(1,0,180, colors='grey', linestyles='dashed',linewidth=1.5)
+
+log_lbl = np.round(
+    np.log([.85,.9,.95,1,1.05,1.1]),
+    2
+)
+labels = [item.get_text() for item in ax.get_yticklabels()]
+
+for ii,_ in enumerate(labels):
+    labels[ii] = str(log_lbl[ii])
+
+ax.set_yticklabels(labels)
+
 ax.tick_params(labelsize=ticksize)
 ax.set_xlabel('Angle of Rotation (Degrees)', fontsize=fontsize)
-ax.set_ylabel('Backward Transfer Efficiency', fontsize=fontsize)
+ax.set_ylabel('log Backward TE', fontsize=fontsize)
 ax.set_title("B. Rotation Experiment", fontsize=fontsize)
 handles, labels_ = ax.get_legend_handles_labels()
 right_side = ax.spines["right"]
