@@ -221,9 +221,9 @@ te_500 = {'Odin':np.zeros(10,dtype=float), 'Odif':np.zeros(10,dtype=float),
 for count,name in enumerate(te_500.keys()):
     for i in range(10):
         if count <4:
-            te_500[name][i] = tes_top[count][i][9-i]
+            te_500[name][i] = np.log(tes_top[count][i][9-i])
         else:
-            te_500[name][i] = tes_bottom[count-4][i][9-i]
+            te_500[name][i] = np.log(tes_bottom[count-4][i][9-i])
 
 
 df_500 = pd.DataFrame.from_dict(te_500)
@@ -371,12 +371,12 @@ ax_ = sns.boxplot(
     x="Algorithms", y="Transfer Efficieny", data=df_500, palette=c_combined_, whis=np.inf,
     ax=ax, showfliers=False, notch=1
     )
-ax.hlines(1, -1,11, colors='grey', linestyles='dashed',linewidth=1.5)
+ax.hlines(0, -1,11, colors='grey', linestyles='dashed',linewidth=1.5)
 #sns.boxplot(x="Algorithms", y="Transfer Efficieny", data=mean_df, palette=c, linewidth=3, ax=ax[1][1])
 #ax_=sns.pointplot(x="Algorithms", y="Transfer Efficieny", data=df_500, join=False, color='grey', linewidth=1.5, ci='sd',ax=ax)
 #ax_.set_yticks([.4,.6,.8,1, 1.2,1.4])
 ax_.set_xlabel('', fontsize=fontsize)
-ax.set_ylabel('Transfer Efficiency after 10 Tasks', fontsize=fontsize-5)
+ax.set_ylabel('log TE after 10 Tasks', fontsize=fontsize-5)
 ax_.set_xticklabels(
     ['Odin','Odif', 'ProgNN','DF-CNN', 'Odif (constrained)','LwF','EWC','O-EWC','SI','Total Replay','Partial Replay', 'None'],
     fontsize=18,rotation=65,ha="right",rotation_mode='anchor'
