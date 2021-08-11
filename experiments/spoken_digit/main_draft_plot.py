@@ -273,7 +273,7 @@ labels = [item.get_text() for item in ax.get_yticklabels()]
 for ii,_ in enumerate(labels):
     labels[ii] = str(log_lbl[ii])
 
-#ax.set_yticklabels(labels)
+ax.set_yticklabels(labels)
 
 ax.tick_params(labelsize=ticksize)
 #ax[0][1].grid(axis='x')
