@@ -260,6 +260,7 @@ for i in range(task_num - 1):
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 ax.set_ylabel('log Backward TE', fontsize=fontsize)
 
+ax.set_xticks(np.arange(1,7))
 ax.set_yticks([.2,1,2,3])
 #ax.set_xticks(np.arange(1,11))
 #ax.set_ylim(0.76, 1.25)
