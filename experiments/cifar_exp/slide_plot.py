@@ -121,13 +121,13 @@ total_alg_bottom = 8
 total_alg = 12
 alg_name_top = ['SynN','SynF','ProgNN', 'DF-CNN']
 alg_name_bottom = ['SynF','LwF','EWC','O-EWC','SI', 'Full replay', 'Replay \n (fixed)', 'None']
-alg_name = ['SynN','SynF','ProgNN', 'DF-CNN', 'SynF (constrained)','LwF','EWC','O-EWC','SI', 'Full replay', 'Replay \n (fixed)', 'None']
+alg_name = ['SynN','SynF','ProgNN', 'DF-CNN', 'SynF \n (constrained)','LwF','EWC','O-EWC','SI', 'Full replay', 'Replay \n (fixed)', 'None']
 combined_alg_name = ['Odin','Odif','ProgNN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Total Replay', 'Partial Replay', 'None']
 model_file_top = ['dnn0withrep','fixed_uf10withrep','Prog_NN','DF_CNN']
 model_file_bottom = ['uf10withrep', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
-btes_top = [[] for i in range(total_alg_top)]
-ftes_top = [[] for i in range(total_alg_top)]
-tes_top = [[] for i in range(total_alg_top)]
+btes_top = [[] for i in range(total_alg)]
+ftes_top = [[] for i in range(total_alg)]
+tes_top = [[] for i in range(total_alg)]
 btes_bottom = [[] for i in range(total_alg_bottom)]
 ftes_bottom = [[] for i in range(total_alg_bottom)]
 tes_bottom = [[] for i in range(total_alg_bottom)]
@@ -232,8 +232,10 @@ df_500 = pd.DataFrame.from_dict(te_500)
 df_500 = pd.melt(df_500,var_name='Algorithms', value_name='Transfer Efficieny')
 
 # %%
-fig = plt.figure(constrained_layout=True,figsize=(29,16))
-gs = fig.add_gridspec(16, 29)
+fig = plt.figure(constrained_layout=True,figsize=(15,8))
+gs = fig.add_gridspec(8, 15)
+#gs = fig.add_gridspec(16, 29)
+ax = fig.add_subplot(gs[:8,:8])
 
 clr_top = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3"]
 c_top = sns.color_palette(clr_top, n_colors=len(clr_top))
@@ -243,43 +245,43 @@ c_bottom = sns.color_palette(clr_bottom, n_colors=len(clr_bottom))
 
 marker_style_top = ['.', '.', '.', '.']
 marker_style_bottom = ['.', '.', '+', 'o', '*', '.', '+', 'o']
-marker_style = ['.', '.', '.', '.', '.', '+', 'o', '*', '.', '+', 'o']
+marker_style = ['.', '.', '.', '.', '.', '.', '+', 'o', '*', '.', '+', 'o']
 marker_style_scatter = ['.', '.', '.', '.', '.', '.', '+', 'o', '*', '.', '+', 'o']
 
 
-clr_combined = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
-c_combined = sns.color_palette(clr_combined, n_colors=total_alg_top+total_alg_bottom)
+#clr_combined = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
+#c_combined = sns.color_palette(clr_combined, n_colors=total_alg_top+total_alg_bottom)
 
 clr_combined_ = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
-c_combined_ = sns.color_palette(clr_combined_, n_colors=total_alg_top+total_alg_bottom+1)
+c_combined_ = sns.color_palette(clr_combined_, n_colors=total_alg)
 
 fontsize=29
 ticksize=26
 legendsize=14
 
-ax = fig.add_subplot(gs[:7,:7])
+#ax = fig.add_subplot(gs[:7,:7])
 
 for i, fte in enumerate(ftes_top):
     fte[0] = 1
     if i == 0:
-        ax.plot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], markersize=12, label=alg_name_top[i], linewidth=3)
+        ax.plot(np.arange(1,11), fte, color=c_combined_[i], marker=marker_style[i], markersize=12, label=alg_name[i], linewidth=3)
         continue
 
     if i == 1:
-        ax.plot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], markersize=12, label=alg_name_top[i], linewidth=3)
+        ax.plot(np.arange(1,11), fte, color=c_combined_[i], marker=marker_style[i], markersize=12, label=alg_name[i], linewidth=3)
         continue
     
-    ax.plot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], markersize=12, label=alg_name_top[i])
+    ax.plot(np.arange(1,11), fte, color=c_combined_[i], marker=marker_style[i], markersize=12, label=alg_name[i])
     
 ax.set_xticks(np.arange(1,11))
-ax.set_yticks([0.9, 1, 1.1, 1.2, 1.3])
+ax.set_yticks([0.85, 1, 1.1, 1.2, 1.3])
 #ax.set_yticks([])
 #ax.text(0, np.mean(ax.get_ylim()), "%s" % str(0), fontsize=26)
 #ax.yaxis.set_major_locator(plt.LogLocator(subs=(0.9, 1, 1.1, 1.2, 1.3)))
-ax.set_ylim(0.89, 1.31)
+ax.set_ylim(0.8, 1.31)
 
 log_lbl = np.round(
-    np.log([0.9,1,1.1,1.2,1.3]),
+    np.log([0.85,1,1.1,1.2,1.3]),
     2
 )
 labels = [item.get_text() for item in ax.get_yticklabels()]
@@ -302,7 +304,7 @@ ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5)
 
 
 
-#ax[0][0].grid(axis='x')
+'''#ax[0][0].grid(axis='x')
 ax = fig.add_subplot(gs[:7,8:15])
 
 for i in range(task_num - 1):
@@ -541,8 +543,93 @@ right_side = ax.spines["right"]
 right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
+'''
+fig.legend(bbox_to_anchor=(.97, 1), fontsize=legendsize+16, frameon=False)
+#fig.legend(frameon=False)
+plt.savefig('result/figs/slide_fte.png',dpi=300)
 
-fig.legend(handles, labels_, bbox_to_anchor=(.97, .95), fontsize=legendsize+12, frameon=False)
-plt.savefig('result/figs/cifar_exp_500_recruit_with_rep.pdf')
+# %%
+fig = plt.figure(constrained_layout=True,figsize=(15,8))
+gs = fig.add_gridspec(8, 15)
+#gs = fig.add_gridspec(16, 29)
+ax = fig.add_subplot(gs[:8,:8])
 
+clr_top = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3"]
+c_top = sns.color_palette(clr_top, n_colors=len(clr_top))
+
+clr_bottom = ["#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
+c_bottom = sns.color_palette(clr_bottom, n_colors=len(clr_bottom))
+
+marker_style_top = ['.', '.', '.', '.']
+marker_style_bottom = ['.', '.', '+', 'o', '*', '.', '+', 'o']
+marker_style = ['.', '.', '.', '.', '.', '.', '+', 'o', '*', '.', '+', 'o']
+marker_style_scatter = ['.', '.', '.', '.', '.', '.', '+', 'o', '*', '.', '+', 'o']
+
+
+#clr_combined = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
+#c_combined = sns.color_palette(clr_combined, n_colors=total_alg_top+total_alg_bottom)
+
+clr_combined_ = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
+c_combined_ = sns.color_palette(clr_combined_, n_colors=total_alg)
+
+fontsize=29
+ticksize=26
+legendsize=14
+
+for i in range(task_num - 1):
+
+    et = np.zeros((total_alg,task_num-i))
+
+    for j in range(0,total_alg):
+        et[j,:] = np.asarray(btes_top[j][i])
+
+    ns = np.arange(i + 1, task_num + 1)
+    for j in range(0,total_alg):
+        if j == 0:
+            if i == 0:
+                ax.plot(ns, et[j,:], marker=marker_style[j], markersize=8, label = alg_name[j], color=c_combined_[j], linewidth = 3)
+            else:
+                ax.plot(ns, et[j,:], marker=marker_style[j], markersize=8, color=c_combined_[j], linewidth = 3)
+        elif j == 1:
+            if i == 0:
+                ax.plot(ns, et[j,:], marker=marker_style[j], markersize=8, label = alg_name_top[j], color=c_combined_[j], linewidth = 3)
+            else:
+                ax.plot(ns, et[j,:], marker=marker_style[j], markersize=8, color=c_combined_[j], linewidth = 3)
+        else:
+            if i == 0:
+                ax.plot(ns, et[j,:], marker=marker_style[j], markersize=8, label = alg_name[j], color=c_combined_[j])
+            else:
+                ax.plot(ns, et[j,:], marker=marker_style[j], markersize=8, color=c_combined_[j])
+
+
+ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
+ax.set_ylabel('log Backward TE', fontsize=fontsize)
+
+ax.set_yticks([.8,.9,1, 1.1,1.2])
+ax.set_xticks(np.arange(1,11))
+ax.set_ylim(0.76, 1.25)
+
+log_lbl = np.round(
+    np.log([.8,.9,1,1.1,1.2]),
+    2
+)
+labels = [item.get_text() for item in ax.get_yticklabels()]
+
+for ii,_ in enumerate(labels):
+    labels[ii] = str(log_lbl[ii])
+
+ax.set_yticklabels(labels)
+
+ax.tick_params(labelsize=ticksize)
+#ax[0][1].grid(axis='x')
+
+right_side = ax.spines["right"]
+right_side.set_visible(False)
+top_side = ax.spines["top"]
+top_side.set_visible(False)
+ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5)
+
+handles, labels_ = ax.get_legend_handles_labels()
+fig.legend(bbox_to_anchor=(.974, 1), fontsize=legendsize+16, frameon=False)
+plt.savefig('result/figs/slide_bte.png', dpi=300)
 # %%
