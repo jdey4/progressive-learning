@@ -116,13 +116,13 @@ ntrees = 10
 slots = 10
 task_num = 10
 shifts = 6
-total_alg_top = 4
-total_alg_bottom = 8
-alg_name_top = ['SynN','SynF','ProgNN', 'DF-CNN']
-alg_name_bottom = ['SynF','LwF','EWC','O-EWC','SI', 'Full replay', 'Replay \n (fixed)', 'None']
-combined_alg_name = ['SynN','SynF','ProgNN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Total Replay', 'Partial Replay', 'None']
-model_file_top = ['dnn0withrep','fixed_uf10withrep','Prog_NN','DF_CNN']
-model_file_bottom = ['uf10withrep', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
+total_alg_top = 7
+total_alg_bottom = 5
+alg_name_top = ['SynN','SynF','ProgNN', 'DF-CNN','EWC', 'Full replay', 'Replay \n (fixed)']
+alg_name_bottom = ['SynF','LwF','O-EWC','SI', 'None']
+combined_alg_name = ['SynN','SynF','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'LwF', 'O-EWC','SI', 'None']
+model_file_top = ['dnn0withrep','fixed_uf10withrep','Prog_NN','DF_CNN', 'EWC', 'offline', 'exact']
+model_file_bottom = ['uf10withrep', 'LwF', 'OEWC', 'si', 'None']
 btes_top = [[] for i in range(total_alg_top)]
 ftes_top = [[] for i in range(total_alg_top)]
 tes_top = [[] for i in range(total_alg_top)]
@@ -220,10 +220,10 @@ te_500 = {'SynN':np.zeros(10,dtype=float), 'SynF':np.zeros(10,dtype=float),
 
 for count,name in enumerate(te_500.keys()):
     for i in range(10):
-        if count <4:
+        if count <7:
             te_500[name][i] = np.log(tes_top[count][i][9-i])
         else:
-            te_500[name][i] = np.log(tes_bottom[count-4][i][9-i])
+            te_500[name][i] = np.log(tes_bottom[count-7][i][9-i])
 
 
 df_500 = pd.DataFrame.from_dict(te_500)
@@ -233,23 +233,22 @@ df_500 = pd.melt(df_500,var_name='Algorithms', value_name='Transfer Efficieny')
 fig = plt.figure(constrained_layout=True,figsize=(29,16))
 gs = fig.add_gridspec(16, 29)
 
-clr_top = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3"]
+clr_top = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928"]
 c_top = sns.color_palette(clr_top, n_colors=len(clr_top))
 
-clr_bottom = ["#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
+clr_bottom = ["#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#b15928"]
 c_bottom = sns.color_palette(clr_bottom, n_colors=len(clr_bottom))
 
-marker_style_top = ['.', '.', '.', '.']
-marker_style_bottom = ['.', '.', '+', 'o', '*', '.', '+', 'o']
-marker_style = ['.', '.', '.', '.', '.', '+', 'o', '*', '.', '+', 'o']
-marker_style_scatter = ['.', '.', '.', '.', '.', '.', '+', 'o', '*', '.', '+', 'o']
+marker_style_top = ['.', '.', '.', '.', '+', '.', '+']
+marker_style_bottom = ['.', '.', 'o', '*', 'o']
+marker_style = ['.', '.', '.', '.', '+', '.', '+', '.', 'o', '*', 'o']
+marker_style_scatter = ['.', '.', '.', '.', '+', '.', '+', '.', '.', 'o', '*', 'o']
 
+clr_combined = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#f781bf", "#f781bf", "#f781bf", "#b15928"]
+c_combined = sns.color_palette(clr_combined, n_colors=total_alg_top+total_alg_bottom-1)
 
-clr_combined = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
-c_combined = sns.color_palette(clr_combined, n_colors=total_alg_top+total_alg_bottom)
-
-clr_combined_ = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
-c_combined_ = sns.color_palette(clr_combined_, n_colors=total_alg_top+total_alg_bottom+1)
+clr_combined_ = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#b15928"]
+c_combined_ = sns.color_palette(clr_combined_, n_colors=total_alg_top+total_alg_bottom)
 
 fontsize=29
 ticksize=26
@@ -270,14 +269,14 @@ for i, fte in enumerate(ftes_top):
     ax.plot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], markersize=12, label=alg_name_top[i])
     
 ax.set_xticks(np.arange(1,11))
-ax.set_yticks([0.9, 1, 1.1, 1.2, 1.3])
+ax.set_yticks([0.8, 0.9, 1, 1.1, 1.2, 1.3])
 #ax.set_yticks([])
 #ax.text(0, np.mean(ax.get_ylim()), "%s" % str(0), fontsize=26)
 #ax.yaxis.set_major_locator(plt.LogLocator(subs=(0.9, 1, 1.1, 1.2, 1.3)))
-ax.set_ylim(0.89, 1.31)
+ax.set_ylim(0.8, 1.31)
 
 log_lbl = np.round(
-    np.log([0.9,1,1.1,1.2,1.3]),
+    np.log([0.8,0.9,1,1.1,1.2,1.3]),
     2
 )
 labels = [item.get_text() for item in ax.get_yticklabels()]
@@ -305,6 +304,7 @@ ax = fig.add_subplot(gs[:7,8:15])
 
 for i in range(task_num - 1):
 
+    ax.plot([], [], markersize=8, label='Resource Growing')
     et = np.zeros((total_alg_top,task_num-i))
 
     for j in range(0,total_alg_top):
@@ -378,7 +378,7 @@ ax.hlines(0, -1,11, colors='grey', linestyles='dashed',linewidth=1.5)
 ax_.set_xlabel('', fontsize=fontsize)
 ax.set_ylabel('log TE after 10 Tasks', fontsize=fontsize-5)
 ax_.set_xticklabels(
-    ['SynN','SynF', 'ProgNN','DF-CNN', 'SynF (constrained)','LwF','EWC','O-EWC','SI','Total Replay','Partial Replay', 'None'],
+    ['SynN','SynF','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'SynF (constrained)', 'LwF', 'O-EWC','SI', 'None'],
     fontsize=18,rotation=65,ha="right",rotation_mode='anchor'
     )
 
