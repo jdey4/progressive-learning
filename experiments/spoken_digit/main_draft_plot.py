@@ -114,7 +114,7 @@ def stratified_scatter(te_dict,axis_handle,s,color,style):
 ### MAIN HYPERPARAMS ###
 task_num = 6
 total_alg = 9
-combined_alg_name = ['Odin','Odif','LwF','EWC','O-EWC','SI', 'Total Replay', 'Partial Replay', 'None']
+combined_alg_name = ['SynN','SynF','LwF','EWC','O-EWC','SI', 'Total Replay', 'Partial Replay', 'None']
 btes = [[] for i in range(total_alg)]
 ftes = [[] for i in range(total_alg)]
 tes = [[] for i in range(total_alg)]

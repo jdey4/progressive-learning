@@ -131,7 +131,7 @@ ftes_bottom = [[] for i in range(total_alg_bottom)]
 tes_bottom = [[] for i in range(total_alg_bottom)]
 
 #combined_alg_name = ['L2N','L2F','Prog-NN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Replay (increasing amount)', 'Replay (fixed amount)', 'None']
-model_file_combined = ['dnn0withrep','fixed_uf10withrep','Prog_NN','DF_CNN', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
+model_file_5000 = ['dnn0','uf10','Prog_NN','DF_CNN', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
 
 ########################
 
@@ -543,6 +543,6 @@ top_side.set_visible(False)
 fig.legend(handles_top, labels_top, bbox_to_anchor=(.99, .95), fontsize=legendsize+14, frameon=False)
 fig.legend(handles_bottom, labels_bottom, bbox_to_anchor=(.99, .55), fontsize=legendsize+14, frameon=False)
 
-plt.savefig('result/figs/cifar_exp_500_recruit_with_rep.pdf')
+plt.savefig('result/figs/benchmark_5000.pdf', dpi=500)
 
 # %%
