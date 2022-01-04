@@ -135,7 +135,7 @@ model_file_combined = ['dnn0','fixed_uf10','Prog_NN','DF_CNN', 'LwF', 'EWC', 'OE
 
 ########################
 
-#%% code for 500 samples
+#%% code for 5000 samples
 reps = slots*shifts
 
 for alg in range(total_alg_top): 

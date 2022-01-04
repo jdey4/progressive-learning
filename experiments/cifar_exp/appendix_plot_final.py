@@ -56,7 +56,7 @@ def calc_mean_te(tes,task_num=10,reps=6):
         
         tmp=tmp/reps
         mean_te[j].extend(tmp)
-                                             
+            
     return mean_te 
 
 def calc_mean_fte(ftes,task_num=10,reps=6):
@@ -119,10 +119,10 @@ shifts = 6
 total_alg_top = 7
 total_alg_bottom = 5
 alg_name_top = ['SynN','SynF','ProgNN', 'DF-CNN', 'EWC', 'Total Replay', 'Partial Replay']
-alg_name_bottom = ['SynF','LwF','O-EWC','SI', 'None']
-combined_alg_name = ['SynN','SynF','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'LwF', 'O-EWC','SI', 'None']
-model_file_top = ['dnn0withrep','fixed_uf10withrep','Prog_NN','DF_CNN', 'EWC', 'offline', 'exact']
-model_file_bottom = ['uf10withrep', 'LwF', 'OEWC', 'si', 'None']
+alg_name_bottom = ['SynF','LwF','O-EWC','SI','None']
+combined_alg_name = ['SynN','SynF','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay','LwF','O-EWC','SI', 'None']
+model_file_top = ['dnn0','fixed_uf10','Prog_NN','DF_CNN', 'EWC', 'offline', 'exact']
+model_file_bottom = ['uf10', 'LwF', 'OEWC', 'si', 'None']
 btes_top = [[] for i in range(total_alg_top)]
 ftes_top = [[] for i in range(total_alg_top)]
 tes_top = [[] for i in range(total_alg_top)]
@@ -131,11 +131,11 @@ ftes_bottom = [[] for i in range(total_alg_bottom)]
 tes_bottom = [[] for i in range(total_alg_bottom)]
 
 #combined_alg_name = ['L2N','L2F','Prog-NN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Replay (increasing amount)', 'Replay (fixed amount)', 'None']
-model_file_5000 = ['dnn0','uf10','Prog_NN','DF_CNN', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
+#model_file_combined = ['dnn0','fixed_uf10','Prog_NN','DF_CNN', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
 
 ########################
 
-#%% code for 500 samples
+#%% code for 5000 samples
 reps = slots*shifts
 
 for alg in range(total_alg_top): 
@@ -144,28 +144,27 @@ for alg in range(total_alg_top):
     fte_tmp = [[] for _ in range(reps)] 
     te_tmp = [[] for _ in range(reps)]
 
-    for slot in range(slots):
-        for shift in range(shifts):
-            if alg < 2:
-                filename = './result/result/'+model_file_top[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
-            elif alg == 2 or alg == 3:
-                filename = './benchmarking_algorthms_result/'+model_file_top[alg]+'-'+str(shift+1)+'-'+str(slot+1)+'.pickle'
-            else:
-                filename = './benchmarking_algorthms_result/'+model_file_top[alg]+'-'+str(slot+1)+'-'+str(shift+1)+'.pickle'
+    for shift in range(shifts):
+        if alg < 2:
+            filename = './result/result/'+model_file_top[alg]+'_'+str(shift+1)+'.pickle'
+        elif alg <4:
+            filename = './benchmarking_algorthms_result/'+model_file_top[alg]+'_'+str(shift+1)+'.pickle'
+        else:
+            filename = './benchmarking_algorthms_result/'+model_file_top[alg]+'-'+str(shift+1)+'.pickle'
 
-            multitask_df, single_task_df = unpickle(filename)
+        multitask_df, single_task_df = unpickle(filename)
 
-            single_err_, err_ = get_error_matrix(filename)
+        single_err_, err_ = get_error_matrix(filename)
 
-            if count == 0:
-                single_err, err = single_err_, err_
-            else:
-                err = sum_error_matrix(err, err_)
-                single_err = list(
-                    np.asarray(single_err) + np.asarray(single_err_)
-                )
+        if count == 0:
+            single_err, err = single_err_, err_
+        else:
+            err = sum_error_matrix(err, err_)
+            single_err = list(
+                np.asarray(single_err) + np.asarray(single_err_)
+            )
 
-            count += 1
+        count += 1
     #single_err /= reps
     #err /= reps
     fte, bte, te = get_fte_bte(err,single_err)
@@ -183,26 +182,25 @@ for alg in range(total_alg_bottom):
     fte_tmp = [[] for _ in range(reps)] 
     te_tmp = [[] for _ in range(reps)]
 
-    for slot in range(slots):
-        for shift in range(shifts):
-            if alg < 1:
-                filename = './result/result/'+model_file_bottom[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
-            else:
-                filename = './benchmarking_algorthms_result/'+model_file_bottom[alg]+'-'+str(slot+1)+'-'+str(shift+1)+'.pickle'
+    for shift in range(shifts):
+        if alg < 1:
+            filename = './result/result/'+model_file_bottom[alg]+'_'+str(shift+1)+'.pickle'
+        else:
+            filename = './benchmarking_algorthms_result/'+model_file_bottom[alg]+'-'+str(shift+1)+'.pickle'
 
-            multitask_df, single_task_df = unpickle(filename)
+        multitask_df, single_task_df = unpickle(filename)
 
-            single_err_, err_ = get_error_matrix(filename)
+        single_err_, err_ = get_error_matrix(filename)
 
-            if count == 0:
-                single_err, err = single_err_, err_
-            else:
-                err = sum_error_matrix(err, err_)
-                single_err = list(
-                    np.asarray(single_err) + np.asarray(single_err_)
-                )
+        if count == 0:
+            single_err, err = single_err_, err_
+        else:
+            err = sum_error_matrix(err, err_)
+            single_err = list(
+                np.asarray(single_err) + np.asarray(single_err_)
+            )
 
-            count += 1
+        count += 1
     #single_err /= reps
     #err /= reps
     fte, bte, te = get_fte_bte(err,single_err)
@@ -212,22 +210,22 @@ for alg in range(total_alg_bottom):
     tes_bottom[alg].extend(te)
 
 #%%
-te_500 = {'SynN':np.zeros(10,dtype=float), 'SynF':np.zeros(10,dtype=float), 
+te_5000 = {'SynN':np.zeros(10,dtype=float), 'SynF':np.zeros(10,dtype=float), 
           'Prog-NN':np.zeros(10,dtype=float), 'DF-CNN':np.zeros(10,dtype=float), 
           'SynF (constrained)':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
           'EWC':np.zeros(10,dtype=float), 'O-EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float),
           'Total Replay':np.zeros(10,dtype=float), 'Partial Replay':np.zeros(10,dtype=float), 'None':np.zeros(10,dtype=float)}
 
-for count,name in enumerate(te_500.keys()):
+for count,name in enumerate(te_5000.keys()):
     for i in range(10):
-        if count <7:
-            te_500[name][i] = np.log(tes_top[count][i][9-i])
+        if count < 7:
+            te_5000[name][i] = np.log(tes_top[count][i][9-i])
         else:
-            te_500[name][i] = np.log(tes_bottom[count-7][i][9-i])
+            te_5000[name][i] = np.log(tes_bottom[count-7][i][9-i])
 
 
-df_500 = pd.DataFrame.from_dict(te_500)
-df_500 = pd.melt(df_500,var_name='Algorithms', value_name='Transfer Efficieny')
+df_5000 = pd.DataFrame.from_dict(te_5000)
+df_5000 = pd.melt(df_5000,var_name='Algorithms', value_name='Transfer Efficieny')
 
 # %%
 fig = plt.figure(constrained_layout=True,figsize=(31,16))
@@ -288,7 +286,7 @@ ax.set_yticklabels(labels)
 
 ax.tick_params(labelsize=ticksize)
 
-ax.set_ylabel('log Forward TE', fontsize=fontsize)
+ax.set_ylabel('log Forward LE', fontsize=fontsize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 
 right_side = ax.spines["right"]
@@ -332,7 +330,7 @@ for i in range(task_num - 1):
     ax.plot(1,0,color=c_combined[i], marker=marker_style[i], markersize=8,label=combined_alg_name[i])'''
 
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
-ax.set_ylabel('log Backward TE', fontsize=fontsize)
+ax.set_ylabel('log Backward LE', fontsize=fontsize)
 
 ax.set_yticks([.8,.9,1, 1.1,1.2])
 ax.set_xticks(np.arange(1,11))
@@ -367,7 +365,7 @@ handles_top, labels_top = ax.get_legend_handles_labels()
 ax = fig.add_subplot(gs[:7,16:23])
 ax.tick_params(labelsize=22)
 ax_ = sns.boxplot(
-    x="Algorithms", y="Transfer Efficieny", data=df_500, palette=c_combined_, whis=np.inf,
+    x="Algorithms", y="Transfer Efficieny", data=df_5000, palette=c_combined_, whis=np.inf,
     ax=ax, showfliers=False, notch=1
     )
 ax.hlines(0, -1,11, colors='grey', linestyles='dashed',linewidth=1.5)
@@ -375,13 +373,13 @@ ax.hlines(0, -1,11, colors='grey', linestyles='dashed',linewidth=1.5)
 #ax_=sns.pointplot(x="Algorithms", y="Transfer Efficieny", data=df_500, join=False, color='grey', linewidth=1.5, ci='sd',ax=ax)
 #ax_.set_yticks([.4,.6,.8,1, 1.2,1.4])
 ax_.set_xlabel('', fontsize=fontsize)
-ax.set_ylabel('log TE after 10 Tasks', fontsize=fontsize-5)
+ax.set_ylabel('log LE after 10 Tasks', fontsize=fontsize-5)
 ax_.set_xticklabels(
     ['SynN','SynF','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'SynF (constrained)', 'LwF', 'O-EWC','SI', 'None'],
     fontsize=19,rotation=65,ha="right",rotation_mode='anchor'
     )
 
-stratified_scatter(te_500,ax,16,c_combined_,marker_style_scatter)
+stratified_scatter(te_5000,ax,16,c_combined_,marker_style_scatter)
 
 right_side = ax.spines["right"]
 right_side.set_visible(False)
@@ -404,15 +402,15 @@ for i, fte in enumerate(ftes_bottom):
     ax.plot(np.arange(1,11), fte, color=c_bottom[i], marker=marker_style_bottom[i], markersize=12)
     
 ax.set_xticks(np.arange(1,11))
-ax.set_yticks([0.85, 1, 1.05])
-ax.set_ylim(0.8, 1.05)
+ax.set_yticks([0.7, 1, 1.25])
+ax.set_ylim(0.7, 1.25)
 ax.tick_params(labelsize=ticksize)
 
-ax.set_ylabel('Resource Constrained log FTE', fontsize=fontsize)
+ax.set_ylabel('Resource Constrained log FLE', fontsize=fontsize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 
 log_lbl = np.round(
-    np.log([0.85,1,1.05]),
+    np.log([0.7,1,1.25]),
     2
 )
 labels = [item.get_text() for item in ax.get_yticklabels()]
@@ -463,7 +461,7 @@ for i in range(task_num - 1):
 
 
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
-ax.set_ylabel('Resource Constrained log BTE', fontsize=fontsize)
+ax.set_ylabel('Resource Constrained log BLE', fontsize=fontsize)
 
 ax.set_yticks([.9,1, 1.1,1.2])
 ax.set_xticks(np.arange(1,11))
@@ -543,6 +541,5 @@ top_side.set_visible(False)
 fig.legend(handles_top, labels_top, bbox_to_anchor=(.99, .95), fontsize=legendsize+14, frameon=False)
 fig.legend(handles_bottom, labels_bottom, bbox_to_anchor=(.99, .55), fontsize=legendsize+14, frameon=False)
 
-plt.savefig('result/figs/benchmark_5000.pdf', dpi=500)
-
+plt.savefig('result/figs/benchmark_5000.pdf')
 # %%

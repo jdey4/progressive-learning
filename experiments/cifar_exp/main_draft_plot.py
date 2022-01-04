@@ -227,7 +227,7 @@ for count,name in enumerate(te_500.keys()):
 
 
 df_500 = pd.DataFrame.from_dict(te_500)
-df_500 = pd.melt(df_500,var_name='Algorithms', value_name='Transfer Efficieny')
+df_500 = pd.melt(df_500,var_name='Algorithms', value_name='Learning Efficieny')
 
 # %%
 fig = plt.figure(constrained_layout=True,figsize=(31,16))
@@ -288,7 +288,7 @@ ax.set_yticklabels(labels)
 
 ax.tick_params(labelsize=ticksize)
 
-ax.set_ylabel('log Forward TE', fontsize=fontsize)
+ax.set_ylabel('log Forward LE', fontsize=fontsize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 
 right_side = ax.spines["right"]
@@ -332,7 +332,7 @@ for i in range(task_num - 1):
     ax.plot(1,0,color=c_combined[i], marker=marker_style[i], markersize=8,label=combined_alg_name[i])'''
 
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
-ax.set_ylabel('log Backward TE', fontsize=fontsize)
+ax.set_ylabel('log Backward LE', fontsize=fontsize)
 
 ax.set_yticks([.8,.9,1, 1.1,1.2])
 ax.set_xticks(np.arange(1,11))
@@ -367,7 +367,7 @@ handles_top, labels_top = ax.get_legend_handles_labels()
 ax = fig.add_subplot(gs[:7,16:23])
 ax.tick_params(labelsize=22)
 ax_ = sns.boxplot(
-    x="Algorithms", y="Transfer Efficieny", data=df_500, palette=c_combined_, whis=np.inf,
+    x="Algorithms", y="Learning Efficieny", data=df_500, palette=c_combined_, whis=np.inf,
     ax=ax, showfliers=False, notch=1
     )
 ax.hlines(0, -1,11, colors='grey', linestyles='dashed',linewidth=1.5)
@@ -375,7 +375,7 @@ ax.hlines(0, -1,11, colors='grey', linestyles='dashed',linewidth=1.5)
 #ax_=sns.pointplot(x="Algorithms", y="Transfer Efficieny", data=df_500, join=False, color='grey', linewidth=1.5, ci='sd',ax=ax)
 #ax_.set_yticks([.4,.6,.8,1, 1.2,1.4])
 ax_.set_xlabel('', fontsize=fontsize)
-ax.set_ylabel('log TE after 10 Tasks', fontsize=fontsize-5)
+ax.set_ylabel('log LE after 10 Tasks', fontsize=fontsize-5)
 ax_.set_xticklabels(
     ['SynN','SynF','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'SynF (constrained)', 'LwF', 'O-EWC','SI', 'None'],
     fontsize=19,rotation=65,ha="right",rotation_mode='anchor'
@@ -408,7 +408,7 @@ ax.set_yticks([0.85, 1, 1.05])
 ax.set_ylim(0.8, 1.05)
 ax.tick_params(labelsize=ticksize)
 
-ax.set_ylabel('Resource Constrained log FTE', fontsize=fontsize)
+ax.set_ylabel('Resource Constrained log FLE', fontsize=fontsize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 
 log_lbl = np.round(
@@ -463,7 +463,7 @@ for i in range(task_num - 1):
 
 
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
-ax.set_ylabel('Resource Constrained log BTE', fontsize=fontsize)
+ax.set_ylabel('Resource Constrained log BLE', fontsize=fontsize)
 
 ax.set_yticks([.9,1, 1.1,1.2])
 ax.set_xticks(np.arange(1,11))

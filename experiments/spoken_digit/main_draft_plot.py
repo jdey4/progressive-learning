@@ -156,7 +156,7 @@ for alg in range(total_alg):
     tes[alg].extend(te)
 
 #%%
-te = {'Odin':np.zeros(6,dtype=float), 'Odif':np.zeros(6,dtype=float), 
+te = {'SynN':np.zeros(6,dtype=float), 'SynF':np.zeros(6,dtype=float), 
     'LwF':np.zeros(6,dtype=float), 'EWC':np.zeros(6,dtype=float), 
     'O-EWC':np.zeros(6,dtype=float), 'SI':np.zeros(6,dtype=float),
     'Total Replay':np.zeros(6,dtype=float), 'Partial Replay':np.zeros(6,dtype=float), 
@@ -218,7 +218,7 @@ ax.set_yticklabels(labels)
 
 ax.tick_params(labelsize=ticksize)
 
-ax.set_ylabel('log Forward TE', fontsize=fontsize)
+ax.set_ylabel('log Forward LE', fontsize=fontsize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 
 right_side = ax.spines["right"]
@@ -258,7 +258,7 @@ for i in range(task_num - 1):
                 ax.plot(ns, et[j,:], marker=marker_style[j], markersize=8, color=c_combined[j])
 
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
-ax.set_ylabel('log Backward TE', fontsize=fontsize)
+ax.set_ylabel('log Backward LE', fontsize=fontsize)
 
 ax.set_xticks(np.arange(1,7))
 ax.set_yticks([.2,1,2,3])
@@ -300,9 +300,9 @@ ax.hlines(0, -1,7, colors='grey', linestyles='dashed',linewidth=1.5)
 #ax_=sns.pointplot(x="Algorithms", y="Transfer Efficieny", data=df_500, join=False, color='grey', linewidth=1.5, ci='sd',ax=ax)
 #ax_.set_yticks([.4,.6,.8,1, 1.2,1.4])
 ax_.set_xlabel('', fontsize=fontsize)
-ax.set_ylabel('log TE after 6 Tasks', fontsize=fontsize-5)
+ax.set_ylabel('log LE after 6 Tasks', fontsize=fontsize-5)
 ax_.set_xticklabels(
-    ['Odin','Odif','LwF','EWC','O-EWC','SI','Total Replay','Partial Replay', 'None'],
+    ['SynN','SynF','LwF','EWC','O-EWC','SI','Total Replay','Partial Replay', 'None'],
     fontsize=18,rotation=65,ha="right",rotation_mode='anchor'
     )
 

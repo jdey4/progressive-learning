@@ -17,7 +17,7 @@
         dict = pickle.load(fo, encoding='bytes')
     return dict
 
-def get_fte_bte(err, single_err):
+ def get_fte_bte(err, single_err):
     bte = [[] for i in range(10)]
     te = [[] for i in range(10)]
     fte = []
@@ -34,7 +34,7 @@ def get_fte_bte(err, single_err):
             
     return fte,bte,te
 
-def calc_mean_bte(btes,task_num=10,reps=6):
+ def calc_mean_bte(btes,task_num=10,reps=6):
     mean_bte = [[] for i in range(task_num)]
 
 
@@ -48,7 +48,7 @@ def calc_mean_bte(btes,task_num=10,reps=6):
             
     return mean_bte     
 
-def calc_mean_te(tes,task_num=10,reps=6):
+ def calc_mean_te(tes,task_num=10,reps=6):
     mean_te = [[] for i in range(task_num)]
 
     for j in range(task_num):
@@ -61,12 +61,12 @@ def calc_mean_te(tes,task_num=10,reps=6):
             
     return mean_te 
 
-def calc_mean_fte(ftes,task_num=10,reps=6):
+ def calc_mean_fte(ftes,task_num=10,reps=6):
     fte = np.asarray(ftes)
     
     return list(np.mean(np.asarray(fte),axis=0))
 
-def get_error_matrix(filename):
+ def get_error_matrix(filename):
     multitask_df, single_task_df = unpickle(filename)
 
     err = [[] for _ in range(10)]
@@ -81,7 +81,7 @@ def get_error_matrix(filename):
 
     return single_err, err
 
-def sum_error_matrix(error_mat1, error_mat2):
+ def sum_error_matrix(error_mat1, error_mat2):
     err = [[] for _ in range(10)]
 
     for ii in range(10):
@@ -93,7 +93,7 @@ def sum_error_matrix(error_mat1, error_mat2):
         )
     return err
 
-def stratified_scatter(te_dict,axis_handle,s,color,style):
+ def stratified_scatter(te_dict,axis_handle,s,color,style):
     algo = list(te_dict.keys())
     total_alg = len(algo)
 

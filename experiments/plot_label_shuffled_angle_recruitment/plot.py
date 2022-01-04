@@ -159,7 +159,7 @@ ax.set_yticklabels(labels)
 
 ax.tick_params(labelsize=ticksize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
-ax.set_ylabel('log Backward TE', fontsize=fontsize)
+ax.set_ylabel('log Backward LE', fontsize=fontsize)
 ax.set_title("A. Label Shuffled CIFAR", fontsize = fontsize)
 ax.hlines(1,1,10, colors='grey', linestyles='dashed',linewidth=1.5)
 right_side = ax.spines["right"]
@@ -171,7 +171,7 @@ plt.tight_layout()
 
 ax = fig.add_subplot(gs[:6,8:14])
 angles = np.arange(0,184,4)
-alg_name = ['Odin','Odif','LwF','EWC','O-EWC','SI', 'Total Replay', 'Partial Replay', 'None']
+alg_name = ['SynN','SynF','LwF','EWC','O-EWC','SI', 'Total Replay', 'Partial Replay', 'None']
 clr = ["#377eb8", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
 c = sns.color_palette(clr, n_colors=len(clr))
 marker_style = ['.', '.', '.', '+', 'o', '*', '.', '+', 'o']
@@ -200,7 +200,7 @@ ax.set_yticklabels(labels)
 
 ax.tick_params(labelsize=ticksize)
 ax.set_xlabel('Angle of Rotation (Degrees)', fontsize=fontsize)
-ax.set_ylabel('log Backward TE', fontsize=fontsize)
+ax.set_ylabel('log Backward LE', fontsize=fontsize)
 ax.set_title("B. Rotation Experiment", fontsize=fontsize)
 handles, labels_ = ax.get_legend_handles_labels()
 right_side = ax.spines["right"]
