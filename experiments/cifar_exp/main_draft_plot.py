@@ -15,6 +15,14 @@ def unpickle(file):
         dict = pickle.load(fo, encoding='bytes')
     return dict
 
+def calc_avg_acc(err, reps):
+    avg_acc = np.zeros(10, dtype=float)
+    avg_var = np.zeros(10, dtype=float)
+    for i in range(10):
+        avg_acc[i] = (1*(i+1) - np.sum(err[i])/reps + (9-i)*.1)/10
+        avg_var[i] = np.var(1-np.array(err[i])/reps)
+    return avg_acc, avg_var
+
 def get_fte_bte(err, single_err):
     bte = [[] for i in range(10)]
     te = [[] for i in range(10)]
@@ -129,6 +137,10 @@ tes_top = [[] for i in range(total_alg_top)]
 btes_bottom = [[] for i in range(total_alg_bottom)]
 ftes_bottom = [[] for i in range(total_alg_bottom)]
 tes_bottom = [[] for i in range(total_alg_bottom)]
+avg_acc_top = [[] for i in range(total_alg_top)]
+avg_var_top = [[] for i in range(total_alg_top)]
+avg_acc_bottom = [[] for i in range(total_alg_bottom)]
+avg_var_bottom = [[] for i in range(total_alg_bottom)]
 
 #combined_alg_name = ['L2N','L2F','Prog-NN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Replay (increasing amount)', 'Replay (fixed amount)', 'None']
 model_file_combined = ['dnn0withrep','fixed_uf10withrep','Prog_NN','DF_CNN', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
@@ -169,10 +181,13 @@ for alg in range(total_alg_top):
     #single_err /= reps
     #err /= reps
     fte, bte, te = get_fte_bte(err,single_err)
-    
+    avg_acc, avg_var = calc_avg_acc(err, reps)
+
     btes_top[alg].extend(bte)
     ftes_top[alg].extend(fte)
     tes_top[alg].extend(te)
+    avg_acc_top[alg]= avg_acc
+    avg_var_top[alg] = avg_var
 
 # %%
 reps = slots*shifts
@@ -206,11 +221,13 @@ for alg in range(total_alg_bottom):
     #single_err /= reps
     #err /= reps
     fte, bte, te = get_fte_bte(err,single_err)
-    
+    avg_acc, avg_var = calc_avg_acc(err, reps)
+
     btes_bottom[alg].extend(bte)
     ftes_bottom[alg].extend(fte)
     tes_bottom[alg].extend(te)
-
+    avg_acc_bottom[alg] = avg_acc
+    avg_var_bottom[alg] = avg_var
 #%%
 te_500 = {'SynN':np.zeros(10,dtype=float), 'SynF':np.zeros(10,dtype=float), 
           'Prog-NN':np.zeros(10,dtype=float), 'DF-CNN':np.zeros(10,dtype=float), 
@@ -230,8 +247,8 @@ df_500 = pd.DataFrame.from_dict(te_500)
 df_500 = pd.melt(df_500,var_name='Algorithms', value_name='Learning Efficieny')
 
 # %%
-fig = plt.figure(constrained_layout=True,figsize=(31,16))
-gs = fig.add_gridspec(16, 31)
+fig = plt.figure(constrained_layout=True,figsize=(30,24))
+gs = fig.add_gridspec(24, 30)
 
 clr_top = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928"]
 c_top = sns.color_palette(clr_top, n_colors=len(clr_top))
@@ -267,7 +284,8 @@ for i, fte in enumerate(ftes_top):
         continue
     
     ax.plot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], markersize=12, label=alg_name_top[i])
-    
+
+
 ax.set_xticks(np.arange(1,11))
 ax.set_yticks([0.8, 0.9, 1, 1.1, 1.2, 1.3])
 #ax.set_yticks([])
@@ -295,12 +313,12 @@ right_side = ax.spines["right"]
 right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
-ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5)
+ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
 
 
 
 #ax[0][0].grid(axis='x')
-ax = fig.add_subplot(gs[:7,8:15])
+ax = fig.add_subplot(gs[:7,9:16])
 ax.plot([0], [0], color=[1,1,1], label='Resource Growing     ')
 for i in range(task_num - 1):
 
@@ -356,32 +374,26 @@ right_side = ax.spines["right"]
 right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
-ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5)
+ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
 
 handles_top, labels_top = ax.get_legend_handles_labels()
 #ax.legend(loc='center left', bbox_to_anchor=(.8, 0.5), fontsize=legendsize+16)
 
+ax = fig.add_subplot(gs[:7,19:26])
 
+for i in range(total_alg_top):
+    if i==0 or i==1:
+        ax.plot(np.arange(1,11,1) ,avg_acc_top[i], color=c_top[i], marker=marker_style_top[i], linewidth=3)
+    else:
+        ax.plot(np.arange(1,11,1) ,avg_acc_top[i], color=c_top[i], marker=marker_style_top[i])
+    ax.fill_between(np.arange(1,11,1), avg_acc_top[i]-1.96*avg_var_top[i], avg_acc_top[i]+1.96*avg_var_top[i], facecolor=c_top[i], alpha=.3)
 
-
-ax = fig.add_subplot(gs[:7,16:23])
-ax.tick_params(labelsize=22)
-ax_ = sns.boxplot(
-    x="Algorithms", y="Learning Efficieny", data=df_500, palette=c_combined_, whis=np.inf,
-    ax=ax, showfliers=False, notch=1
-    )
-ax.hlines(0, -1,11, colors='grey', linestyles='dashed',linewidth=1.5)
-#sns.boxplot(x="Algorithms", y="Transfer Efficieny", data=mean_df, palette=c, linewidth=3, ax=ax[1][1])
-#ax_=sns.pointplot(x="Algorithms", y="Transfer Efficieny", data=df_500, join=False, color='grey', linewidth=1.5, ci='sd',ax=ax)
-#ax_.set_yticks([.4,.6,.8,1, 1.2,1.4])
-ax_.set_xlabel('', fontsize=fontsize)
-ax.set_ylabel('log LE after 10 Tasks', fontsize=fontsize-5)
-ax_.set_xticklabels(
-    ['SynN','SynF','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'SynF (constrained)', 'LwF', 'O-EWC','SI', 'None'],
-    fontsize=19,rotation=65,ha="right",rotation_mode='anchor'
-    )
-
-stratified_scatter(te_500,ax,16,c_combined_,marker_style_scatter)
+ax.hlines(.1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
+ax.set_yticks([.1,.2,.3,.4])
+ax.set_xticks(np.arange(1,11))
+ax.tick_params(labelsize=ticksize)
+ax.set_ylabel('Accuracy[$\pm$ std dev.]', fontsize=fontsize)
+ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 
 right_side = ax.spines["right"]
 right_side.set_visible(False)
@@ -389,7 +401,7 @@ top_side = ax.spines["top"]
 top_side.set_visible(False)
 
 #########################################################
-ax = fig.add_subplot(gs[8:15,:7])
+ax = fig.add_subplot(gs[9:16,:7])
 
 for i, fte in enumerate(ftes_bottom):
     fte[0] = 1
@@ -426,14 +438,14 @@ right_side = ax.spines["right"]
 right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
-ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5)
+ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
 
 '''for i in range(0,total_alg_top+total_alg_bottom-1):
     ax.plot(1,0,color=c_combined[i], marker=marker_style[i], markersize=8,label=combined_alg_name[i])'''
 
 
 #ax[0][0].grid(axis='x')
-ax = fig.add_subplot(gs[8:15,8:15])
+ax = fig.add_subplot(gs[9:16,10:17])
 ax.plot([0], [0], color=[1,1,1], label='Resource Constrained')
 
 for i in range(task_num - 1):
@@ -482,18 +494,41 @@ ax.set_yticklabels(labels)
 
 ax.tick_params(labelsize=ticksize)
 #ax[0][1].grid(axis='x')
+ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
+
 handles_bottom, labels_bottom = ax.get_legend_handles_labels()
 
 right_side = ax.spines["right"]
 right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
-ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5)
 
 
 ############################
 
-ax = fig.add_subplot(gs[8:15,16:23])
+ax = fig.add_subplot(gs[9:16,19:26])
+
+for i in range(total_alg_bottom):
+    if i==0:
+        ax.plot(np.arange(1,11,1) ,avg_acc_bottom[i], color=c_bottom[i], marker=marker_style_bottom[i], linewidth=3)
+    else:
+        ax.plot(np.arange(1,11,1) ,avg_acc_bottom[i], color=c_bottom[i], marker=marker_style_bottom[i])
+    ax.fill_between(np.arange(1,11,1), avg_acc_bottom[i]-1.96*avg_var_bottom[i], avg_acc_bottom[i]+1.96*avg_var_bottom[i], facecolor=c_bottom[i], alpha=.3)
+
+ax.hlines(.1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
+ax.set_yticks([.1,.2,.3,.4])
+ax.set_xticks(np.arange(1,11))
+ax.tick_params(labelsize=ticksize)
+ax.set_ylabel('Accuracy[$\pm$ std dev.]', fontsize=fontsize)
+ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
+
+right_side = ax.spines["right"]
+right_side.set_visible(False)
+top_side = ax.spines["top"]
+top_side.set_visible(False)
+########################
+ax = fig.add_subplot(gs[18:,14:21])
+
 mean_error, std_error = unpickle('../recruitment_exp/result/recruitment_exp_500.pickle')
 ns = 10*np.array([10, 50, 100, 200, 350, 500])
 clr = ["#e41a1c", "#377eb8", "#4daf4a", "#984ea3"]
@@ -530,7 +565,7 @@ ax.set_yticks([0.45, 0.55, 0.65,0.75])
 ax.text(100, 0.426, "100", fontsize=ticksize-2)
 ax.text(500, 0.426, "500", fontsize=ticksize-2)
 ax.text(5000, 0.426, "5000", fontsize=ticksize-2)
-ax.text(120, 0.400, "Number of Task 10 Samples", fontsize=fontsize-1)
+ax.text(120, 0.39, "Number of Task 10 Samples", fontsize=fontsize-1)
 
 ax.legend(loc='lower left',fontsize=legendsize+6, frameon=False)
 ax.set_title('Recruitment Experiment on Task 10', fontsize=fontsize)
@@ -540,8 +575,32 @@ right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
 
-fig.legend(handles_top, labels_top, bbox_to_anchor=(.99, .95), fontsize=legendsize+14, frameon=False)
-fig.legend(handles_bottom, labels_bottom, bbox_to_anchor=(.99, .55), fontsize=legendsize+14, frameon=False)
+####################
+ax = fig.add_subplot(gs[18:,4:11])
+ax.tick_params(labelsize=22)
+ax_ = sns.boxplot(
+    x="Algorithms", y="Learning Efficieny", data=df_500, palette=c_combined_, whis=np.inf,
+    ax=ax, showfliers=False, notch=1
+    )
+ax.hlines(0, -1,11, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
+#sns.boxplot(x="Algorithms", y="Transfer Efficieny", data=mean_df, palette=c, linewidth=3, ax=ax[1][1])
+#ax_=sns.pointplot(x="Algorithms", y="Transfer Efficieny", data=df_500, join=False, color='grey', linewidth=1.5, ci='sd',ax=ax)
+#ax_.set_yticks([.4,.6,.8,1, 1.2,1.4])
+ax_.set_xlabel('', fontsize=fontsize)
+ax.set_ylabel('log LE after 10 Tasks', fontsize=fontsize-5)
+ax_.set_xticklabels(
+    ['SynN','SynF','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'SynF (constrained)', 'LwF', 'O-EWC','SI', 'None'],
+    fontsize=19,rotation=65,ha="right",rotation_mode='anchor'
+    )
+
+stratified_scatter(te_500,ax,16,c_combined_,marker_style_scatter)
+right_side = ax.spines["right"]
+right_side.set_visible(False)
+top_side = ax.spines["top"]
+top_side.set_visible(False)
+
+fig.legend(handles_top, labels_top, bbox_to_anchor=(.995, .95), fontsize=legendsize+14, frameon=False)
+fig.legend(handles_bottom, labels_bottom, bbox_to_anchor=(.995, .55), fontsize=legendsize+14, frameon=False)
 
 plt.savefig('result/figs/cifar_exp_500_recruit_with_rep.pdf')
 
