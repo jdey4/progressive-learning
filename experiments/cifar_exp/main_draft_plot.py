@@ -23,6 +23,14 @@ def calc_avg_acc(err, reps):
         avg_var[i] = np.var(1-np.array(err[i])/reps)
     return avg_acc, avg_var
 
+def calc_avg_single_acc(err, reps):
+    avg_acc = np.zeros(10, dtype=float)
+    avg_var = np.zeros(10, dtype=float)
+    for i in range(10):
+        avg_acc[i] = (1*(i+1) - np.sum(err[:i+1])/reps + (9-i)*.1)/10
+        avg_var[i] = np.var(1-np.array(err[:i+1])/reps)
+    return avg_acc, avg_var
+
 def get_fte_bte(err, single_err):
     bte = [[] for i in range(10)]
     te = [[] for i in range(10)]
@@ -142,6 +150,11 @@ avg_var_top = [[] for i in range(total_alg_top)]
 avg_acc_bottom = [[] for i in range(total_alg_bottom)]
 avg_var_bottom = [[] for i in range(total_alg_bottom)]
 
+avg_single_acc_top = [[] for i in range(total_alg_top)]
+avg_single_var_top = [[] for i in range(total_alg_top)]
+avg_single_acc_bottom = [[] for i in range(total_alg_bottom)]
+avg_single_var_bottom = [[] for i in range(total_alg_bottom)]
+
 #combined_alg_name = ['L2N','L2F','Prog-NN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Replay (increasing amount)', 'Replay (fixed amount)', 'None']
 model_file_combined = ['dnn0withrep','fixed_uf10withrep','Prog_NN','DF_CNN', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
 
@@ -182,12 +195,15 @@ for alg in range(total_alg_top):
     #err /= reps
     fte, bte, te = get_fte_bte(err,single_err)
     avg_acc, avg_var = calc_avg_acc(err, reps)
+    avg_single_acc, avg_single_var = calc_avg_single_acc(single_err, reps)
 
     btes_top[alg].extend(bte)
     ftes_top[alg].extend(fte)
     tes_top[alg].extend(te)
     avg_acc_top[alg]= avg_acc
     avg_var_top[alg] = avg_var
+    avg_single_acc_top[alg]= avg_single_acc
+    avg_single_var_top[alg] = avg_single_var
 
 # %%
 reps = slots*shifts
@@ -222,12 +238,16 @@ for alg in range(total_alg_bottom):
     #err /= reps
     fte, bte, te = get_fte_bte(err,single_err)
     avg_acc, avg_var = calc_avg_acc(err, reps)
+    avg_single_acc, avg_single_var = calc_avg_single_acc(single_err, reps)
+
 
     btes_bottom[alg].extend(bte)
     ftes_bottom[alg].extend(fte)
     tes_bottom[alg].extend(te)
     avg_acc_bottom[alg] = avg_acc
     avg_var_bottom[alg] = avg_var
+    avg_single_acc_bottom[alg]= avg_single_acc
+    avg_single_var_bottom[alg] = avg_single_var
 #%%
 te_500 = {'SynN':np.zeros(10,dtype=float), 'SynF':np.zeros(10,dtype=float), 
           'Prog-NN':np.zeros(10,dtype=float), 'DF-CNN':np.zeros(10,dtype=float), 
@@ -247,8 +267,8 @@ df_500 = pd.DataFrame.from_dict(te_500)
 df_500 = pd.melt(df_500,var_name='Algorithms', value_name='Learning Efficieny')
 
 # %%
-fig = plt.figure(constrained_layout=True,figsize=(30,24))
-gs = fig.add_gridspec(24, 30)
+fig = plt.figure(constrained_layout=True,figsize=(42,25))
+gs = fig.add_gridspec(25,42)
 
 clr_top = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928"]
 c_top = sns.color_palette(clr_top, n_colors=len(clr_top))
@@ -267,8 +287,8 @@ c_combined = sns.color_palette(clr_combined, n_colors=total_alg_top+total_alg_bo
 clr_combined_ = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#b15928"]
 c_combined_ = sns.color_palette(clr_combined_, n_colors=total_alg_top+total_alg_bottom)
 
-fontsize=31
-ticksize=28
+fontsize=38
+ticksize=34
 legendsize=16
 
 ax = fig.add_subplot(gs[:7,:7])
@@ -318,7 +338,7 @@ ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chan
 
 
 #ax[0][0].grid(axis='x')
-ax = fig.add_subplot(gs[:7,9:16])
+ax = fig.add_subplot(gs[:7,9:17])
 ax.plot([0], [0], color=[1,1,1], label='Resource Growing     ')
 for i in range(task_num - 1):
 
@@ -379,7 +399,7 @@ ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chan
 handles_top, labels_top = ax.get_legend_handles_labels()
 #ax.legend(loc='center left', bbox_to_anchor=(.8, 0.5), fontsize=legendsize+16)
 
-ax = fig.add_subplot(gs[:7,19:26])
+ax = fig.add_subplot(gs[:7,18:25])
 
 for i in range(total_alg_top):
     if i==0 or i==1:
@@ -400,6 +420,28 @@ right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
 
+
+
+ax = fig.add_subplot(gs[:7,26:33])
+
+for i in range(total_alg_top):
+    if i==0 or i==1:
+        ax.plot(np.arange(1,11,1) ,avg_single_acc_top[i], color=c_top[i], marker=marker_style_top[i], linewidth=3)
+    else:
+        ax.plot(np.arange(1,11,1) ,avg_single_acc_top[i], color=c_top[i], marker=marker_style_top[i])
+    ax.fill_between(np.arange(1,11,1), avg_single_acc_top[i]-1.96*avg_single_var_top[i], avg_single_acc_top[i]+1.96*avg_single_var_top[i], facecolor=c_top[i], alpha=.3)
+
+ax.hlines(.1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
+ax.set_yticks([.1,.2,.3,.4])
+ax.set_xticks(np.arange(1,11))
+ax.tick_params(labelsize=ticksize)
+ax.set_ylabel('Single task accuracy', fontsize=fontsize)
+ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
+
+right_side = ax.spines["right"]
+right_side.set_visible(False)
+top_side = ax.spines["top"]
+top_side.set_visible(False)
 #########################################################
 ax = fig.add_subplot(gs[9:16,:7])
 
@@ -445,7 +487,7 @@ ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chan
 
 
 #ax[0][0].grid(axis='x')
-ax = fig.add_subplot(gs[9:16,10:17])
+ax = fig.add_subplot(gs[9:16,9:17])
 ax.plot([0], [0], color=[1,1,1], label='Resource Constrained')
 
 for i in range(task_num - 1):
@@ -506,7 +548,7 @@ top_side.set_visible(False)
 
 ############################
 
-ax = fig.add_subplot(gs[9:16,19:26])
+ax = fig.add_subplot(gs[9:16,18:25])
 
 for i in range(total_alg_bottom):
     if i==0:
@@ -526,8 +568,30 @@ right_side = ax.spines["right"]
 right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
+
+
+ax = fig.add_subplot(gs[9:16,26:33])
+
+for i in range(total_alg_bottom):
+    if i==0:
+        ax.plot(np.arange(1,11,1) ,avg_single_acc_bottom[i], color=c_bottom[i], marker=marker_style_bottom[i], linewidth=3)
+    else:
+        ax.plot(np.arange(1,11,1) ,avg_single_acc_bottom[i], color=c_bottom[i], marker=marker_style_bottom[i])
+    ax.fill_between(np.arange(1,11,1), avg_single_acc_bottom[i]-1.96*avg_single_var_bottom[i], avg_single_acc_bottom[i]+1.96*avg_single_var_bottom[i], facecolor=c_bottom[i], alpha=.3)
+
+ax.hlines(.1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
+ax.set_yticks([.1,.2,.3,.4])
+ax.set_xticks(np.arange(1,11))
+ax.tick_params(labelsize=ticksize)
+ax.set_ylabel('Single task accuracy', fontsize=fontsize)
+ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
+
+right_side = ax.spines["right"]
+right_side.set_visible(False)
+top_side = ax.spines["top"]
+top_side.set_visible(False)
 ########################
-ax = fig.add_subplot(gs[18:,14:21])
+ax = fig.add_subplot(gs[18:,18:25])
 
 mean_error, std_error = unpickle('../recruitment_exp/result/recruitment_exp_500.pickle')
 ns = 10*np.array([10, 50, 100, 200, 350, 500])
@@ -576,7 +640,7 @@ top_side = ax.spines["top"]
 top_side.set_visible(False)
 
 ####################
-ax = fig.add_subplot(gs[18:,4:11])
+ax = fig.add_subplot(gs[18:,9:16])
 ax.tick_params(labelsize=22)
 ax_ = sns.boxplot(
     x="Algorithms", y="Learning Efficieny", data=df_500, palette=c_combined_, whis=np.inf,
@@ -599,8 +663,8 @@ right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
 
-fig.legend(handles_top, labels_top, bbox_to_anchor=(.995, .95), fontsize=legendsize+14, frameon=False)
-fig.legend(handles_bottom, labels_bottom, bbox_to_anchor=(.995, .55), fontsize=legendsize+14, frameon=False)
+fig.legend(handles_top, labels_top, bbox_to_anchor=(.995, .9), fontsize=legendsize+14, frameon=False)
+fig.legend(handles_bottom, labels_bottom, bbox_to_anchor=(.995, .5), fontsize=legendsize+14, frameon=False)
 
 plt.savefig('result/figs/cifar_exp_500_recruit_with_rep.pdf')
 

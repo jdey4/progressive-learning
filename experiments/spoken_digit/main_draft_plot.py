@@ -15,6 +15,22 @@ def unpickle(file):
         dict = pickle.load(fo, encoding='bytes')
     return dict
 
+def calc_avg_acc(err, reps):
+    avg_acc = np.zeros(6, dtype=float)
+    avg_var = np.zeros(6, dtype=float)
+    for i in range(6):
+        avg_acc[i] = (1*(i+1) - np.sum(err[i])/reps + (9-i)*.1)/10
+        avg_var[i] = np.var(1-np.array(err[i])/reps)
+    return avg_acc, avg_var
+
+def calc_avg_single_acc(err, reps):
+    avg_acc = np.zeros(6, dtype=float)
+    avg_var = np.zeros(6, dtype=float)
+    for i in range(6):
+        avg_acc[i] = (1*(i+1) - np.sum(err[:i+1])/reps + (9-i)*.1)/10
+        avg_var[i] = np.var(1-np.array(err[:i+1])/reps)
+    return avg_acc, avg_var
+    
 def get_fte_bte(err, single_err):
     bte = [[] for i in range(6)]
     te = [[] for i in range(6)]
@@ -119,7 +135,10 @@ btes = [[] for i in range(total_alg)]
 ftes = [[] for i in range(total_alg)]
 tes = [[] for i in range(total_alg)]
 model_file_combined = ['odin','odif', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
-
+avg_acc = [[] for i in range(total_alg)]
+avg_var = [[] for i in range(total_alg)]
+avg_single_acc = [[] for i in range(total_alg)]
+avg_single_var = [[] for i in range(total_alg)]
 ########################
 
 #%% code for 500 samples
@@ -150,10 +169,16 @@ for alg in range(total_alg):
     #single_err /= reps
     #err /= reps
     fte, bte, te = get_fte_bte(err,single_err)
-    
+    avg_acc_, avg_var_ = calc_avg_acc(err, reps)
+    avg_single_acc_, avg_single_var_ = calc_avg_single_acc(single_err, reps)
+
     btes[alg].extend(bte)
     ftes[alg].extend(fte)
     tes[alg].extend(te)
+    avg_acc[alg]= avg_acc_
+    avg_var[alg] = avg_var_
+    avg_single_acc[alg]= avg_single_acc_
+    avg_single_var[alg] = avg_single_var_
 
 #%%
 te = {'SynN':np.zeros(6,dtype=float), 'SynF':np.zeros(6,dtype=float), 
@@ -171,8 +196,8 @@ df = pd.DataFrame.from_dict(te)
 df = pd.melt(df,var_name='Algorithms', value_name='Transfer Efficieny')
 
 # %%
-fig = plt.figure(constrained_layout=True,figsize=(29,8))
-gs = fig.add_gridspec(8, 29)
+fig = plt.figure(constrained_layout=True,figsize=(29,16))
+gs = fig.add_gridspec(16, 29)
 
 marker_style = ['.', '.', '.', '+', 'o', '*', '.', '+', 'o']
 marker_style_scatter = ['.', '.', '.', '+', 'o', '*', '.', '+', 'o']
@@ -314,5 +339,49 @@ top_side = ax.spines["top"]
 top_side.set_visible(False)
 
 fig.legend(handles, labels_, bbox_to_anchor=(.97, .93), fontsize=legendsize+12, frameon=False)
+
+ax = fig.add_subplot(gs[9:16,6:13])
+
+for i in range(total_alg):
+    if i==0 or i==1:
+        ax.plot(np.arange(1,7,1) ,avg_acc[i], color=c_combined[i], marker=marker_style[i], linewidth=3)
+    else:
+        ax.plot(np.arange(1,7,1) ,avg_acc[i], color=c_combined[i], marker=marker_style[i])
+    ax.fill_between(np.arange(1,7,1), avg_acc[i]-1.96*avg_var[i], avg_acc[i]+1.96*avg_var[i], facecolor=c_combined[i], alpha=.3)
+
+ax.hlines(.1, 1,6, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
+ax.set_yticks([.1,.2,.3,.4])
+ax.set_xticks(np.arange(1,7))
+ax.tick_params(labelsize=ticksize)
+ax.set_ylabel('Accuracy[$\pm$ std dev.]', fontsize=fontsize)
+ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
+
+right_side = ax.spines["right"]
+right_side.set_visible(False)
+top_side = ax.spines["top"]
+top_side.set_visible(False)
+
+############################
+ax = fig.add_subplot(gs[9:16,15:22])
+
+for i in range(total_alg):
+    if i==0 or i==1:
+        ax.plot(np.arange(1,7,1) ,avg_single_acc[i], color=c_combined[i], marker=marker_style[i], linewidth=3)
+    else:
+        ax.plot(np.arange(1,7,1) ,avg_single_acc[i], color=c_combined[i], marker=marker_style[i])
+    ax.fill_between(np.arange(1,7,1), avg_single_acc[i]-1.96*avg_single_var[i], avg_single_acc[i]+1.96*avg_single_var[i], facecolor=c_combined[i], alpha=.3)
+
+ax.hlines(.1, 1,6, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
+ax.set_yticks([.1,.2,.3,.4])
+ax.set_xticks(np.arange(1,7))
+ax.tick_params(labelsize=ticksize)
+ax.set_ylabel('Single task accuracy', fontsize=fontsize)
+ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
+
+right_side = ax.spines["right"]
+right_side.set_visible(False)
+top_side = ax.spines["top"]
+top_side.set_visible(False)
+
 plt.savefig('spoken_digit.pdf')
 # %%
