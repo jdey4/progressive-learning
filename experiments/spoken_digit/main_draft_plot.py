@@ -196,8 +196,8 @@ df = pd.DataFrame.from_dict(te)
 df = pd.melt(df,var_name='Algorithms', value_name='Transfer Efficieny')
 
 # %%
-fig = plt.figure(constrained_layout=True,figsize=(29,16))
-gs = fig.add_gridspec(16, 29)
+fig = plt.figure(constrained_layout=True,figsize=(28,17))
+gs = fig.add_gridspec(17, 28)
 
 marker_style = ['.', '.', '.', '+', 'o', '*', '.', '+', 'o']
 marker_style_scatter = ['.', '.', '.', '+', 'o', '*', '.', '+', 'o']
@@ -255,7 +255,7 @@ ax.hlines(1, 1,6, colors='grey', linestyles='dashed',linewidth=1.5)
 
 
 #ax[0][0].grid(axis='x')
-ax = fig.add_subplot(gs[:7,8:15])
+ax = fig.add_subplot(gs[:7,9:16])
 
 for i in range(task_num - 1):
 
@@ -308,13 +308,13 @@ right_side = ax.spines["right"]
 right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
-ax.hlines(1, 1,6, colors='grey', linestyles='dashed',linewidth=1.5)
+ax.hlines(1, 1,6, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
 
 handles, labels_ = ax.get_legend_handles_labels()
 #ax.legend(loc='center left', bbox_to_anchor=(.8, 0.5), fontsize=legendsize+16)
 
 
-ax = fig.add_subplot(gs[:7,16:23])
+ax = fig.add_subplot(gs[:7,18:25])
 ax.tick_params(labelsize=22)
 ax_ = sns.boxplot(
     x="Algorithms", y="Transfer Efficieny", data=df, palette=c_combined, whis=np.inf,
@@ -338,9 +338,9 @@ right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
 
-fig.legend(handles, labels_, bbox_to_anchor=(.97, .93), fontsize=legendsize+12, frameon=False)
+fig.legend(handles, labels_, bbox_to_anchor=(.97, .7), fontsize=legendsize+12, frameon=False)
 
-ax = fig.add_subplot(gs[9:16,6:13])
+ax = fig.add_subplot(gs[10:17,4:11])
 
 for i in range(total_alg):
     if i==0 or i==1:
@@ -362,7 +362,7 @@ top_side = ax.spines["top"]
 top_side.set_visible(False)
 
 ############################
-ax = fig.add_subplot(gs[9:16,15:22])
+ax = fig.add_subplot(gs[10:17,15:22])
 
 for i in range(total_alg):
     if i==0 or i==1:
