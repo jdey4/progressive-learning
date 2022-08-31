@@ -75,9 +75,9 @@ def get_error_matrix(filename):
     return err
 
 #%%
-alg_name = ['Odin','Odif','Prog_NN', 'DF_CNN','LwF','EWC','O-EWC','SI', 'Total Replay', 'Partial Replay', 'None']
-model_file = ['dnn0','uf10','Prog_NN','DF_CNN', 'LwF', 'EWC', 'OEWC', 'SI', 'offline', 'exact', 'None']
-total_alg = 11
+alg_name = ['Odin','Odif','Prog_NN', 'DF_CNN','LwF','EWC','O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'Total Replay', 'Partial Replay', 'None']
+model_file = ['dnn0','uf10','Prog_NN','DF_CNN', 'LwF', 'EWC', 'OEWC', 'SI', 'er', 'agem', 'tag', 'offline', 'exact', 'None']
+total_alg = 14
 slots = 10
 shifts = 6
 
@@ -108,10 +108,10 @@ for alg in range(total_alg):
         tes_label_shuffle[alg].extend(te)
 
 #%% calculate TE for rotation experiment
-alg_name = ['Odin','Odif','LwF','EWC','O-EWC','SI', 'Total Replay', 'Partial Replay', 'None']
-model_file = ['dnn','uf', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
-total_alg = 9
-angles = range(0,184,4)
+alg_name = ['Odin','Odif','LwF','EWC','O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'Total Replay', 'Partial Replay', 'None']
+model_file = ['dnn','uf', 'LwF', 'EWC', 'OEWC', 'si', 'er', 'agem', 'tag', 'offline', 'exact', 'None']
+total_alg = 12
+angles = range(0,182,4)
 tes_angle = [[] for i in range(total_alg)]
 
 for alg in range(total_alg): 
@@ -129,9 +129,9 @@ ticksize=22
 fig = plt.figure(constrained_layout=True,figsize=(18,6))
 gs = fig.add_gridspec(6, 18)
 
-clr = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
+clr = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928", "#b15928", "#b15928"]
 c = sns.color_palette(clr, n_colors=len(clr))
-marker_style = ['.', '.', '.', '.', '.', '+', 'o', '*', '.', '+', 'o']
+marker_style = ['.', '.', '.', '.', '.', '+', 'o', '*', '.', '+', 'x', '.', '+', 'o']
 
 ax = fig.add_subplot(gs[:6,:6])
 
@@ -171,10 +171,10 @@ plt.tight_layout()
 
 ax = fig.add_subplot(gs[:6,8:14])
 angles = np.arange(0,184,4)
-alg_name = ['SynN','SynF','LwF','EWC','O-EWC','SI', 'Total Replay', 'Partial Replay', 'None']
-clr = ["#377eb8", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
-c = sns.color_palette(clr, n_colors=len(clr))
-marker_style = ['.', '.', '.', '+', 'o', '*', '.', '+', 'o']
+#alg_name = ['SynN','SynF','LwF','EWC','O-EWC','SI', 'Total Replay', 'Partial Replay', 'None']
+#clr = ["#377eb8", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
+#c = sns.color_palette(clr, n_colors=len(clr))
+#marker_style = ['.', '.', '.', '+', 'o', '*', '.', '+', 'o']
 
 for alg_no,alg in enumerate(alg_name):
     if alg_no<2:
@@ -182,13 +182,13 @@ for alg_no,alg in enumerate(alg_name):
     else:
         ax.plot(angles,tes_angle[alg_no], c=c[alg_no], label=alg_name[alg_no], marker=marker_style[alg_no])
 
-ax.set_yticks([.85,.9,.95,1,1.05,1.1])
-ax.set_ylim([0.83,1.11])
+ax.set_yticks([.6,.7,.8,.9,1,1.1])
+ax.set_ylim([0.6,1.1])
 ax.set_xticks([0,30,60,90,120,150,180])
 ax.hlines(1,0,180, colors='grey', linestyles='dashed',linewidth=1.5)
 
 log_lbl = np.round(
-    np.log([.85,.9,.95,1,1.05,1.1]),
+    np.log([.6,.7,.8,.9,1,1.1]),
     2
 )
 labels = [item.get_text() for item in ax.get_yticklabels()]

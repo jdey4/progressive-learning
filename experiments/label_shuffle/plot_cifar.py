@@ -10,7 +10,7 @@ import seaborn as sns
 ### MAIN HYPERPARAMS ###
 slots = 10
 shifts = 6
-alg_name = ['L2N','L2F','Prog_NN', 'DF_CNN','LwF','EWC','Online_EWC','SI']
+alg_name = ['L2N','L2F','Prog_NN', 'DF_CNN','LwF','EWC','Online_EWC','SI','er','agem','tag']
 ########################
 
 #%%
@@ -149,6 +149,8 @@ for alg_no,alg in enumerate(alg_name):
                 filename = 'result/dnn0_'+str(shift+1)+'_'+str(slot)+'.pickle'
             elif alg_no==1:
                 filename = 'result/uf10_'+str(shift+1)+'_'+str(slot)+'.pickle'
+            elif alg_no == 10 or alg_no==9 or alg_no==8:
+                filename = 'benchmarking_algorthms_result/'+alg+'_'+str(slot+1)+'_'+str(shift+1)+'.pickle'
             else:
                 filename = 'benchmarking_algorthms_result/'+alg+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
 

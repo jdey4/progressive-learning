@@ -4,25 +4,25 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 # %%
-alg_name = ['L2N','L2F','LwF','EWC','Online_EWC','SI']
-angles = np.arange(0,180,2)
+alg_name = ['L2N','L2F','LwF','EWC','OEWC','SI','er','agem','tag']
+angles = np.arange(0,180,4)
 tes = [[] for _ in range(len(alg_name))]
 
 for algo_no,alg in enumerate(alg_name):
     for angle in angles:
         if alg=='L2F':
             orig_error, transfer_error = pickle.load(
-                open("results/angle_" + str(angle) + "_uf.pickle", "rb")
+                open("./results/uf-" + str(angle) + ".pickle", "rb")
                 )
             tes[algo_no].append(orig_error / transfer_error)
         elif alg=='L2N':
             orig_error, transfer_error = pickle.load(
-                open("results/angle_" + str(angle) + "_dnn.pickle", "rb")
+                open("./results/dnn-" + str(angle) + ".pickle", "rb")
                 )
             tes[algo_no].append(orig_error / transfer_error)
         else:
             orig_error, transfer_error = pickle.load(
-                open("benchmarking_algorthms_result/" +alg+'_'+str(angle) + ".pickle", "rb")
+                open("./benchmarking_algorthms_result/" +alg+'-'+str(angle) + ".pickle", "rb")
                 )
             tes[algo_no].append(orig_error / transfer_error)
 
