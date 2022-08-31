@@ -655,7 +655,7 @@ ax.hlines(0, -1,14, colors='grey', linestyles='dashed',linewidth=1.5, label='cha
 ax_.set_xlabel('', fontsize=fontsize)
 ax.set_ylabel('log LE after 10 Tasks', fontsize=fontsize-5)
 ax_.set_xticklabels(
-    ['SynN','SynF','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'SynF (constrained)', 'LwF', 'O-EWC','SI', 'er', 'agem', 'tag', 'None'],
+    ['SynN','SynF','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'SynF (constrained)', 'LwF', 'O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None'],
     fontsize=19,rotation=65,ha="right",rotation_mode='anchor'
     )
 
