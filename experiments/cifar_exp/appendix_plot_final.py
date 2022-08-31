@@ -133,12 +133,12 @@ slots = 10
 task_num = 10
 shifts = 6
 total_alg_top = 7
-total_alg_bottom = 5
+total_alg_bottom = 8
 alg_name_top = ['SynN','SynF','ProgNN', 'DF-CNN', 'EWC', 'Total Replay', 'Partial Replay']
-alg_name_bottom = ['SynF','LwF','O-EWC','SI','None']
-combined_alg_name = ['SynN','SynF','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay','LwF','O-EWC','SI', 'None']
+alg_name_bottom = ['SynF','LwF','O-EWC','SI','ER', 'A-GEM', 'TAG', 'None']
+combined_alg_name = ['SynN','SynF','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay','LwF','O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None']
 model_file_top = ['dnn0','fixed_uf10','Prog_NN','DF_CNN', 'EWC', 'offline', 'exact']
-model_file_bottom = ['uf10', 'LwF', 'OEWC', 'si', 'None']
+model_file_bottom = ['uf10', 'LwF', 'OEWC', 'si', 'er', 'agem', 'tag', 'None']
 btes_top = [[] for i in range(total_alg_top)]
 ftes_top = [[] for i in range(total_alg_top)]
 tes_top = [[] for i in range(total_alg_top)]
@@ -251,7 +251,9 @@ te_5000 = {'SynN':np.zeros(10,dtype=float), 'SynF':np.zeros(10,dtype=float),
           'Prog-NN':np.zeros(10,dtype=float), 'DF-CNN':np.zeros(10,dtype=float), 
           'SynF (constrained)':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
           'EWC':np.zeros(10,dtype=float), 'O-EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float),
-          'Total Replay':np.zeros(10,dtype=float), 'Partial Replay':np.zeros(10,dtype=float), 'None':np.zeros(10,dtype=float)}
+          'Total Replay':np.zeros(10,dtype=float), 'Partial Replay':np.zeros(10,dtype=float), 
+          'er':np.zeros(10,dtype=float), 'agem':np.zeros(10,dtype=float),
+          'tag':np.zeros(10,dtype=float), 'None':np.zeros(10,dtype=float)}
 
 for count,name in enumerate(te_5000.keys()):
     for i in range(10):
@@ -262,34 +264,34 @@ for count,name in enumerate(te_5000.keys()):
 
 
 df_5000 = pd.DataFrame.from_dict(te_5000)
-df_5000 = pd.melt(df_5000,var_name='Algorithms', value_name='Transfer Efficieny')
+df_5000 = pd.melt(df_5000,var_name='Algorithms', value_name='Learning Efficieny')
 
 # %%
-fig = plt.figure(constrained_layout=True,figsize=(42,25))
-gs = fig.add_gridspec(25,42)
+fig = plt.figure(constrained_layout=True,figsize=(43,28))
+gs = fig.add_gridspec(27,42)
 
 clr_top = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928"]
 c_top = sns.color_palette(clr_top, n_colors=len(clr_top))
 
-clr_bottom = ["#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#b15928"]
+clr_bottom = ["#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928"]
 c_bottom = sns.color_palette(clr_bottom, n_colors=len(clr_bottom))
 
 marker_style_top = ['.', '.', '.', '.', '+', '.', '+']
-marker_style_bottom = ['.', '.', 'o', '*', 'o']
-marker_style = ['.', '.', '.', '.', '+', '.', '+', '.', 'o', '*', 'o']
-marker_style_scatter = ['.', '.', '.', '.', '+', '.', '+', '.', '.', 'o', '*', 'o']
+marker_style_bottom = ['.', '.', 'o', '*', '.', '+', 'x', 'o']
+marker_style = ['.', '.', '.', '.', '+', '.', '+', '.', 'o', '*', '.', '+', 'x', 'o']
+marker_style_scatter = ['.', '.', '.', '.', '+', '.', '+', '.', '.', 'o', '*', '.', '+', 'x', 'o']
 
-clr_combined = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#f781bf", "#f781bf", "#f781bf", "#b15928"]
+clr_combined = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928"]
 c_combined = sns.color_palette(clr_combined, n_colors=total_alg_top+total_alg_bottom-1)
 
-clr_combined_ = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#b15928"]
+clr_combined_ = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928"]
 c_combined_ = sns.color_palette(clr_combined_, n_colors=total_alg_top+total_alg_bottom)
 
 fontsize=38
 ticksize=34
 legendsize=16
 
-ax = fig.add_subplot(gs[:7,:7])
+ax = fig.add_subplot(gs[2:9,:7])
 
 for i, fte in enumerate(ftes_top):
     fte[0] = 1
@@ -302,7 +304,8 @@ for i, fte in enumerate(ftes_top):
         continue
     
     ax.plot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], markersize=12, label=alg_name_top[i])
-    
+
+
 ax.set_xticks(np.arange(1,11))
 ax.set_yticks([0.8, 0.9, 1, 1.1, 1.2, 1.3])
 #ax.set_yticks([])
@@ -330,13 +333,13 @@ right_side = ax.spines["right"]
 right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
-ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5)
+ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
 
 
 
 #ax[0][0].grid(axis='x')
-ax = fig.add_subplot(gs[:7,9:17])
-ax.plot([0],[0], color=[1,1,1], label='Resource Growing     ')
+ax = fig.add_subplot(gs[2:9,9:17])
+ax.plot([0], [0], color=[1,1,1], label='Resource Growing     ')
 for i in range(task_num - 1):
 
     et = np.zeros((total_alg_top,task_num-i))
@@ -391,12 +394,12 @@ right_side = ax.spines["right"]
 right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
-ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5)
+ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
 
 handles_top, labels_top = ax.get_legend_handles_labels()
 #ax.legend(loc='center left', bbox_to_anchor=(.8, 0.5), fontsize=legendsize+16)
 
-ax = fig.add_subplot(gs[:7,18:25])
+ax = fig.add_subplot(gs[2:9,18:25])
 
 for i in range(total_alg_top):
     if i==0 or i==1:
@@ -417,8 +420,9 @@ right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
 
-###############################
-ax = fig.add_subplot(gs[:7,26:33])
+
+
+ax = fig.add_subplot(gs[2:9,26:33])
 
 for i in range(total_alg_top):
     if i==0 or i==1:
@@ -431,41 +435,15 @@ ax.hlines(.1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='cha
 ax.set_yticks([.2,.4,.6,.8,1])
 ax.set_xticks(np.arange(1,11))
 ax.tick_params(labelsize=ticksize)
-ax.set_ylabel('Single task accuracy', fontsize=fontsize)
+ax.set_ylabel('Accuracy[$\pm$ std dev.]', fontsize=fontsize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 
 right_side = ax.spines["right"]
 right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
-#########################################
-
-ax = fig.add_subplot(gs[18:,9:16])
-ax.tick_params(labelsize=22)
-ax_ = sns.boxplot(
-    x="Algorithms", y="Transfer Efficieny", data=df_5000, palette=c_combined_, whis=np.inf,
-    ax=ax, showfliers=False, notch=1
-    )
-ax.hlines(0, -1,11, colors='grey', linestyles='dashed',linewidth=1.5)
-#sns.boxplot(x="Algorithms", y="Transfer Efficieny", data=mean_df, palette=c, linewidth=3, ax=ax[1][1])
-#ax_=sns.pointplot(x="Algorithms", y="Transfer Efficieny", data=df_500, join=False, color='grey', linewidth=1.5, ci='sd',ax=ax)
-#ax_.set_yticks([.4,.6,.8,1, 1.2,1.4])
-ax_.set_xlabel('', fontsize=fontsize)
-ax.set_ylabel('log LE after 10 Tasks', fontsize=fontsize-5)
-ax_.set_xticklabels(
-    ['SynN','SynF','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'SynF (constrained)', 'LwF', 'O-EWC','SI', 'None'],
-    fontsize=19,rotation=65,ha="right",rotation_mode='anchor'
-    )
-
-stratified_scatter(te_5000,ax,16,c_combined_,marker_style_scatter)
-
-right_side = ax.spines["right"]
-right_side.set_visible(False)
-top_side = ax.spines["top"]
-top_side.set_visible(False)
-
 #########################################################
-ax = fig.add_subplot(gs[9:16,:7])
+ax = fig.add_subplot(gs[11:18,:7])
 
 for i, fte in enumerate(ftes_bottom):
     fte[0] = 1
@@ -502,14 +480,14 @@ right_side = ax.spines["right"]
 right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
-ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5)
+ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
 
 '''for i in range(0,total_alg_top+total_alg_bottom-1):
     ax.plot(1,0,color=c_combined[i], marker=marker_style[i], markersize=8,label=combined_alg_name[i])'''
 
 
 #ax[0][0].grid(axis='x')
-ax = fig.add_subplot(gs[9:16,9:17])
+ax = fig.add_subplot(gs[11:18,9:17])
 ax.plot([0], [0], color=[1,1,1], label='Resource Constrained')
 
 for i in range(task_num - 1):
@@ -558,17 +536,19 @@ ax.set_yticklabels(labels)
 
 ax.tick_params(labelsize=ticksize)
 #ax[0][1].grid(axis='x')
+ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
+
 handles_bottom, labels_bottom = ax.get_legend_handles_labels()
 
 right_side = ax.spines["right"]
 right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
-ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5)
 
 
+############################
 
-ax = fig.add_subplot(gs[9:16,18:25])
+ax = fig.add_subplot(gs[11:18,18:25])
 
 for i in range(total_alg_bottom):
     if i==0:
@@ -590,7 +570,7 @@ top_side = ax.spines["top"]
 top_side.set_visible(False)
 
 
-ax = fig.add_subplot(gs[9:16,26:33])
+ax = fig.add_subplot(gs[11:18,26:33])
 
 for i in range(total_alg_bottom):
     if i==0:
@@ -603,17 +583,16 @@ ax.hlines(.1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='cha
 ax.set_yticks([.2,.4,.6,.8,1])
 ax.set_xticks(np.arange(1,11))
 ax.tick_params(labelsize=ticksize)
-ax.set_ylabel('Single task accuracy', fontsize=fontsize)
+ax.set_ylabel('Accuracy[$\pm$ std dev.]', fontsize=fontsize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 
 right_side = ax.spines["right"]
 right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
+########################
+ax = fig.add_subplot(gs[20:,18:25])
 
-############################
-
-ax = fig.add_subplot(gs[18:,18:25])
 mean_error, std_error = unpickle('../recruitment_exp/result/recruitment_exp_500.pickle')
 ns = 10*np.array([10, 50, 100, 200, 350, 500])
 clr = ["#e41a1c", "#377eb8", "#4daf4a", "#984ea3"]
@@ -650,7 +629,7 @@ ax.set_yticks([0.45, 0.55, 0.65,0.75])
 ax.text(100, 0.426, "100", fontsize=ticksize-2)
 ax.text(500, 0.426, "500", fontsize=ticksize-2)
 ax.text(5000, 0.426, "5000", fontsize=ticksize-2)
-ax.text(120, 0.400, "Number of Task 10 Samples", fontsize=fontsize-1)
+ax.text(120, 0.39, "Number of Task 10 Samples", fontsize=fontsize-1)
 
 ax.legend(loc='lower left',fontsize=legendsize+6, frameon=False)
 ax.set_title('Recruitment Experiment on Task 10', fontsize=fontsize)
@@ -660,8 +639,32 @@ right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
 
-fig.legend(handles_top, labels_top, bbox_to_anchor=(.99, .95), fontsize=legendsize+14, frameon=False)
-fig.legend(handles_bottom, labels_bottom, bbox_to_anchor=(.99, .55), fontsize=legendsize+14, frameon=False)
+####################
+ax = fig.add_subplot(gs[20:,9:16])
+ax.tick_params(labelsize=22)
+ax_ = sns.boxplot(
+    x="Algorithms", y="Learning Efficieny", data=df_5000, palette=c_combined_, whis=np.inf,
+    ax=ax, showfliers=False, notch=1
+    )
+ax.hlines(0, -1,14, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
+#sns.boxplot(x="Algorithms", y="Transfer Efficieny", data=mean_df, palette=c, linewidth=3, ax=ax[1][1])
+#ax_=sns.pointplot(x="Algorithms", y="Transfer Efficieny", data=df_500, join=False, color='grey', linewidth=1.5, ci='sd',ax=ax)
+#ax_.set_yticks([.4,.6,.8,1, 1.2,1.4])
+ax_.set_xlabel('', fontsize=fontsize)
+ax.set_ylabel('log LE after 10 Tasks', fontsize=fontsize-5)
+ax_.set_xticklabels(
+    ['SynN','SynF','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'SynF (constrained)', 'LwF', 'O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None'],
+    fontsize=19,rotation=65,ha="right",rotation_mode='anchor'
+    )
+
+stratified_scatter(te_5000,ax,16,c_combined_,marker_style_scatter)
+right_side = ax.spines["right"]
+right_side.set_visible(False)
+top_side = ax.spines["top"]
+top_side.set_visible(False)
+
+fig.legend(handles_top, labels_top, bbox_to_anchor=(.995, .9), fontsize=legendsize+14, frameon=False)
+fig.legend(handles_bottom, labels_bottom, bbox_to_anchor=(.995, .5), fontsize=legendsize+14, frameon=False)
 
 plt.savefig('result/figs/benchmark_5000.pdf')
 # %%

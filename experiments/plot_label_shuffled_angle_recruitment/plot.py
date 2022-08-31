@@ -124,14 +124,16 @@ for alg in range(total_alg):
         err = unpickle(filename)
         tes_angle[alg].extend([err[0]/err[1]])
 # %%
+alg_name = ['Odin','Odif','LwF','EWC','O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'Total Replay', 'Partial Replay', 'None']
+
 fontsize=24
 ticksize=22
 fig = plt.figure(constrained_layout=True,figsize=(18,6))
 gs = fig.add_gridspec(6, 18)
 
-clr = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928", "#b15928", "#b15928"]
+clr = ["#377eb8", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928", "#b15928", "#b15928", "#b15928", "#b15928"]
 c = sns.color_palette(clr, n_colors=len(clr))
-marker_style = ['.', '.', '.', '.', '.', '+', 'o', '*', '.', '+', 'x', '.', '+', 'o']
+marker_style = ['.', '.', '.', '.', '.', '+', 'o', '*', '.', '+', 'x', 'v']
 
 ax = fig.add_subplot(gs[:6,:6])
 
