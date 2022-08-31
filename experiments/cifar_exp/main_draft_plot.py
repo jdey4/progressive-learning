@@ -133,12 +133,12 @@ slots = 10
 task_num = 10
 shifts = 6
 total_alg_top = 7
-total_alg_bottom = 5
+total_alg_bottom = 8
 alg_name_top = ['SynN','SynF','ProgNN', 'DF-CNN', 'EWC', 'Total Replay', 'Partial Replay']
-alg_name_bottom = ['SynF','LwF','O-EWC','SI', 'None']
-combined_alg_name = ['SynN','SynF','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'LwF', 'O-EWC','SI', 'None']
+alg_name_bottom = ['SynF','LwF','O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None']
+combined_alg_name = ['SynN','SynF','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'LwF', 'O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None']
 model_file_top = ['dnn0withrep','fixed_uf10withrep','Prog_NN','DF_CNN', 'EWC', 'offline', 'exact']
-model_file_bottom = ['uf10withrep', 'LwF', 'OEWC', 'si', 'None']
+model_file_bottom = ['uf10withrep', 'LwF', 'OEWC', 'si', 'er', 'agem', 'tag', 'None']
 btes_top = [[] for i in range(total_alg_top)]
 ftes_top = [[] for i in range(total_alg_top)]
 tes_top = [[] for i in range(total_alg_top)]
@@ -156,7 +156,7 @@ avg_single_acc_bottom = [[] for i in range(total_alg_bottom)]
 avg_single_var_bottom = [[] for i in range(total_alg_bottom)]
 
 #combined_alg_name = ['L2N','L2F','Prog-NN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Replay (increasing amount)', 'Replay (fixed amount)', 'None']
-model_file_combined = ['dnn0withrep','fixed_uf10withrep','Prog_NN','DF_CNN', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
+model_file_combined = ['dnn0withrep','fixed_uf10withrep','Prog_NN','DF_CNN', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'er', 'agem', 'tag', 'None']
 
 ########################
 
@@ -253,7 +253,9 @@ te_500 = {'SynN':np.zeros(10,dtype=float), 'SynF':np.zeros(10,dtype=float),
           'Prog-NN':np.zeros(10,dtype=float), 'DF-CNN':np.zeros(10,dtype=float), 
           'SynF (constrained)':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
           'EWC':np.zeros(10,dtype=float), 'O-EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float),
-          'Total Replay':np.zeros(10,dtype=float), 'Partial Replay':np.zeros(10,dtype=float), 'None':np.zeros(10,dtype=float)}
+          'Total Replay':np.zeros(10,dtype=float), 'Partial Replay':np.zeros(10,dtype=float), 
+          'er':np.zeros(10,dtype=float), 'agem':np.zeros(10,dtype=float),
+          'tag':np.zeros(10,dtype=float), 'None':np.zeros(10,dtype=float)}
 
 for count,name in enumerate(te_500.keys()):
     for i in range(10):
@@ -267,31 +269,31 @@ df_500 = pd.DataFrame.from_dict(te_500)
 df_500 = pd.melt(df_500,var_name='Algorithms', value_name='Learning Efficieny')
 
 # %%
-fig = plt.figure(constrained_layout=True,figsize=(42,25))
-gs = fig.add_gridspec(25,42)
+fig = plt.figure(constrained_layout=True,figsize=(43,28))
+gs = fig.add_gridspec(27,42)
 
 clr_top = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928"]
 c_top = sns.color_palette(clr_top, n_colors=len(clr_top))
 
-clr_bottom = ["#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#b15928"]
+clr_bottom = ["#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928"]
 c_bottom = sns.color_palette(clr_bottom, n_colors=len(clr_bottom))
 
 marker_style_top = ['.', '.', '.', '.', '+', '.', '+']
-marker_style_bottom = ['.', '.', 'o', '*', 'o']
-marker_style = ['.', '.', '.', '.', '+', '.', '+', '.', 'o', '*', 'o']
-marker_style_scatter = ['.', '.', '.', '.', '+', '.', '+', '.', '.', 'o', '*', 'o']
+marker_style_bottom = ['.', '.', 'o', '*', '.', '+', 'x', 'o']
+marker_style = ['.', '.', '.', '.', '+', '.', '+', '.', 'o', '*', '.', '+', 'x', 'o']
+marker_style_scatter = ['.', '.', '.', '.', '+', '.', '+', '.', '.', 'o', '*', '.', '+', 'x', 'o']
 
-clr_combined = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#f781bf", "#f781bf", "#f781bf", "#b15928"]
+clr_combined = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928"]
 c_combined = sns.color_palette(clr_combined, n_colors=total_alg_top+total_alg_bottom-1)
 
-clr_combined_ = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#b15928"]
+clr_combined_ = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928"]
 c_combined_ = sns.color_palette(clr_combined_, n_colors=total_alg_top+total_alg_bottom)
 
 fontsize=38
 ticksize=34
 legendsize=16
 
-ax = fig.add_subplot(gs[:7,:7])
+ax = fig.add_subplot(gs[2:9,:7])
 
 for i, fte in enumerate(ftes_top):
     fte[0] = 1
@@ -338,7 +340,7 @@ ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chan
 
 
 #ax[0][0].grid(axis='x')
-ax = fig.add_subplot(gs[:7,9:17])
+ax = fig.add_subplot(gs[2:9,9:17])
 ax.plot([0], [0], color=[1,1,1], label='Resource Growing     ')
 for i in range(task_num - 1):
 
@@ -399,7 +401,7 @@ ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chan
 handles_top, labels_top = ax.get_legend_handles_labels()
 #ax.legend(loc='center left', bbox_to_anchor=(.8, 0.5), fontsize=legendsize+16)
 
-ax = fig.add_subplot(gs[:7,18:25])
+ax = fig.add_subplot(gs[2:9,18:25])
 
 for i in range(total_alg_top):
     if i==0 or i==1:
@@ -422,7 +424,7 @@ top_side.set_visible(False)
 
 
 
-ax = fig.add_subplot(gs[:7,26:33])
+ax = fig.add_subplot(gs[2:9,26:33])
 
 for i in range(total_alg_top):
     if i==0 or i==1:
@@ -435,7 +437,7 @@ ax.hlines(.1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='cha
 ax.set_yticks([.1,.2,.3,.4])
 ax.set_xticks(np.arange(1,11))
 ax.tick_params(labelsize=ticksize)
-ax.set_ylabel('Single task accuracy', fontsize=fontsize)
+ax.set_ylabel('Accuracy[$\pm$ std dev.]', fontsize=fontsize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 
 right_side = ax.spines["right"]
@@ -443,7 +445,7 @@ right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
 #########################################################
-ax = fig.add_subplot(gs[9:16,:7])
+ax = fig.add_subplot(gs[11:18,:7])
 
 for i, fte in enumerate(ftes_bottom):
     fte[0] = 1
@@ -458,15 +460,15 @@ for i, fte in enumerate(ftes_bottom):
     ax.plot(np.arange(1,11), fte, color=c_bottom[i], marker=marker_style_bottom[i], markersize=12)
     
 ax.set_xticks(np.arange(1,11))
-ax.set_yticks([0.85, 1, 1.05])
-ax.set_ylim(0.8, 1.05)
+ax.set_yticks([0.85, 1, 1.1])
+ax.set_ylim(0.8, 1.1)
 ax.tick_params(labelsize=ticksize)
 
 ax.set_ylabel('Resource Constrained log FLE', fontsize=fontsize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 
 log_lbl = np.round(
-    np.log([0.85,1,1.05]),
+    np.log([0.85,1,1.1]),
     2
 )
 labels = [item.get_text() for item in ax.get_yticklabels()]
@@ -487,7 +489,7 @@ ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chan
 
 
 #ax[0][0].grid(axis='x')
-ax = fig.add_subplot(gs[9:16,9:17])
+ax = fig.add_subplot(gs[11:18,9:17])
 ax.plot([0], [0], color=[1,1,1], label='Resource Constrained')
 
 for i in range(task_num - 1):
@@ -548,7 +550,7 @@ top_side.set_visible(False)
 
 ############################
 
-ax = fig.add_subplot(gs[9:16,18:25])
+ax = fig.add_subplot(gs[11:18,18:25])
 
 for i in range(total_alg_bottom):
     if i==0:
@@ -570,7 +572,7 @@ top_side = ax.spines["top"]
 top_side.set_visible(False)
 
 
-ax = fig.add_subplot(gs[9:16,26:33])
+ax = fig.add_subplot(gs[11:18,26:33])
 
 for i in range(total_alg_bottom):
     if i==0:
@@ -583,7 +585,7 @@ ax.hlines(.1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='cha
 ax.set_yticks([.1,.2,.3,.4])
 ax.set_xticks(np.arange(1,11))
 ax.tick_params(labelsize=ticksize)
-ax.set_ylabel('Single task accuracy', fontsize=fontsize)
+ax.set_ylabel('Accuracy[$\pm$ std dev.]', fontsize=fontsize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 
 right_side = ax.spines["right"]
@@ -591,7 +593,7 @@ right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
 ########################
-ax = fig.add_subplot(gs[18:,18:25])
+ax = fig.add_subplot(gs[20:,18:25])
 
 mean_error, std_error = unpickle('../recruitment_exp/result/recruitment_exp_500.pickle')
 ns = 10*np.array([10, 50, 100, 200, 350, 500])
@@ -640,20 +642,20 @@ top_side = ax.spines["top"]
 top_side.set_visible(False)
 
 ####################
-ax = fig.add_subplot(gs[18:,9:16])
+ax = fig.add_subplot(gs[20:,9:16])
 ax.tick_params(labelsize=22)
 ax_ = sns.boxplot(
     x="Algorithms", y="Learning Efficieny", data=df_500, palette=c_combined_, whis=np.inf,
     ax=ax, showfliers=False, notch=1
     )
-ax.hlines(0, -1,11, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
+ax.hlines(0, -1,14, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
 #sns.boxplot(x="Algorithms", y="Transfer Efficieny", data=mean_df, palette=c, linewidth=3, ax=ax[1][1])
 #ax_=sns.pointplot(x="Algorithms", y="Transfer Efficieny", data=df_500, join=False, color='grey', linewidth=1.5, ci='sd',ax=ax)
 #ax_.set_yticks([.4,.6,.8,1, 1.2,1.4])
 ax_.set_xlabel('', fontsize=fontsize)
 ax.set_ylabel('log LE after 10 Tasks', fontsize=fontsize-5)
 ax_.set_xticklabels(
-    ['SynN','SynF','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'SynF (constrained)', 'LwF', 'O-EWC','SI', 'None'],
+    ['SynN','SynF','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'SynF (constrained)', 'LwF', 'O-EWC','SI', 'er', 'agem', 'tag', 'None'],
     fontsize=19,rotation=65,ha="right",rotation_mode='anchor'
     )
 

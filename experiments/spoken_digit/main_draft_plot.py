@@ -350,7 +350,7 @@ for i in range(total_alg):
     ax.fill_between(np.arange(1,7,1), avg_acc[i]-1.96*avg_var[i], avg_acc[i]+1.96*avg_var[i], facecolor=c_combined[i], alpha=.3)
 
 ax.hlines(.1, 1,6, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
-ax.set_yticks([.1,.2,.3,.4])
+ax.set_yticks([.1,.2,.3,.4,.5,.6])
 ax.set_xticks(np.arange(1,7))
 ax.tick_params(labelsize=ticksize)
 ax.set_ylabel('Accuracy[$\pm$ std dev.]', fontsize=fontsize)
@@ -372,7 +372,7 @@ for i in range(total_alg):
     ax.fill_between(np.arange(1,7,1), avg_single_acc[i]-1.96*avg_single_var[i], avg_single_acc[i]+1.96*avg_single_var[i], facecolor=c_combined[i], alpha=.3)
 
 ax.hlines(.1, 1,6, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
-ax.set_yticks([.1,.2,.3,.4])
+ax.set_yticks([.1,.2,.3,.4,.5,.6])
 ax.set_xticks(np.arange(1,7))
 ax.tick_params(labelsize=ticksize)
 ax.set_ylabel('Single task accuracy', fontsize=fontsize)
