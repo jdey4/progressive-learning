@@ -75,9 +75,9 @@ def get_error_matrix(filename):
     return err
 
 #%%
-alg_name = ['Odin','Odif','Prog_NN', 'DF_CNN','LwF','EWC','O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'Total Replay', 'Partial Replay', 'None']
-model_file = ['dnn0','uf10','Prog_NN','DF_CNN', 'LwF', 'EWC', 'OEWC', 'SI', 'er', 'agem', 'tag', 'offline', 'exact', 'None']
-total_alg = 14
+alg_name = ['SynN','SynF', 'Model Zoo', 'LwF','EWC','O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'Total Replay', 'Partial Replay', 'None']
+model_file = ['dnn0','uf10', 'model_zoo', 'LwF', 'EWC', 'OEWC', 'SI', 'er', 'agem', 'tag', 'offline', 'exact', 'None']
+total_alg = 13
 slots = 10
 shifts = 6
 
@@ -92,8 +92,8 @@ for alg in range(total_alg):
         for shift in range(shifts):
             if alg < 2:
                 filename = './label_shuffle_result/'+model_file[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
-            elif alg == 2 or alg == 3:
-                filename = './label_shuffle_result/'+model_file[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
+            elif alg == 2:
+                filename = './label_shuffle_result/'+model_file[alg]+'_'+str(slot+1)+'_'+str(shift+1)+'.pickle'
             else:
                 filename = './label_shuffle_result/'+model_file[alg]+'-'+str(slot+1)+'-'+str(shift+1)+'.pickle'
 
@@ -108,9 +108,9 @@ for alg in range(total_alg):
         tes_label_shuffle[alg].extend(te)
 
 #%% calculate TE for rotation experiment
-alg_name = ['Odin','Odif','LwF','EWC','O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'Total Replay', 'Partial Replay', 'None']
-model_file = ['dnn','uf', 'LwF', 'EWC', 'OEWC', 'si', 'er', 'agem', 'tag', 'offline', 'exact', 'None']
-total_alg = 12
+alg_name = ['SynN','SynF', 'Model Zoo', 'LwF','EWC','O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'Total Replay', 'Partial Replay', 'None']
+model_file = ['dnn','uf', 'model_zoo', 'LwF', 'EWC', 'OEWC', 'si', 'er', 'agem', 'tag', 'offline', 'exact', 'None']
+total_alg = 13
 angles = range(0,182,4)
 tes_angle = [[] for i in range(total_alg)]
 
@@ -124,16 +124,16 @@ for alg in range(total_alg):
         err = unpickle(filename)
         tes_angle[alg].extend([err[0]/err[1]])
 # %%
-alg_name = ['Odin','Odif','LwF','EWC','O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'Total Replay', 'Partial Replay', 'None']
+alg_name = ['SynN','SynF','Model Zoo', 'LwF','EWC','O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'Total Replay', 'Partial Replay', 'None']
 
 fontsize=24
 ticksize=22
 fig = plt.figure(constrained_layout=True,figsize=(18,6))
 gs = fig.add_gridspec(6, 18)
 
-clr = ["#377eb8", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928", "#b15928", "#b15928", "#b15928", "#b15928"]
+clr = ["#377eb8", "#e41a1c", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928", "#b15928", "#b15928", "#b15928", "#b15928"]
 c = sns.color_palette(clr, n_colors=len(clr))
-marker_style = ['.', '.', '.', '.', '.', '+', 'o', '*', '.', '+', 'x', 'v']
+marker_style = ['.', '.', 'v', '.', '.', '.', '+', 'o', '*', '.', '+', 'x', 'v']
 
 ax = fig.add_subplot(gs[:6,:6])
 
@@ -149,7 +149,7 @@ ax.set_xticks(np.arange(1,11))
 
 log_lbl = np.round(
     np.log([0.8,0.9, 1, 1.1, 1.2]),
-    2
+    1
 )
 labels = [item.get_text() for item in ax.get_yticklabels()]
 
@@ -191,7 +191,7 @@ ax.hlines(1,0,180, colors='grey', linestyles='dashed',linewidth=1.5)
 
 log_lbl = np.round(
     np.log([.6,.7,.8,.9,1,1.1]),
-    2
+    1
 )
 labels = [item.get_text() for item in ax.get_yticklabels()]
 
