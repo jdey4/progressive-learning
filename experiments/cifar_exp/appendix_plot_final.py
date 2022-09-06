@@ -132,12 +132,12 @@ ntrees = 10
 slots = 10
 task_num = 10
 shifts = 6
-total_alg_top = 7
+total_alg_top = 8
 total_alg_bottom = 8
-alg_name_top = ['SynN','SynF','ProgNN', 'DF-CNN', 'EWC', 'Total Replay', 'Partial Replay']
-alg_name_bottom = ['SynF','LwF','O-EWC','SI','ER', 'A-GEM', 'TAG', 'None']
-combined_alg_name = ['SynN','SynF','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay','LwF','O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None']
-model_file_top = ['dnn0','fixed_uf10','Prog_NN','DF_CNN', 'EWC', 'offline', 'exact']
+alg_name_top = ['SynN','SynF','ProgNN', 'DF-CNN', 'EWC', 'Total Replay', 'Partial Replay', 'Model Zoo']
+alg_name_bottom = ['SynF','LwF','O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None']
+combined_alg_name = ['SynN','SynF','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'Model Zoo', 'LwF', 'O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None']
+model_file_top = ['dnn0','fixed_uf10','Prog_NN','DF_CNN', 'EWC', 'offline', 'exact', 'model_zoo']
 model_file_bottom = ['uf10', 'LwF', 'OEWC', 'si', 'er', 'agem', 'tag', 'None']
 btes_top = [[] for i in range(total_alg_top)]
 ftes_top = [[] for i in range(total_alg_top)]
@@ -156,7 +156,7 @@ avg_single_acc_bottom = [[] for i in range(total_alg_bottom)]
 avg_single_var_bottom = [[] for i in range(total_alg_bottom)]
 
 #combined_alg_name = ['L2N','L2F','Prog-NN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Replay (increasing amount)', 'Replay (fixed amount)', 'None']
-#model_file_combined = ['dnn0','fixed_uf10','Prog_NN','DF_CNN', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
+#model_file_combined = ['dnn0withrep','fixed_uf10withrep','Prog_NN','DF_CNN', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'model_zoo', 'er', 'agem', 'tag', 'None']
 
 ########################
 
@@ -174,6 +174,8 @@ for alg in range(total_alg_top):
             filename = './result/result/'+model_file_top[alg]+'_'+str(shift+1)+'.pickle'
         elif alg <4:
             filename = './benchmarking_algorthms_result/'+model_file_top[alg]+'_'+str(shift+1)+'.pickle'
+        elif alg == 7:
+                filename = './benchmarking_algorthms_result/'+model_file_top[alg]+'_'+str(shift+1)+'.pickle'
         else:
             filename = './benchmarking_algorthms_result/'+model_file_top[alg]+'-'+str(shift+1)+'.pickle'
 
@@ -249,42 +251,44 @@ for alg in range(total_alg_bottom):
 #%%
 te_5000 = {'SynN':np.zeros(10,dtype=float), 'SynF':np.zeros(10,dtype=float), 
           'Prog-NN':np.zeros(10,dtype=float), 'DF-CNN':np.zeros(10,dtype=float), 
+          'EWC':np.zeros(10,dtype=float),'Total Replay':np.zeros(10,dtype=float),
+          'Partial Replay':np.zeros(10,dtype=float), 'Model Zoo':np.zeros(10,dtype=float),
           'SynF (constrained)':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
-          'EWC':np.zeros(10,dtype=float), 'O-EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float),
-          'Total Replay':np.zeros(10,dtype=float), 'Partial Replay':np.zeros(10,dtype=float), 
+           'O-EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float),
           'er':np.zeros(10,dtype=float), 'agem':np.zeros(10,dtype=float),
           'tag':np.zeros(10,dtype=float), 'None':np.zeros(10,dtype=float)}
 
 for count,name in enumerate(te_5000.keys()):
     for i in range(10):
-        if count < 7:
+        if count <8:
             te_5000[name][i] = np.log(tes_top[count][i][9-i])
         else:
-            te_5000[name][i] = np.log(tes_bottom[count-7][i][9-i])
+            te_5000[name][i] = np.log(tes_bottom[count-8][i][9-i])
 
 
 df_5000 = pd.DataFrame.from_dict(te_5000)
 df_5000 = pd.melt(df_5000,var_name='Algorithms', value_name='Learning Efficieny')
 
+
 # %%
 fig = plt.figure(constrained_layout=True,figsize=(43,28))
 gs = fig.add_gridspec(27,42)
 
-clr_top = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928"]
+clr_top = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#984ea3"]
 c_top = sns.color_palette(clr_top, n_colors=len(clr_top))
 
 clr_bottom = ["#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928"]
 c_bottom = sns.color_palette(clr_bottom, n_colors=len(clr_bottom))
 
-marker_style_top = ['.', '.', '.', '.', '+', '.', '+']
+marker_style_top = ['.', '.', '.', '.', '+', '.', '+', 'v']
 marker_style_bottom = ['.', '.', 'o', '*', '.', '+', 'x', 'o']
-marker_style = ['.', '.', '.', '.', '+', '.', '+', '.', 'o', '*', '.', '+', 'x', 'o']
-marker_style_scatter = ['.', '.', '.', '.', '+', '.', '+', '.', '.', 'o', '*', '.', '+', 'x', 'o']
+marker_style = ['.', '.', '.', '.', '+', '.', '+',  'v', '.', 'o', '*', '.', '+', 'x', 'o']
+marker_style_scatter = ['.', '.', '.', '.', '+', 'v', '.', '+', '.', '.', 'o', '*', '.', '+', 'x', 'o']
 
-clr_combined = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928"]
+clr_combined = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928"]
 c_combined = sns.color_palette(clr_combined, n_colors=total_alg_top+total_alg_bottom-1)
 
-clr_combined_ = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928"]
+clr_combined_ = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#984ea3", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928"]
 c_combined_ = sns.color_palette(clr_combined_, n_colors=total_alg_top+total_alg_bottom)
 
 fontsize=38
@@ -315,7 +319,7 @@ ax.set_ylim(0.8, 1.31)
 
 log_lbl = np.round(
     np.log([0.8,0.9,1,1.1,1.2,1.3]),
-    2
+    1
 )
 labels = [item.get_text() for item in ax.get_yticklabels()]
 
@@ -378,7 +382,7 @@ ax.set_ylim(0.76, 1.25)
 
 log_lbl = np.round(
     np.log([.8,.9,1,1.1,1.2]),
-    2
+    1
 )
 labels = [item.get_text() for item in ax.get_yticklabels()]
 
@@ -466,8 +470,8 @@ ax.set_ylabel('Resource Constrained log FLE', fontsize=fontsize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 
 log_lbl = np.round(
-    np.log([0.7,1,1.25]),
-    2
+    np.log([0.7, 1, 1.25]),
+    1
 )
 labels = [item.get_text() for item in ax.get_yticklabels()]
 
@@ -525,7 +529,7 @@ ax.set_ylim(0.85, 1.15)
 
 log_lbl = np.round(
     np.log([0.9,1,1.1,1.2]),
-    2
+    1
 )
 labels = [item.get_text() for item in ax.get_yticklabels()]
 
@@ -646,14 +650,14 @@ ax_ = sns.boxplot(
     x="Algorithms", y="Learning Efficieny", data=df_5000, palette=c_combined_, whis=np.inf,
     ax=ax, showfliers=False, notch=1
     )
-ax.hlines(0, -1,14, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
+ax.hlines(0, -1,15, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
 #sns.boxplot(x="Algorithms", y="Transfer Efficieny", data=mean_df, palette=c, linewidth=3, ax=ax[1][1])
 #ax_=sns.pointplot(x="Algorithms", y="Transfer Efficieny", data=df_500, join=False, color='grey', linewidth=1.5, ci='sd',ax=ax)
 #ax_.set_yticks([.4,.6,.8,1, 1.2,1.4])
 ax_.set_xlabel('', fontsize=fontsize)
 ax.set_ylabel('log LE after 10 Tasks', fontsize=fontsize-5)
 ax_.set_xticklabels(
-    ['SynN','SynF','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'SynF (constrained)', 'LwF', 'O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None'],
+    ['SynN','SynF','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'Model Zoo', 'SynF (constrained)', 'LwF', 'O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None'],
     fontsize=19,rotation=65,ha="right",rotation_mode='anchor'
     )
 
