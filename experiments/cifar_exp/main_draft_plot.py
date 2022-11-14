@@ -642,7 +642,7 @@ ax.hlines(.1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='cha
 ax.set_yticks([.1,.2,.3,.4])
 ax.set_xticks(np.arange(1,11))
 ax.tick_params(labelsize=ticksize)
-ax.set_ylabel('Lifelong Task Accuracy', fontsize=fontsize)
+ax.set_ylabel('Average Accuracy', fontsize=fontsize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 
 right_side = ax.spines["right"]
@@ -665,7 +665,7 @@ ax.hlines(.1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='cha
 ax.set_yticks([.1,.2,.3,.4])
 ax.set_xticks(np.arange(1,11))
 ax.tick_params(labelsize=ticksize)
-ax.set_ylabel('Single Task Accuracy', fontsize=fontsize)
+ax.set_ylabel('Average Accuracy', fontsize=fontsize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 
 right_side = ax.spines["right"]
@@ -688,7 +688,7 @@ ax.hlines(.1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='cha
 ax.set_yticks([.1,.2,.3,.4])
 ax.set_xticks(np.arange(1,11))
 ax.tick_params(labelsize=ticksize)
-ax.set_ylabel('Lifelong Task Accuracy \n (Resource constrained)', fontsize=fontsize)
+ax.set_ylabel('Average Accuracy \n (Resource constrained)', fontsize=fontsize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 
 right_side = ax.spines["right"]
@@ -710,7 +710,7 @@ ax.hlines(.1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='cha
 ax.set_yticks([.1,.2,.3,.4])
 ax.set_xticks(np.arange(1,11))
 ax.tick_params(labelsize=ticksize)
-ax.set_ylabel('Single Task Accuracy \n (Resource constrained)', fontsize=fontsize)
+ax.set_ylabel('Average Accuracy \n (Resource constrained)', fontsize=fontsize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 
 right_side = ax.spines["right"]
