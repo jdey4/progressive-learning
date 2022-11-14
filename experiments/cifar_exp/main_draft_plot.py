@@ -273,8 +273,8 @@ df_500 = pd.DataFrame.from_dict(te_500)
 df_500 = pd.melt(df_500,var_name='Algorithms', value_name='Learning Efficieny')
 
 # %%
-fig = plt.figure(constrained_layout=True,figsize=(43,28))
-gs = fig.add_gridspec(27,42)
+fig = plt.figure(constrained_layout=True,figsize=(33,18))
+gs = fig.add_gridspec(18,33)
 
 clr_top = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#984ea3"]
 c_top = sns.color_palette(clr_top, n_colors=len(clr_top))
@@ -407,49 +407,30 @@ handles_top, labels_top = ax.get_legend_handles_labels()
 
 ax = fig.add_subplot(gs[2:9,18:25])
 
-for i in range(total_alg_top):
-    if i==0 or i==1:
-        ax.plot(np.arange(1,11,1) ,avg_acc_top[i], color=c_top[i], marker=marker_style_top[i], linewidth=3)
-    else:
-        ax.plot(np.arange(1,11,1) ,avg_acc_top[i], color=c_top[i], marker=marker_style_top[i])
-    ax.fill_between(np.arange(1,11,1), avg_acc_top[i]-1.96*avg_var_top[i], avg_acc_top[i]+1.96*avg_var_top[i], facecolor=c_top[i], alpha=.3)
+ax.tick_params(labelsize=22)
+ax_ = sns.boxplot(
+    x="Algorithms", y="Learning Efficieny", data=df_500, palette=c_combined_, whis=np.inf,
+    ax=ax, showfliers=False, notch=1
+    )
+ax.hlines(0, -1,15, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
+#sns.boxplot(x="Algorithms", y="Transfer Efficieny", data=mean_df, palette=c, linewidth=3, ax=ax[1][1])
+#ax_=sns.pointplot(x="Algorithms", y="Transfer Efficieny", data=df_500, join=False, color='grey', linewidth=1.5, ci='sd',ax=ax)
+#ax_.set_yticks([.4,.6,.8,1, 1.2,1.4])
+ax_.set_xlabel('', fontsize=fontsize)
+ax.set_ylabel('log LE after 10 Tasks', fontsize=fontsize-5)
+ax_.set_xticklabels(
+    ['SynN','SynF','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'Model Zoo', 'SynF (constrained)', 'LwF', 'O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None'],
+    fontsize=19,rotation=65,ha="right",rotation_mode='anchor'
+    )
 
-ax.hlines(.1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
-ax.set_yticks([.1,.2,.3,.4])
-ax.set_xticks(np.arange(1,11))
-ax.tick_params(labelsize=ticksize)
-ax.set_ylabel('Accuracy[$\pm$ std dev.]', fontsize=fontsize)
-ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
-
+stratified_scatter(te_500,ax,16,c_combined_,marker_style_scatter)
 right_side = ax.spines["right"]
 right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
 
-
-
-ax = fig.add_subplot(gs[2:9,26:33])
-
-for i in range(total_alg_top):
-    if i==0 or i==1:
-        ax.plot(np.arange(1,11,1) ,avg_single_acc_top[i], color=c_top[i], marker=marker_style_top[i], linewidth=3)
-    else:
-        ax.plot(np.arange(1,11,1) ,avg_single_acc_top[i], color=c_top[i], marker=marker_style_top[i])
-    ax.fill_between(np.arange(1,11,1), avg_single_acc_top[i]-1.96*avg_single_var_top[i], avg_single_acc_top[i]+1.96*avg_single_var_top[i], facecolor=c_top[i], alpha=.3)
-
-ax.hlines(.1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
-ax.set_yticks([.1,.2,.3,.4])
-ax.set_xticks(np.arange(1,11))
-ax.tick_params(labelsize=ticksize)
-ax.set_ylabel('Accuracy[$\pm$ std dev.]', fontsize=fontsize)
-ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
-
-right_side = ax.spines["right"]
-right_side.set_visible(False)
-top_side = ax.spines["top"]
-top_side.set_visible(False)
 #########################################################
-ax = fig.add_subplot(gs[11:18,:7])
+ax = fig.add_subplot(gs[10:17,:7])
 
 for i, fte in enumerate(ftes_bottom):
     fte[0] = 1
@@ -493,7 +474,7 @@ ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chan
 
 
 #ax[0][0].grid(axis='x')
-ax = fig.add_subplot(gs[11:18,9:17])
+ax = fig.add_subplot(gs[10:17,9:17])
 ax.plot([0], [0], color=[1,1,1], label='Resource Constrained')
 
 for i in range(task_num - 1):
@@ -554,50 +535,7 @@ top_side.set_visible(False)
 
 ############################
 
-ax = fig.add_subplot(gs[11:18,18:25])
-
-for i in range(total_alg_bottom):
-    if i==0:
-        ax.plot(np.arange(1,11,1) ,avg_acc_bottom[i], color=c_bottom[i], marker=marker_style_bottom[i], linewidth=3)
-    else:
-        ax.plot(np.arange(1,11,1) ,avg_acc_bottom[i], color=c_bottom[i], marker=marker_style_bottom[i])
-    ax.fill_between(np.arange(1,11,1), avg_acc_bottom[i]-1.96*avg_var_bottom[i], avg_acc_bottom[i]+1.96*avg_var_bottom[i], facecolor=c_bottom[i], alpha=.3)
-
-ax.hlines(.1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
-ax.set_yticks([.1,.2,.3,.4])
-ax.set_xticks(np.arange(1,11))
-ax.tick_params(labelsize=ticksize)
-ax.set_ylabel('Accuracy[$\pm$ std dev.]', fontsize=fontsize)
-ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
-
-right_side = ax.spines["right"]
-right_side.set_visible(False)
-top_side = ax.spines["top"]
-top_side.set_visible(False)
-
-
-ax = fig.add_subplot(gs[11:18,26:33])
-
-for i in range(total_alg_bottom):
-    if i==0:
-        ax.plot(np.arange(1,11,1) ,avg_single_acc_bottom[i], color=c_bottom[i], marker=marker_style_bottom[i], linewidth=3)
-    else:
-        ax.plot(np.arange(1,11,1) ,avg_single_acc_bottom[i], color=c_bottom[i], marker=marker_style_bottom[i])
-    ax.fill_between(np.arange(1,11,1), avg_single_acc_bottom[i]-1.96*avg_single_var_bottom[i], avg_single_acc_bottom[i]+1.96*avg_single_var_bottom[i], facecolor=c_bottom[i], alpha=.3)
-
-ax.hlines(.1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
-ax.set_yticks([.1,.2,.3,.4])
-ax.set_xticks(np.arange(1,11))
-ax.tick_params(labelsize=ticksize)
-ax.set_ylabel('Accuracy[$\pm$ std dev.]', fontsize=fontsize)
-ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
-
-right_side = ax.spines["right"]
-right_side.set_visible(False)
-top_side = ax.spines["top"]
-top_side.set_visible(False)
-########################
-ax = fig.add_subplot(gs[20:,18:25])
+ax = fig.add_subplot(gs[10:17,18:25])
 
 mean_error, std_error = unpickle('../recruitment_exp/result/recruitment_exp_500.pickle')
 ns = 10*np.array([10, 50, 100, 200, 350, 500])
@@ -632,9 +570,9 @@ ax.set_xticks([])
 ax.set_yticks([0.45, 0.55, 0.65,0.75])
 #ax.set_ylim([0.43,0.62])
 #ax.text(50, 1, "50", fontsize=ticksize)
-ax.text(100, 0.426, "100", fontsize=ticksize-2)
-ax.text(500, 0.426, "500", fontsize=ticksize-2)
-ax.text(5000, 0.426, "5000", fontsize=ticksize-2)
+ax.text(100, 0.424, "100", fontsize=ticksize-2)
+ax.text(500, 0.424, "500", fontsize=ticksize-2)
+ax.text(5000, 0.424, "5000", fontsize=ticksize-2)
 ax.text(120, 0.39, "Number of Task 10 Samples", fontsize=fontsize-1)
 
 ax.legend(loc='lower left',fontsize=legendsize+6, frameon=False)
@@ -645,33 +583,145 @@ right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
 
-####################
-ax = fig.add_subplot(gs[20:,9:16])
-ax.tick_params(labelsize=22)
-ax_ = sns.boxplot(
-    x="Algorithms", y="Learning Efficieny", data=df_500, palette=c_combined_, whis=np.inf,
-    ax=ax, showfliers=False, notch=1
-    )
-ax.hlines(0, -1,15, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
-#sns.boxplot(x="Algorithms", y="Transfer Efficieny", data=mean_df, palette=c, linewidth=3, ax=ax[1][1])
-#ax_=sns.pointplot(x="Algorithms", y="Transfer Efficieny", data=df_500, join=False, color='grey', linewidth=1.5, ci='sd',ax=ax)
-#ax_.set_yticks([.4,.6,.8,1, 1.2,1.4])
-ax_.set_xlabel('', fontsize=fontsize)
-ax.set_ylabel('log LE after 10 Tasks', fontsize=fontsize-5)
-ax_.set_xticklabels(
-    ['SynN','SynF','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'Model Zoo', 'SynF (constrained)', 'LwF', 'O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None'],
-    fontsize=19,rotation=65,ha="right",rotation_mode='anchor'
-    )
 
-stratified_scatter(te_500,ax,16,c_combined_,marker_style_scatter)
-right_side = ax.spines["right"]
-right_side.set_visible(False)
-top_side = ax.spines["top"]
-top_side.set_visible(False)
 
 fig.legend(handles_top, labels_top, bbox_to_anchor=(.995, .9), fontsize=legendsize+14, frameon=False)
 fig.legend(handles_bottom, labels_bottom, bbox_to_anchor=(.995, .5), fontsize=legendsize+14, frameon=False)
 
 plt.savefig('result/figs/cifar_exp_500_recruit_with_rep.pdf')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# %%
+fig = plt.figure(constrained_layout=True,figsize=(25,17))
+gs = fig.add_gridspec(17,25)
+
+clr_top = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#984ea3"]
+c_top = sns.color_palette(clr_top, n_colors=len(clr_top))
+
+clr_bottom = ["#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928"]
+c_bottom = sns.color_palette(clr_bottom, n_colors=len(clr_bottom))
+
+marker_style_top = ['.', '.', '.', '.', '+', '.', '+', 'v']
+marker_style_bottom = ['.', '.', 'o', '*', '.', '+', 'x', 'o']
+marker_style = ['.', '.', '.', '.', '+', '.', '+',  'v', '.', 'o', '*', '.', '+', 'x', 'o']
+marker_style_scatter = ['.', '.', '.', '.', '+', 'v', '.', '+', '.', '.', 'o', '*', '.', '+', 'x', 'o']
+
+clr_combined = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928"]
+c_combined = sns.color_palette(clr_combined, n_colors=total_alg_top+total_alg_bottom-1)
+
+clr_combined_ = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#984ea3", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928"]
+c_combined_ = sns.color_palette(clr_combined_, n_colors=total_alg_top+total_alg_bottom)
+
+fontsize=38
+ticksize=34
+legendsize=16
+
+ax = fig.add_subplot(gs[2:9,2:9])
+
+for i in range(total_alg_top):
+    if i==0 or i==1:
+        ax.plot(np.arange(1,11,1) ,avg_acc_top[i], color=c_top[i], marker=marker_style_top[i], linewidth=3)
+    else:
+        ax.plot(np.arange(1,11,1) ,avg_acc_top[i], color=c_top[i], marker=marker_style_top[i])
+    ax.fill_between(np.arange(1,11,1), avg_acc_top[i]-1.96*avg_var_top[i], avg_acc_top[i]+1.96*avg_var_top[i], facecolor=c_top[i], alpha=.3)
+
+ax.hlines(.1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
+ax.set_yticks([.1,.2,.3,.4])
+ax.set_xticks(np.arange(1,11))
+ax.tick_params(labelsize=ticksize)
+ax.set_ylabel('Lifelong Task Accuracy', fontsize=fontsize)
+ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
+
+right_side = ax.spines["right"]
+right_side.set_visible(False)
+top_side = ax.spines["top"]
+top_side.set_visible(False)
+
+
+
+ax = fig.add_subplot(gs[2:9,10:17])
+
+for i in range(total_alg_top):
+    if i==0 or i==1:
+        ax.plot(np.arange(1,11,1) ,avg_single_acc_top[i], color=c_top[i], marker=marker_style_top[i], linewidth=3)
+    else:
+        ax.plot(np.arange(1,11,1) ,avg_single_acc_top[i], color=c_top[i], marker=marker_style_top[i])
+    ax.fill_between(np.arange(1,11,1), avg_single_acc_top[i]-1.96*avg_single_var_top[i], avg_single_acc_top[i]+1.96*avg_single_var_top[i], facecolor=c_top[i], alpha=.3)
+
+ax.hlines(.1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
+ax.set_yticks([.1,.2,.3,.4])
+ax.set_xticks(np.arange(1,11))
+ax.tick_params(labelsize=ticksize)
+ax.set_ylabel('Single Task Accuracy', fontsize=fontsize)
+ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
+
+right_side = ax.spines["right"]
+right_side.set_visible(False)
+top_side = ax.spines["top"]
+top_side.set_visible(False)
+
+############################
+
+ax = fig.add_subplot(gs[10:,2:9])
+
+for i in range(total_alg_bottom):
+    if i==0:
+        ax.plot(np.arange(1,11,1) ,avg_acc_bottom[i], color=c_bottom[i], marker=marker_style_bottom[i], linewidth=3)
+    else:
+        ax.plot(np.arange(1,11,1) ,avg_acc_bottom[i], color=c_bottom[i], marker=marker_style_bottom[i])
+    ax.fill_between(np.arange(1,11,1), avg_acc_bottom[i]-1.96*avg_var_bottom[i], avg_acc_bottom[i]+1.96*avg_var_bottom[i], facecolor=c_bottom[i], alpha=.3)
+
+ax.hlines(.1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
+ax.set_yticks([.1,.2,.3,.4])
+ax.set_xticks(np.arange(1,11))
+ax.tick_params(labelsize=ticksize)
+ax.set_ylabel('Lifelong Task Accuracy \n (Resource constrained)', fontsize=fontsize)
+ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
+
+right_side = ax.spines["right"]
+right_side.set_visible(False)
+top_side = ax.spines["top"]
+top_side.set_visible(False)
+
+
+ax = fig.add_subplot(gs[10:,10:17])
+
+for i in range(total_alg_bottom):
+    if i==0:
+        ax.plot(np.arange(1,11,1) ,avg_single_acc_bottom[i], color=c_bottom[i], marker=marker_style_bottom[i], linewidth=3)
+    else:
+        ax.plot(np.arange(1,11,1) ,avg_single_acc_bottom[i], color=c_bottom[i], marker=marker_style_bottom[i])
+    ax.fill_between(np.arange(1,11,1), avg_single_acc_bottom[i]-1.96*avg_single_var_bottom[i], avg_single_acc_bottom[i]+1.96*avg_single_var_bottom[i], facecolor=c_bottom[i], alpha=.3)
+
+ax.hlines(.1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
+ax.set_yticks([.1,.2,.3,.4])
+ax.set_xticks(np.arange(1,11))
+ax.tick_params(labelsize=ticksize)
+ax.set_ylabel('Single Task Accuracy \n (Resource constrained)', fontsize=fontsize)
+ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
+
+right_side = ax.spines["right"]
+right_side.set_visible(False)
+top_side = ax.spines["top"]
+top_side.set_visible(False)
+########################
+
+fig.legend(handles_top, labels_top, bbox_to_anchor=(.995, .9), fontsize=legendsize+14, frameon=False)
+fig.legend(handles_bottom, labels_bottom, bbox_to_anchor=(.995, .5), fontsize=legendsize+14, frameon=False)
+
+plt.savefig('result/figs/cifar_exp_500_acc.pdf')
 
 # %%
