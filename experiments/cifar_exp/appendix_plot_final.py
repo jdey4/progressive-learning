@@ -10,6 +10,31 @@ import seaborn as sns
 import matplotlib.gridspec as gridspec
 import matplotlib
 #%%
+def calc_forget(err, reps, total_task=5):
+#Tom Vient et al
+    forget = 0
+    for ii in range(total_task-1):
+        forget += err[ii][ii] - err[total_task-1][ii]
+
+    forget /= (total_task-1)
+    return forget/reps
+
+def calc_transfer(err, single_err, reps, total_task=5):
+#Tom Vient et al
+    transfer = np.zeros(total_task,dtype=float)
+
+    for ii in range(total_task):
+        transfer[ii] = (single_err[ii] - err[total_task-1][ii])/reps
+
+    return np.mean(transfer)
+
+def calc_acc(err, reps, total_task=5):
+#Tom Vient et al
+    acc = 0
+    for ii in range(total_task):
+        acc += (1-err[total_task-1][ii]/reps)
+    return acc/total_task
+
 def unpickle(file):
     with open(file, 'rb') as fo:
         dict = pickle.load(fo, encoding='bytes')
@@ -206,6 +231,11 @@ for alg in range(total_alg_top):
     avg_single_acc_top[alg]= avg_single_acc
     avg_single_var_top[alg] = avg_single_var
 
+    print('Algo name:' , alg_name_top[alg])
+    print('Accuracy', np.round(calc_acc(err,reps),2))
+    print('forget', np.round(calc_forget(err, reps),2))
+    print('transfer', np.round(calc_transfer(err, single_err, reps),2))
+    
 # %%
 reps = slots*shifts
 
@@ -248,6 +278,10 @@ for alg in range(total_alg_bottom):
     avg_single_acc_bottom[alg]= avg_single_acc
     avg_single_var_bottom[alg] = avg_single_var
     
+    print('Algo name:' , alg_name_bottom[alg])
+    print('Accuracy', np.round(calc_acc(err,reps),2))
+    print('forget', np.round(calc_forget(err, reps),2))
+    print('transfer', np.round(calc_transfer(err, single_err, reps),2))
 #%%
 te_5000 = {'SynN':np.zeros(10,dtype=float), 'SynF':np.zeros(10,dtype=float), 
           'Prog-NN':np.zeros(10,dtype=float), 'DF-CNN':np.zeros(10,dtype=float), 
