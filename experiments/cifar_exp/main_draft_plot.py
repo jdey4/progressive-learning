@@ -347,10 +347,10 @@ for i, fte in enumerate(ftes_top):
         continue
 
     if i == 1:
-        sns.regplot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], label=alg_name_top[i], ax=ax, scatter=False, ci=None)
+        sns.regplot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], label=alg_name_top[i], lowess=True, ax=ax, scatter=False, ci=None)
         continue
     
-    sns.regplot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], label=alg_name_top[i], ax=ax, scatter=False, ci=None)
+    sns.regplot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], label=alg_name_top[i], lowess=True, ax=ax, scatter=False, ci=None)
 
 
 ax.set_xticks(np.arange(1,11))
@@ -398,19 +398,19 @@ for i in range(task_num - 1):
     for j in range(0,total_alg_top):
         if j == 0:
             if i == 0:
-                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, label = alg_name_top[j], color=c_top[j], linewidth = 3)
+                sns.regplot(ns, et[j,:], marker=marker_style_top[j], label = alg_name_top[j], color=c_top[j], lowess=True, ax=ax, scatter=False, ci=None)
             else:
-                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, color=c_top[j], linewidth = 3)
+                sns.regplot(ns, et[j,:], marker=marker_style_top[j], color=c_top[j], lowess=True, ax=ax, scatter=False, ci=None)
         elif j == 1:
             if i == 0:
-                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, label = alg_name_top[j], color=c_top[j], linewidth = 3)
+                sns.regplot(ns, et[j,:], marker=marker_style_top[j], label = alg_name_top[j], color=c_top[j], lowess=True, ax=ax, scatter=False, ci=None)
             else:
-                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, color=c_top[j], linewidth = 3)
+                sns.regplot(ns, et[j,:], marker=marker_style_top[j], color=c_top[j], lowess=True, ax=ax, scatter=False, ci=None)
         else:
             if i == 0:
-                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, label = alg_name_top[j], color=c_top[j])
+                sns.regplot(ns, et[j,:], marker=marker_style_top[j], label = alg_name_top[j], color=c_top[j], lowess=True, ax=ax, scatter=False, ci=None)
             else:
-                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, color=c_top[j])
+                sns.regplot(ns, et[j,:], marker=marker_style_top[j], color=c_top[j], lowess=True, ax=ax, scatter=False, ci=None)
 
 
 '''for i in range(total_alg_top,total_alg_top+total_alg_bottom-1):
