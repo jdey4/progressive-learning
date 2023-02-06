@@ -9,7 +9,6 @@ from itertools import product
 import seaborn as sns
 import matplotlib.gridspec as gridspec
 import matplotlib
-import statsmodels.api as sm
 #%%
 def calc_forget(err, reps, total_task=10):
 #Tom Vient et al
@@ -338,19 +337,15 @@ ax = fig.add_subplot(gs[2:9,:7])
 
 for i, fte in enumerate(ftes_top):
     fte[0] = 1
-    #print(fte, 'before')
-    #lowess = sm.nonparametric.lowess
-    #fte = lowess(np.arange(1,11), fte, frac= 1./2, it=0)[:,0]
-    #print(fte,'after')
     if i == 0:
-        sns.regplot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], label=alg_name_top[i], lowess=True, ax=ax, scatter=False, ci=None)
+        ax.plot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], markersize=12, label=alg_name_top[i], linewidth=3)
         continue
 
     if i == 1:
-        sns.regplot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], label=alg_name_top[i], lowess=True, ax=ax, scatter=False, ci=None)
+        ax.plot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], markersize=12, label=alg_name_top[i], linewidth=3)
         continue
     
-    sns.regplot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], label=alg_name_top[i], lowess=True, ax=ax, scatter=False, ci=None)
+    ax.plot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], markersize=12, label=alg_name_top[i])
 
 
 ax.set_xticks(np.arange(1,11))
@@ -398,19 +393,19 @@ for i in range(task_num - 1):
     for j in range(0,total_alg_top):
         if j == 0:
             if i == 0:
-                sns.regplot(ns, et[j,:], marker=marker_style_top[j], label = alg_name_top[j], color=c_top[j], lowess=True, ax=ax, scatter=False, ci=None)
+                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, label = alg_name_top[j], color=c_top[j], linewidth = 3)
             else:
-                sns.regplot(ns, et[j,:], marker=marker_style_top[j], color=c_top[j], lowess=True, ax=ax, scatter=False, ci=None)
+                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, color=c_top[j], linewidth = 3)
         elif j == 1:
             if i == 0:
-                sns.regplot(ns, et[j,:], marker=marker_style_top[j], label = alg_name_top[j], color=c_top[j], lowess=True, ax=ax, scatter=False, ci=None)
+                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, label = alg_name_top[j], color=c_top[j], linewidth = 3)
             else:
-                sns.regplot(ns, et[j,:], marker=marker_style_top[j], color=c_top[j], lowess=True, ax=ax, scatter=False, ci=None)
+                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, color=c_top[j], linewidth = 3)
         else:
             if i == 0:
-                sns.regplot(ns, et[j,:], marker=marker_style_top[j], label = alg_name_top[j], color=c_top[j], lowess=True, ax=ax, scatter=False, ci=None)
+                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, label = alg_name_top[j], color=c_top[j])
             else:
-                sns.regplot(ns, et[j,:], marker=marker_style_top[j], color=c_top[j], lowess=True, ax=ax, scatter=False, ci=None)
+                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, color=c_top[j])
 
 
 '''for i in range(total_alg_top,total_alg_top+total_alg_bottom-1):
@@ -765,4 +760,74 @@ fig.legend(handles_bottom, labels_bottom, bbox_to_anchor=(.995, .5), fontsize=le
 
 plt.savefig('result/figs/cifar_exp_500_acc.pdf')
 
+# %%
+ax = plt.figure(figsize=(12,12)).add_subplot(projection='3d')
+
+for i in range(task_num - 1):
+
+    et = np.zeros((total_alg_top,task_num-i))
+
+    for j in range(0,total_alg_top):
+        et[j,:] = np.asarray(btes_top[j][i])
+
+    ns = np.arange(i + 1, task_num + 1)
+    for j in range(0,total_alg_top):
+        if j == 0:
+            if i == 0:
+                ax.plot(ns, et[j,:], zs=j, zdir='y', marker=marker_style_top[j], markersize=4, label = alg_name_top[j], color=c_top[j])
+            else:
+                ax.plot(ns, et[j,:], zs=j, zdir='y', marker=marker_style_top[j], markersize=4, color=c_top[j])
+        elif j == 1:
+            if i == 0:
+                ax.plot(ns, et[j,:], zs=j, zdir='y', marker=marker_style_top[j], markersize=4, label = alg_name_top[j], color=c_top[j])
+            else:
+                ax.plot(ns, et[j,:], zs=j, zdir='y', marker=marker_style_top[j], markersize=4, color=c_top[j])
+        else:
+            if i == 0:
+                ax.plot(ns, et[j,:], zs=j, zdir='y', marker=marker_style_top[j], markersize=4, label = alg_name_top[j], color=c_top[j])
+            else:
+                ax.plot(ns, et[j,:], zs=j, zdir='y', marker=marker_style_top[j], markersize=4, color=c_top[j])
+
+
+xs = np.linspace(0, 10, 100)
+zs = np.linspace(0, 7, 100)
+X, Y = np.meshgrid(xs, zs)
+Z = np.ones(X.shape)
+
+ax.plot_surface(X, Y, Z, color='grey', alpha=.7)
+
+ax.view_init(elev=10., azim=15, roll=0)
+
+'''for i in range(total_alg_top,total_alg_top+total_alg_bottom-1):
+    ax.plot(1,0,color=c_combined[i], marker=marker_style[i], markersize=8,label=combined_alg_name[i])'''
+
+ax.set_xlabel('Number of tasks seen', fontsize=15)
+ax.set_zlabel('log Backward LE', fontsize=15)
+
+ax.set_zticks([.8,.9,1, 1.1,1.2])
+ax.set_xticks(np.arange(2,11,2))
+ax.set_zlim(0.76, 1.25)
+ax.set_ylim([0,7])
+log_lbl = np.round(
+    np.log([.8,.9,1,1.1,1.2]),
+    1
+)
+labels = [item.get_text() for item in ax.get_zticklabels()]
+
+for ii,_ in enumerate(labels):
+    labels[ii] = str(log_lbl[ii])
+
+ax.set_zticklabels(labels)
+ax.set_yticklabels(alg_name_top, rotation=-40)
+ax.tick_params(labelsize=15)
+#ax[0][1].grid(axis='x')
+ax.invert_xaxis()
+
+right_side = ax.spines["right"]
+right_side.set_visible(False)
+top_side = ax.spines["top"]
+top_side.set_visible(False)
+#ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
+
+plt.savefig('result/figs/test.pdf')
 # %%
