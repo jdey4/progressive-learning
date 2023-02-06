@@ -47,20 +47,29 @@ transfer['speech'] = [.16, .03, np.nan, np.nan, -.24, -.04, -.04, np.nan,\
             np.nan, -.21, -.25, -.25, np.nan, np.nan, np.nan, -.23]
 
 
-keys = ['cifar', '5 dataset', 'imagenet', 'speech']
+keys = ['accuracy', 'forget', 'transfer']
 
-for key in keys:
-    data[key] = pd.DataFrame({"accuracy":accuracy[key], "forget":forget[key],\
-        "transfer":transfer[key]})
-    data[key].index = algorithms
+data['accuracy'] = pd.DataFrame({"cifar":accuracy["cifar"], "5 dataset":accuracy["5 dataset"],\
+        "imagenet":accuracy["imagenet"], "speech":accuracy["speech"]})
+data['accuracy'].index = algorithms
 
-fig, ax = plt.subplots(1, 4, figsize=(18,8), sharey=True, sharex=True)
-cbar_ax = fig.add_axes([.91, .3, .03, .4])
+data['forget'] = pd.DataFrame({"cifar":forget["cifar"], "5 dataset":forget["5 dataset"],\
+        "imagenet":forget["imagenet"], "speech":forget["speech"]})
+data['forget'].index = algorithms
 
-for i in range(4):
-    sns.heatmap(data[keys[i]], yticklabels=algorithms,
-             cmap='Reds', ax=ax[i], cbar=i == 0, 
-             cbar_ax=cbar_ax if i==0 else None)
+data['transfer'] = pd.DataFrame({"cifar":transfer["cifar"], "5 dataset":transfer["5 dataset"],\
+        "imagenet":transfer["imagenet"], "speech":transfer["speech"]})
+data['transfer'].index = algorithms
+
+fig, ax = plt.subplots(1, 3, figsize=(18,8), sharey=True, sharex=True)
+#cbar_ax = fig.add_axes([.91, .3, .03, .4])
+vmins = [0,-.3,-.3]
+vmaxs = [1,.3,.3]
+for i in range(3):
+    sns.heatmap(data[keys[i]], yticklabels=algorithms,\
+                vmin=vmins[i], vmax=vmaxs[i],
+             cmap='coolwarm', ax=ax[i],)# cbar=i == 0, \
+             #cbar_ax=cbar_ax if i==0 else None)
     ax[i].set_title(keys[i], fontsize=35)
     ax[i].set_xticklabels(ax[i].get_xticklabels(), rotation=45, fontsize=20)
     #ax[i].set_yticklabels(ax[i].get_yticklabels(), fontsize=20)

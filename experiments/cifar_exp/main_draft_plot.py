@@ -9,6 +9,7 @@ from itertools import product
 import seaborn as sns
 import matplotlib.gridspec as gridspec
 import matplotlib
+import statsmodels.api as sm
 #%%
 def calc_forget(err, reps, total_task=10):
 #Tom Vient et al
@@ -337,15 +338,19 @@ ax = fig.add_subplot(gs[2:9,:7])
 
 for i, fte in enumerate(ftes_top):
     fte[0] = 1
+    #print(fte, 'before')
+    #lowess = sm.nonparametric.lowess
+    #fte = lowess(np.arange(1,11), fte, frac= 1./2, it=0)[:,0]
+    #print(fte,'after')
     if i == 0:
-        ax.plot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], markersize=12, label=alg_name_top[i], linewidth=3)
+        sns.regplot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], label=alg_name_top[i], lowess=True, ax=ax, scatter=False, ci=None)
         continue
 
     if i == 1:
-        ax.plot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], markersize=12, label=alg_name_top[i], linewidth=3)
+        sns.regplot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], label=alg_name_top[i], ax=ax, scatter=False, ci=None)
         continue
     
-    ax.plot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], markersize=12, label=alg_name_top[i])
+    sns.regplot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], label=alg_name_top[i], ax=ax, scatter=False, ci=None)
 
 
 ax.set_xticks(np.arange(1,11))
