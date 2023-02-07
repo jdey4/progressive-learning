@@ -159,10 +159,10 @@ task_num = 10
 shifts = 6
 total_alg_top = 8
 total_alg_bottom = 8
-alg_name_top = ['SynN','SynF','ProgNN', 'DF-CNN', 'EWC', 'Total Replay', 'Partial Replay', 'Model Zoo']
+alg_name_top = ['SynN','SynF', 'Model Zoo','ProgNN', 'DF-CNN', 'EWC', 'Total Replay', 'Partial Replay']
 alg_name_bottom = ['SynF','LwF','O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None']
-combined_alg_name = ['SynN','SynF','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'Model Zoo', 'LwF', 'O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None']
-model_file_top = ['dnn0withrep','fixed_uf10withrep','Prog_NN','DF_CNN', 'EWC', 'offline', 'exact', 'model_zoo']
+combined_alg_name = ['SynN','SynF', 'Model Zoo','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'LwF', 'O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None']
+model_file_top = ['dnn0withrep','fixed_uf10withrep', 'model_zoo','Prog_NN','DF_CNN', 'EWC', 'offline', 'exact']
 model_file_bottom = ['uf10withrep', 'LwF', 'OEWC', 'si', 'er', 'agem', 'tag', 'None']
 btes_top = [[] for i in range(total_alg_top)]
 ftes_top = [[] for i in range(total_alg_top)]
@@ -181,7 +181,7 @@ avg_single_acc_bottom = [[] for i in range(total_alg_bottom)]
 avg_single_var_bottom = [[] for i in range(total_alg_bottom)]
 
 #combined_alg_name = ['L2N','L2F','Prog-NN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Replay (increasing amount)', 'Replay (fixed amount)', 'None']
-model_file_combined = ['dnn0withrep','fixed_uf10withrep','Prog_NN','DF_CNN', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'model_zoo', 'er', 'agem', 'tag', 'None']
+model_file_combined = ['dnn0withrep','fixed_uf10withrep', 'model_zoo','Prog_NN','DF_CNN', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'er', 'agem', 'tag', 'None']
 
 ########################
 
@@ -198,9 +198,9 @@ for alg in range(total_alg_top):
         for shift in range(shifts):
             if alg < 2:
                 filename = './result/result/'+model_file_top[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
-            elif alg == 2 or alg == 3:
+            elif alg == 3 or alg == 4:
                 filename = './benchmarking_algorthms_result/'+model_file_top[alg]+'-'+str(shift+1)+'-'+str(slot+1)+'.pickle'
-            elif alg == 7:
+            elif alg == 2:
                 filename = './benchmarking_algorthms_result/'+model_file_top[alg]+'_'+str(slot+1)+'_'+str(shift+1)+'.pickle'
             else:
                 filename = './benchmarking_algorthms_result/'+model_file_top[alg]+'-'+str(slot+1)+'-'+str(shift+1)+'.pickle'
@@ -288,9 +288,10 @@ for alg in range(total_alg_bottom):
     print('transfer', np.round(calc_transfer(err, single_err, reps),2))
 #%%
 te_500 = {'SynN':np.zeros(10,dtype=float), 'SynF':np.zeros(10,dtype=float), 
+          'Model Zoo':np.zeros(10,dtype=float),
           'Prog-NN':np.zeros(10,dtype=float), 'DF-CNN':np.zeros(10,dtype=float), 
           'EWC':np.zeros(10,dtype=float),'Total Replay':np.zeros(10,dtype=float),
-          'Partial Replay':np.zeros(10,dtype=float), 'Model Zoo':np.zeros(10,dtype=float),
+          'Partial Replay':np.zeros(10,dtype=float),
           'SynF (constrained)':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
            'O-EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float),
           'er':np.zeros(10,dtype=float), 'agem':np.zeros(10,dtype=float),
@@ -309,8 +310,8 @@ df_500 = pd.DataFrame.from_dict(te_500)
 df_500 = pd.melt(df_500,var_name='Algorithms', value_name='Learning Efficieny')
 
 # %%
-fig = plt.figure(constrained_layout=True,figsize=(33,18))
-gs = fig.add_gridspec(18,33)
+fig = plt.figure(constrained_layout=True,figsize=(42,32))
+gs = fig.add_gridspec(32,42)
 
 clr_top = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#984ea3"]
 c_top = sns.color_palette(clr_top, n_colors=len(clr_top))
@@ -333,7 +334,8 @@ fontsize=38
 ticksize=34
 legendsize=16
 
-ax = fig.add_subplot(gs[2:9,:7])
+ax = fig.add_subplot(gs[4:12,:8])
+ax.plot([0], [0], color=[1,1,1], label='Resource Growing     ')
 
 for i, fte in enumerate(ftes_top):
     fte[0] = 1
@@ -369,68 +371,7 @@ ax.set_yticklabels(labels)
 ax.tick_params(labelsize=ticksize)
 
 ax.set_ylabel('log Forward LE', fontsize=fontsize)
-ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
-
-right_side = ax.spines["right"]
-right_side.set_visible(False)
-top_side = ax.spines["top"]
-top_side.set_visible(False)
-ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
-
-
-
-#ax[0][0].grid(axis='x')
-ax = fig.add_subplot(gs[2:9,9:17])
-ax.plot([0], [0], color=[1,1,1], label='Resource Growing     ')
-for i in range(task_num - 1):
-
-    et = np.zeros((total_alg_top,task_num-i))
-
-    for j in range(0,total_alg_top):
-        et[j,:] = np.asarray(btes_top[j][i])
-
-    ns = np.arange(i + 1, task_num + 1)
-    for j in range(0,total_alg_top):
-        if j == 0:
-            if i == 0:
-                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, label = alg_name_top[j], color=c_top[j], linewidth = 3)
-            else:
-                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, color=c_top[j], linewidth = 3)
-        elif j == 1:
-            if i == 0:
-                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, label = alg_name_top[j], color=c_top[j], linewidth = 3)
-            else:
-                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, color=c_top[j], linewidth = 3)
-        else:
-            if i == 0:
-                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, label = alg_name_top[j], color=c_top[j])
-            else:
-                ax.plot(ns, et[j,:], marker=marker_style_top[j], markersize=8, color=c_top[j])
-
-
-'''for i in range(total_alg_top,total_alg_top+total_alg_bottom-1):
-    ax.plot(1,0,color=c_combined[i], marker=marker_style[i], markersize=8,label=combined_alg_name[i])'''
-
-ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
-ax.set_ylabel('log Backward LE', fontsize=fontsize)
-
-ax.set_yticks([.8,.9,1, 1.1,1.2])
-ax.set_xticks(np.arange(1,11))
-ax.set_ylim(0.76, 1.25)
-
-log_lbl = np.round(
-    np.log([.8,.9,1,1.1,1.2]),
-    1
-)
-labels = [item.get_text() for item in ax.get_yticklabels()]
-
-for ii,_ in enumerate(labels):
-    labels[ii] = str(log_lbl[ii])
-
-ax.set_yticklabels(labels)
-
-ax.tick_params(labelsize=ticksize)
-#ax[0][1].grid(axis='x')
+ax.set_xlabel('Tasks seen', fontsize=fontsize)
 
 right_side = ax.spines["right"]
 right_side.set_visible(False)
@@ -439,9 +380,90 @@ top_side.set_visible(False)
 ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
 
 handles_top, labels_top = ax.get_legend_handles_labels()
-#ax.legend(loc='center left', bbox_to_anchor=(.8, 0.5), fontsize=legendsize+16)
 
-ax = fig.add_subplot(gs[2:9,18:25])
+#ax[0][0].grid(axis='x')
+ax = fig.add_subplot(gs[2:15,8:27], projection='3d')
+#cmap = sns.color_palette("coolwarm", as_cmap=True)
+color = ['b', 'r']
+for i in range(task_num - 1):
+
+    et = np.zeros((total_alg_top,task_num-i))
+
+    for j in range(0,total_alg_top):
+        et[j,:] = np.asarray(btes_top[j][i])
+
+    ns = np.arange(i + 1, task_num + 1)
+    ns_new = np.linspace(ns.min(), ns.max(), 300)
+
+    for j in range(0,total_alg_top):
+        y_interp = np.interp(ns_new, ns, et[j,:])
+        idx = np.zeros(len(y_interp), dtype=int)
+        idx[np.where(y_interp>=1)[0]] = 1     
+        clr = [color[i] for i in idx]
+
+        if j == 0:
+            if i == 0:
+                ax.scatter(ns_new, y_interp, zs=j, zdir='y', label = alg_name_top[j], c=clr, s=2)
+            else:
+                ax.scatter(ns_new, y_interp, zs=j, zdir='y', c=clr, s=2)
+        elif j == 1:
+            if i == 0:
+                ax.scatter(ns_new, y_interp, zs=j, zdir='y', label = alg_name_top[j], c=clr, s=2)
+            else:
+                ax.scatter(ns_new, y_interp, zs=j, zdir='y', c=clr, s=2)
+        else:
+            if i == 0:
+                ax.scatter(ns_new, y_interp, zs=j, zdir='y', label = alg_name_top[j], c=clr, s=2)
+            else:
+                ax.scatter(ns_new, y_interp, zs=j, zdir='y', c=clr, s=2)
+
+
+xs = np.linspace(0, 10, 100)
+zs = np.linspace(0, 7, 100)
+X, Y = np.meshgrid(xs, zs)
+Z = np.ones(X.shape)
+
+ax.plot_surface(X, Y, Z, color='grey', alpha=.5)
+
+ax.view_init(elev=10., azim=15, roll=0)
+
+'''for i in range(total_alg_top,total_alg_top+total_alg_bottom-1):
+    ax.plot(1,0,color=c_combined[i], marker=marker_style[i], markersize=8,label=combined_alg_name[i])'''
+
+ax.set_xlabel('Tasks seen', fontsize=30, labelpad=15)
+ax.set_zlabel('log Backward LE', fontsize=30, labelpad=15)
+
+ax.set_zticks([.8,.9,1, 1.1,1.2])
+ax.set_xticks(np.arange(2,11,4))
+ax.set_zlim(0.76, 1.25)
+ax.set_ylim([0,7])
+log_lbl = np.round(
+    np.log([.8,.9,1,1.1,1.2]),
+    1
+)
+labels = [item.get_text() for item in ax.get_zticklabels()]
+
+for ii,_ in enumerate(labels):
+    labels[ii] = str(log_lbl[ii])
+
+ax.set_zticklabels(labels)
+ax.set_yticklabels(alg_name_top, rotation=80)
+ax.tick_params(labelsize=ticksize-8)
+#ax[0][1].grid(axis='x')
+ax.invert_xaxis()
+
+right_side = ax.spines["right"]
+right_side.set_visible(False)
+top_side = ax.spines["top"]
+top_side.set_visible(False)
+#ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
+
+for ytick, color in zip(ax.get_yticklabels(), clr_top):
+    ytick.set_color(color)
+
+
+##########################################################
+ax = fig.add_subplot(gs[4:12,28:36])
 
 ax.tick_params(labelsize=22)
 ax_ = sns.boxplot(
@@ -455,7 +477,7 @@ ax.hlines(0, -1,15, colors='grey', linestyles='dashed',linewidth=1.5, label='cha
 ax_.set_xlabel('', fontsize=fontsize)
 ax.set_ylabel('log LE after 10 Tasks', fontsize=fontsize-5)
 ax_.set_xticklabels(
-    ['SynN','SynF','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'Model Zoo', 'SynF (constrained)', 'LwF', 'O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None'],
+    ['SynN','SynF', 'Model Zoo', 'ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'SynF (constrained)', 'LwF', 'O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None'],
     fontsize=19,rotation=65,ha="right",rotation_mode='anchor'
     )
 
@@ -466,19 +488,20 @@ top_side = ax.spines["top"]
 top_side.set_visible(False)
 
 #########################################################
-ax = fig.add_subplot(gs[10:17,:7])
+ax = fig.add_subplot(gs[19:27,:8])
+ax.plot([0], [0], color=[1,1,1], label='Resource Constrained')
 
 for i, fte in enumerate(ftes_bottom):
     fte[0] = 1
     if i == 0:
-        ax.plot(np.arange(1,11), fte, color=c_bottom[i], marker=marker_style_bottom[i], markersize=12, linewidth=3)
+        ax.plot(np.arange(1,11), fte, color=c_bottom[i], marker=marker_style_bottom[i], markersize=12, label = alg_name_bottom[i], linewidth=3)
         continue
 
     if i == 1:
-        ax.plot(np.arange(1,11), fte, color=c_bottom[i], marker=marker_style_bottom[i], markersize=12, linewidth=3)
+        ax.plot(np.arange(1,11), fte, color=c_bottom[i], marker=marker_style_bottom[i], markersize=12, label = alg_name_bottom[i], linewidth=3)
         continue
     
-    ax.plot(np.arange(1,11), fte, color=c_bottom[i], marker=marker_style_bottom[i], markersize=12)
+    ax.plot(np.arange(1,11), fte, color=c_bottom[i], marker=marker_style_bottom[i], markersize=12, label = alg_name_bottom[i])
     
 ax.set_xticks(np.arange(1,11))
 ax.set_yticks([0.85, 1, 1.1])
@@ -486,7 +509,7 @@ ax.set_ylim(0.8, 1.1)
 ax.tick_params(labelsize=ticksize)
 
 ax.set_ylabel('Resource Constrained log FLE', fontsize=fontsize)
-ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
+ax.set_xlabel('Tasks seen', fontsize=fontsize)
 
 log_lbl = np.round(
     np.log([0.85,1,1.1]),
@@ -505,14 +528,15 @@ top_side = ax.spines["top"]
 top_side.set_visible(False)
 ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
 
+handles_bottom, labels_bottom = ax.get_legend_handles_labels()
 '''for i in range(0,total_alg_top+total_alg_bottom-1):
     ax.plot(1,0,color=c_combined[i], marker=marker_style[i], markersize=8,label=combined_alg_name[i])'''
 
 
-#ax[0][0].grid(axis='x')
-ax = fig.add_subplot(gs[10:17,9:17])
-ax.plot([0], [0], color=[1,1,1], label='Resource Constrained')
+#####################################################
+ax = fig.add_subplot(gs[17:30,8:27], projection='3d')
 
+color = ['b', 'r']
 for i in range(task_num - 1):
 
     et = np.zeros((total_alg_bottom,task_num-i))
@@ -521,57 +545,77 @@ for i in range(task_num - 1):
         et[j,:] = np.asarray(btes_bottom[j][i])
 
     ns = np.arange(i + 1, task_num + 1)
+    ns_new = np.linspace(ns.min(), ns.max(), 300)
+
     for j in range(0,total_alg_bottom):
+        y_interp = np.interp(ns_new, ns, et[j,:])
+        idx = np.zeros(len(y_interp), dtype=int)
+        idx[np.where(y_interp>=1)[0]] = 1     
+        clr = [color[i] for i in idx]
+
         if j == 0:
             if i == 0:
-                ax.plot(ns, et[j,:], marker=marker_style_bottom[j], markersize=8, label = alg_name_bottom[j], color=c_bottom[j], linewidth = 3)
+                ax.scatter(ns_new, y_interp, zs=j, zdir='y', c=clr, s=2)
             else:
-                ax.plot(ns, et[j,:], marker=marker_style_bottom[j], markersize=8, color=c_bottom[j], linewidth = 3)
+                ax.scatter(ns_new, y_interp, zs=j, zdir='y', c=clr, s=2)
         elif j == 1:
             if i == 0:
-                ax.plot(ns, et[j,:], marker=marker_style_bottom[j], markersize=8, label = alg_name_bottom[j], color=c_bottom[j])
+                ax.scatter(ns_new, y_interp, zs=j, zdir='y', c=clr, s=2)
             else:
-                ax.plot(ns, et[j,:], marker=marker_style_bottom[j], markersize=8, color=c_bottom[j], linewidth = 3)
+                ax.scatter(ns_new, y_interp, zs=j, zdir='y', c=clr, s=2)
         else:
             if i == 0:
-                ax.plot(ns, et[j,:], marker=marker_style_bottom[j], markersize=8, label = alg_name_bottom[j], color=c_bottom[j])
+                ax.scatter(ns_new, y_interp, zs=j, zdir='y', c=clr, s=2)
             else:
-                ax.plot(ns, et[j,:], marker=marker_style_bottom[j], markersize=8, color=c_bottom[j])
+                ax.scatter(ns_new, y_interp, zs=j, zdir='y', c=clr, s=2)
 
 
-ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
-ax.set_ylabel('Resource Constrained log BLE', fontsize=fontsize)
+xs = np.linspace(0, 10, 100)
+zs = np.linspace(0, 7, 100)
+X, Y = np.meshgrid(xs, zs)
+Z = np.ones(X.shape)
 
-ax.set_yticks([.9,1, 1.1,1.2])
-ax.set_xticks(np.arange(1,11))
-ax.set_ylim(0.85, 1.15)
+ax.plot_surface(X, Y, Z, color='grey', alpha=.5)
 
+ax.view_init(elev=10., azim=15, roll=0)
+
+'''for i in range(total_alg_top,total_alg_top+total_alg_bottom-1):
+    ax.plot(1,0,color=c_combined[i], marker=marker_style[i], markersize=8,label=combined_alg_name[i])'''
+
+ax.set_xlabel('Tasks seen', fontsize=30, labelpad=15)
+ax.set_zlabel('log Backward LE', fontsize=30, labelpad=15)
+
+ax.set_zticks([.8,.9,1, 1.1,1.2])
+ax.set_xticks(np.arange(2,11,4))
+ax.set_zlim(0.76, 1.25)
+ax.set_ylim([0,7])
 log_lbl = np.round(
-    np.log([0.9,1,1.1,1.2]),
+    np.log([.8,.9,1,1.1,1.2]),
     1
 )
-labels = [item.get_text() for item in ax.get_yticklabels()]
+labels = [item.get_text() for item in ax.get_zticklabels()]
 
 for ii,_ in enumerate(labels):
     labels[ii] = str(log_lbl[ii])
 
-ax.set_yticklabels(labels)
-
-ax.tick_params(labelsize=ticksize)
+ax.set_zticklabels(labels)
+ax.set_yticklabels(alg_name_bottom, rotation=80)
+ax.tick_params(labelsize=ticksize-8)
 #ax[0][1].grid(axis='x')
-ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
-
-handles_bottom, labels_bottom = ax.get_legend_handles_labels()
+ax.invert_xaxis()
 
 right_side = ax.spines["right"]
 right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
+#ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
 
+for ytick, color in zip(ax.get_yticklabels(), clr_bottom):
+    ytick.set_color(color)
 
 ############################
 
-ax = fig.add_subplot(gs[10:17,18:25])
+ax = fig.add_subplot(gs[19:27,28:36])
 
 mean_error, std_error = unpickle('../recruitment_exp/result/recruitment_exp_500.pickle')
 ns = 10*np.array([10, 50, 100, 200, 350, 500])
@@ -612,7 +656,7 @@ ax.text(5000, 0.424, "5000", fontsize=ticksize-2)
 ax.text(120, 0.39, "Number of Task 10 Samples", fontsize=fontsize-1)
 
 ax.legend(loc='lower left',fontsize=legendsize+6, frameon=False)
-ax.set_title('Recruitment Experiment on Task 10', fontsize=fontsize)
+#ax.set_title('Recruitment Experiment on Task 10', fontsize=fontsize)
 
 right_side = ax.spines["right"]
 right_side.set_visible(False)
@@ -621,8 +665,8 @@ top_side.set_visible(False)
 
 
 
-fig.legend(handles_top, labels_top, bbox_to_anchor=(.995, .9), fontsize=legendsize+14, frameon=False)
-fig.legend(handles_bottom, labels_bottom, bbox_to_anchor=(.995, .5), fontsize=legendsize+14, frameon=False)
+fig.legend(handles_top, labels_top, bbox_to_anchor=(1, .8), fontsize=legendsize+14, frameon=False)
+fig.legend(handles_bottom, labels_bottom, bbox_to_anchor=(1, .45), fontsize=legendsize+14, frameon=False)
 
 plt.savefig('result/figs/cifar_exp_500_recruit_with_rep.pdf')
 
@@ -761,32 +805,42 @@ fig.legend(handles_bottom, labels_bottom, bbox_to_anchor=(.995, .5), fontsize=le
 plt.savefig('result/figs/cifar_exp_500_acc.pdf')
 
 # %%
-ax = plt.figure(figsize=(12,12)).add_subplot(projection='3d')
+from matplotlib import cm
 
+ax = plt.figure(figsize=(12,12)).add_subplot(projection='3d')
+#cmap = sns.color_palette("coolwarm", as_cmap=True)
+color = ['b', 'r']
 for i in range(task_num - 1):
 
-    et = np.zeros((total_alg_top,task_num-i))
+    et = np.zeros((total_alg_bottom,task_num-i))
 
-    for j in range(0,total_alg_top):
-        et[j,:] = np.asarray(btes_top[j][i])
+    for j in range(0,total_alg_bottom):
+        et[j,:] = np.asarray(btes_bottom[j][i])
 
     ns = np.arange(i + 1, task_num + 1)
-    for j in range(0,total_alg_top):
+    ns_new = np.linspace(ns.min(), ns.max(), 300)
+
+    for j in range(0,total_alg_bottom):
+        y_interp = np.interp(ns_new, ns, et[j,:])
+        idx = np.zeros(len(y_interp), dtype=int)
+        idx[np.where(y_interp>=1)[0]] = 1     
+        clr = [color[i] for i in idx]
+
         if j == 0:
             if i == 0:
-                ax.plot(ns, et[j,:], zs=j, zdir='y', marker=marker_style_top[j], markersize=4, label = alg_name_top[j], color=c_top[j])
+                ax.scatter(ns_new, y_interp, zs=j, zdir='y', c=clr, s=2)
             else:
-                ax.plot(ns, et[j,:], zs=j, zdir='y', marker=marker_style_top[j], markersize=4, color=c_top[j])
+                ax.scatter(ns_new, y_interp, zs=j, zdir='y', c=clr, s=2)
         elif j == 1:
             if i == 0:
-                ax.plot(ns, et[j,:], zs=j, zdir='y', marker=marker_style_top[j], markersize=4, label = alg_name_top[j], color=c_top[j])
+                ax.scatter(ns_new, y_interp, zs=j, zdir='y', c=clr, s=2)
             else:
-                ax.plot(ns, et[j,:], zs=j, zdir='y', marker=marker_style_top[j], markersize=4, color=c_top[j])
+                ax.scatter(ns_new, y_interp, zs=j, zdir='y', c=clr, s=2)
         else:
             if i == 0:
-                ax.plot(ns, et[j,:], zs=j, zdir='y', marker=marker_style_top[j], markersize=4, label = alg_name_top[j], color=c_top[j])
+                ax.scatter(ns_new, y_interp, zs=j, zdir='y', c=clr, s=2)
             else:
-                ax.plot(ns, et[j,:], zs=j, zdir='y', marker=marker_style_top[j], markersize=4, color=c_top[j])
+                ax.scatter(ns_new, y_interp, zs=j, zdir='y', c=clr, s=2)
 
 
 xs = np.linspace(0, 10, 100)
@@ -794,18 +848,18 @@ zs = np.linspace(0, 7, 100)
 X, Y = np.meshgrid(xs, zs)
 Z = np.ones(X.shape)
 
-ax.plot_surface(X, Y, Z, color='grey', alpha=.7)
+ax.plot_surface(X, Y, Z, color='grey', alpha=.5)
 
-ax.view_init(elev=10., azim=15, roll=0)
+ax.view_init(elev=10., azim=25, roll=0)
 
 '''for i in range(total_alg_top,total_alg_top+total_alg_bottom-1):
     ax.plot(1,0,color=c_combined[i], marker=marker_style[i], markersize=8,label=combined_alg_name[i])'''
 
-ax.set_xlabel('Number of tasks seen', fontsize=15)
+ax.set_xlabel('Tasks seen', fontsize=15)
 ax.set_zlabel('log Backward LE', fontsize=15)
 
 ax.set_zticks([.8,.9,1, 1.1,1.2])
-ax.set_xticks(np.arange(2,11,2))
+ax.set_xticks(np.arange(2,11,4))
 ax.set_zlim(0.76, 1.25)
 ax.set_ylim([0,7])
 log_lbl = np.round(
@@ -818,7 +872,7 @@ for ii,_ in enumerate(labels):
     labels[ii] = str(log_lbl[ii])
 
 ax.set_zticklabels(labels)
-ax.set_yticklabels(alg_name_top, rotation=-40)
+ax.set_yticklabels(alg_name_bottom, rotation=80)
 ax.tick_params(labelsize=15)
 #ax[0][1].grid(axis='x')
 ax.invert_xaxis()
@@ -828,6 +882,9 @@ right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
 #ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
+
+for ytick, color in zip(ax.get_yticklabels(), clr_bottom):
+    ytick.set_color(color)
 
 plt.savefig('result/figs/test.pdf')
 # %%
