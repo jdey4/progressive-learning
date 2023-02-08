@@ -756,6 +756,7 @@ top_side.set_visible(False)
 
 fig.legend(handles_top, labels_top, bbox_to_anchor=(.995, .8), fontsize=legendsize+14, frameon=False)
 fig.legend(handles_bottom, labels_bottom, bbox_to_anchor=(.995, .5), fontsize=legendsize+14, frameon=False)
-
+fig.text(.4,.9, 'Lifelong Learners', fontsize=80)
+fig.text(.7,.9, 'Single Task Learners', fontsize=80)
 plt.savefig('result/figs/benchmark_5000.pdf')
 # %%
