@@ -589,7 +589,7 @@ for i in range(task_num - 1):
 
 
 xs = np.linspace(0, task_num, 100)
-zs = np.linspace(0, total_alg_bottom, 100)
+zs = np.linspace(0, total_alg_bottom-1, 100)
 X, Y = np.meshgrid(xs, zs)
 Z = np.ones(X.shape)
 
