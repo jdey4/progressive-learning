@@ -381,6 +381,8 @@ ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chan
 
 handles_top, labels_top = ax.get_legend_handles_labels()
 
+
+#########################################################
 #ax[0][0].grid(axis='x')
 ax = fig.add_subplot(gs[2:15,8:27], projection='3d')
 #cmap = sns.color_palette("coolwarm", as_cmap=True)
@@ -423,7 +425,15 @@ zs = np.linspace(0, 7, 100)
 X, Y = np.meshgrid(xs, zs)
 Z = np.ones(X.shape)
 
-ax.plot_surface(X, Y, Z, color='grey', alpha=.5)
+ax.plot_surface(X, Y, Z, color='grey', alpha=.3)
+
+for ii in range(total_alg_top):
+    zs = np.linspace(ii-.05,ii+.05,10)
+    X, Y = np.meshgrid(xs, zs)
+    Z = np.ones(X.shape)
+
+    ax.plot_surface(X, Y, Z, color='grey', alpha=1)
+
 
 ax.view_init(elev=10., azim=15, roll=0)
 
@@ -575,7 +585,14 @@ zs = np.linspace(0, 7, 100)
 X, Y = np.meshgrid(xs, zs)
 Z = np.ones(X.shape)
 
-ax.plot_surface(X, Y, Z, color='grey', alpha=.5)
+ax.plot_surface(X, Y, Z, color='grey', alpha=.3)
+
+for ii in range(total_alg_bottom):
+    zs = np.linspace(ii-.05,ii+.05,10)
+    X, Y = np.meshgrid(xs, zs)
+    Z = np.ones(X.shape)
+
+    ax.plot_surface(X, Y, Z, color='grey', alpha=1)
 
 ax.view_init(elev=10., azim=15, roll=0)
 
