@@ -345,7 +345,7 @@ ax.set_xlabel('Tasks seen', fontsize=30, labelpad=15)
 ax.set_zlabel('log Backward LE', fontsize=30, labelpad=15)
 
 ax.set_zticks([.1,1,2,3.5])
-ax.set_xticks(np.arange(1,task_num+1,1))
+ax.set_xticks(np.arange(2,task_num+1,2))
 ax.set_yticks(np.arange(0,total_alg,1))
 ax.set_zlim(0.1, 3.5)
 ax.set_ylim([0,total_alg-1])
