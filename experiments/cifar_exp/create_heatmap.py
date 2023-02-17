@@ -16,6 +16,7 @@ algorithms = ['SynN', 'SynF', 'ProgNN', \
             'LwF', 'O-EWC', 'SI', 'ER', \
             'A-GEM', 'TAG', 'None']
 
+
 accuracy['cifar'] = [.4, .41, .39, .17, .36, .36, .37, .46,\
            .41, .42, .36, .35, .32, .27, .15, .29]
 forget['cifar'] = [.03, .03, 0, -.09, -.01, -.03, -.01, .05,\
@@ -46,19 +47,26 @@ forget['speech'] = [.035, .01, np.nan, np.nan, -.28, 0, 0, np.nan,\
 transfer['speech'] = [.16, .03, np.nan, np.nan, -.24, -.04, -.04, np.nan,\
             np.nan, -.21, -.25, -.25, np.nan, np.nan, np.nan, -.23]
 
+accuracy['food1k'] = [.45, .36, np.nan, np.nan, np.nan, np.nan, np.nan, .42,\
+           np.nan, .43, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan]
+forget['food1k'] = [.03, .01, np.nan, np.nan, np.nan, np.nan, np.nan, .05,\
+           np.nan, -.08, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan]
+transfer['food1k'] = [.2, .09, np.nan, np.nan, np.nan, np.nan, np.nan, .08,\
+           np.nan, -.03, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan]
+
 
 keys = ['accuracy', 'forget', 'transfer']
 
 data['accuracy'] = pd.DataFrame({"cifar":accuracy["cifar"], "5 dataset":accuracy["5 dataset"],\
-        "imagenet":accuracy["imagenet"], "speech":accuracy["speech"]})
+        "imagenet":accuracy["imagenet"], "speech":accuracy["speech"], "food1k":accuracy["food1k"]})
 data['accuracy'].index = algorithms
 
 data['forget'] = pd.DataFrame({"cifar":forget["cifar"], "5 dataset":forget["5 dataset"],\
-        "imagenet":forget["imagenet"], "speech":forget["speech"]})
+        "imagenet":forget["imagenet"], "speech":forget["speech"], "food1k":forget["food1k"]})
 data['forget'].index = algorithms
 
 data['transfer'] = pd.DataFrame({"cifar":transfer["cifar"], "5 dataset":transfer["5 dataset"],\
-        "imagenet":transfer["imagenet"], "speech":transfer["speech"]})
+        "imagenet":transfer["imagenet"], "speech":transfer["speech"], "food1k":transfer["food1k"]})
 data['transfer'].index = algorithms
 
 fig, ax = plt.subplots(1, 3, figsize=(18,8), sharey=True, sharex=True)
