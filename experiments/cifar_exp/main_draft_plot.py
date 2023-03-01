@@ -370,7 +370,7 @@ ax.set_yticklabels(labels)
 
 ax.tick_params(labelsize=ticksize)
 
-ax.set_ylabel('log Forward LE', fontsize=fontsize)
+ax.set_ylabel('log FLE', fontsize=fontsize)
 ax.set_xlabel('Tasks seen', fontsize=fontsize)
 
 right_side = ax.spines["right"]
@@ -441,7 +441,7 @@ ax.view_init(elev=10., azim=15, roll=0)
     ax.plot(1,0,color=c_combined[i], marker=marker_style[i], markersize=8,label=combined_alg_name[i])'''
 
 ax.set_xlabel('Tasks seen', fontsize=30, labelpad=15)
-ax.set_zlabel('log Backward LE', fontsize=30, labelpad=15)
+ax.set_zlabel('log BLE', fontsize=30, labelpad=15)
 
 ax.set_zticks([.8,.9,1, 1.1,1.2])
 ax.set_xticks(np.arange(2,11,4))
@@ -603,7 +603,7 @@ ax.view_init(elev=10., azim=15, roll=0)
     ax.plot(1,0,color=c_combined[i], marker=marker_style[i], markersize=8,label=combined_alg_name[i])'''
 
 ax.set_xlabel('Tasks seen', fontsize=30, labelpad=15)
-ax.set_zlabel('log Backward LE', fontsize=30, labelpad=15)
+ax.set_zlabel('log BLE', fontsize=30, labelpad=15)
 
 ax.set_zticks([.8,.9,1, 1.1,1.2])
 ax.set_xticks(np.arange(2,11,4))
