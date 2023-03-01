@@ -349,7 +349,7 @@ for i, fte in enumerate(ftes_top):
     
     ax.plot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], markersize=12, label=alg_name_top[i])
 
-
+ax.set_title('Forward Learning', fontsize=fontsize)
 ax.set_xticks(np.arange(1,11))
 ax.set_yticks([0.8, 0.9, 1, 1.1, 1.2, 1.3])
 #ax.set_yticks([])
@@ -456,6 +456,7 @@ labels = [item.get_text() for item in ax.get_zticklabels()]
 for ii,_ in enumerate(labels):
     labels[ii] = str(log_lbl[ii])
 
+ax.set_title('Backward Learning', fontsize=fontsize)
 ax.set_zticklabels(labels)
 ax.set_yticklabels(alg_name_top, rotation=80)
 ax.tick_params(labelsize=ticksize-8)
@@ -475,6 +476,7 @@ for ytick, color in zip(ax.get_yticklabels(), clr_top):
 ##########################################################
 ax = fig.add_subplot(gs[4:12,28:36])
 
+ax.set_title('Overall Learning', fontsize=fontsize)
 ax.tick_params(labelsize=22)
 ax_ = sns.boxplot(
     x="Algorithms", y="Learning Efficieny", data=df_500, palette=c_combined_, whis=np.inf,
@@ -515,10 +517,11 @@ for i, fte in enumerate(ftes_bottom):
     
 ax.set_xticks(np.arange(1,11))
 ax.set_yticks([0.85, 1, 1.1])
-ax.set_ylim(0.8, 1.1)
+ax.set_ylim(0.8, 1.15)
 ax.tick_params(labelsize=ticksize)
+ax.set_title('Resource Constrained Forward Learning', fontsize=fontsize)
 
-ax.set_ylabel('Resource Constrained log FLE', fontsize=fontsize)
+ax.set_ylabel('log FLE', fontsize=fontsize)
 ax.set_xlabel('Tasks seen', fontsize=fontsize)
 
 log_lbl = np.round(
@@ -615,6 +618,7 @@ labels = [item.get_text() for item in ax.get_zticklabels()]
 for ii,_ in enumerate(labels):
     labels[ii] = str(log_lbl[ii])
 
+ax.set_title('Resource Constrained Backward Learning', fontsize=fontsize)
 ax.set_zticklabels(labels)
 ax.set_yticklabels(alg_name_bottom, rotation=80)
 ax.tick_params(labelsize=ticksize-8)
@@ -662,7 +666,7 @@ ax.set_ylabel('Generalization Error', fontsize=fontsize)
 ax.set_xlabel('')
 ax.tick_params(labelsize=ticksize)
 #ax.set_ylim(0.325, 0.575)
-#ax.set_title("CIFAR Recruitment",fontsize=titlesize)
+ax.set_title("CIFAR Recruitment",fontsize=fontsize)
 ax.set_xticks([])
 ax.set_yticks([0.45, 0.55, 0.65,0.75])
 #ax.set_ylim([0.43,0.62])
@@ -681,7 +685,7 @@ top_side = ax.spines["top"]
 top_side.set_visible(False)
 
 
-
+fig.text(.35, 0.88, "CIFAR 10X10 (500 samples)", fontsize=fontsize+10)
 fig.legend(handles_top, labels_top, bbox_to_anchor=(1, .8), fontsize=legendsize+14, frameon=False)
 fig.legend(handles_bottom, labels_bottom, bbox_to_anchor=(1, .45), fontsize=legendsize+14, frameon=False)
 
