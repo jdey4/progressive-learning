@@ -349,7 +349,7 @@ for i, fte in enumerate(ftes_top):
     
     ax.plot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], markersize=12, label=alg_name_top[i])
 
-ax.set_title('Forward Learning', fontsize=fontsize)
+ax.set_title('Forward Learning (FL)', fontsize=fontsize)
 ax.set_xticks(np.arange(1,11))
 ax.set_yticks([0.8, 0.9, 1, 1.1, 1.2, 1.3])
 #ax.set_yticks([])
@@ -440,6 +440,7 @@ ax.view_init(elev=10., azim=15, roll=0)
 '''for i in range(total_alg_top,total_alg_top+total_alg_bottom-1):
     ax.plot(1,0,color=c_combined[i], marker=marker_style[i], markersize=8,label=combined_alg_name[i])'''
 
+ax.text(.9, .5, 1.4, 'Backward Learning (BL)', fontsize=fontsize)
 ax.set_xlabel('Tasks seen', fontsize=30, labelpad=15)
 ax.set_zlabel('log BLE', fontsize=30, labelpad=15)
 
@@ -456,7 +457,6 @@ labels = [item.get_text() for item in ax.get_zticklabels()]
 for ii,_ in enumerate(labels):
     labels[ii] = str(log_lbl[ii])
 
-ax.set_title('Backward Learning', fontsize=fontsize)
 ax.set_zticklabels(labels)
 ax.set_yticklabels(alg_name_top, rotation=80)
 ax.tick_params(labelsize=ticksize-8)
@@ -519,7 +519,7 @@ ax.set_xticks(np.arange(1,11))
 ax.set_yticks([0.85, 1, 1.1])
 ax.set_ylim(0.8, 1.15)
 ax.tick_params(labelsize=ticksize)
-ax.set_title('Resource Constrained Forward Learning', fontsize=fontsize)
+ax.set_title('Resource Constrained FL', fontsize=fontsize)
 
 ax.set_ylabel('log FLE', fontsize=fontsize)
 ax.set_xlabel('Tasks seen', fontsize=fontsize)
@@ -618,7 +618,7 @@ labels = [item.get_text() for item in ax.get_zticklabels()]
 for ii,_ in enumerate(labels):
     labels[ii] = str(log_lbl[ii])
 
-ax.set_title('Resource Constrained Backward Learning', fontsize=fontsize)
+ax.text(.9, .5, 1.4, 'Resource Constrained BL', fontsize=fontsize)
 ax.set_zticklabels(labels)
 ax.set_yticklabels(alg_name_bottom, rotation=80)
 ax.tick_params(labelsize=ticksize-8)
@@ -706,8 +706,8 @@ plt.savefig('result/figs/cifar_exp_500_recruit_with_rep.pdf')
 
 
 # %%
-fig = plt.figure(constrained_layout=True,figsize=(25,17))
-gs = fig.add_gridspec(17,25)
+fig = plt.figure(constrained_layout=True,figsize=(25,19))
+gs = fig.add_gridspec(19,25)
 
 clr_top = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#984ea3"]
 c_top = sns.color_palette(clr_top, n_colors=len(clr_top))
@@ -741,10 +741,11 @@ for i in range(total_alg_top):
 
 ax.hlines(.1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
 ax.set_yticks([.1,.2,.3,.4])
-ax.set_xticks(np.arange(1,11))
+ax.set_xticks(np.arange(2,11,2))
 ax.tick_params(labelsize=ticksize)
 ax.set_ylabel('Average Accuracy', fontsize=fontsize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
+ax.text(.6,.55,'Lifelong Learners', fontsize=fontsize+4)
 
 right_side = ax.spines["right"]
 right_side.set_visible(False)
@@ -764,8 +765,9 @@ for i in range(total_alg_top):
 
 ax.hlines(.1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
 ax.set_yticks([.1,.2,.3,.4])
-ax.set_xticks(np.arange(1,11))
+ax.set_xticks(np.arange(2,11,2))
 ax.tick_params(labelsize=ticksize)
+ax.text(.6,.55,'Single Task Experts', fontsize=fontsize+4)
 ax.set_ylabel('Average Accuracy', fontsize=fontsize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 
@@ -787,7 +789,7 @@ for i in range(total_alg_bottom):
 
 ax.hlines(.1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
 ax.set_yticks([.1,.2,.3,.4])
-ax.set_xticks(np.arange(1,11))
+ax.set_xticks(np.arange(2,11,2))
 ax.tick_params(labelsize=ticksize)
 ax.set_ylabel('Average Accuracy \n (Resource constrained)', fontsize=fontsize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
@@ -809,7 +811,7 @@ for i in range(total_alg_bottom):
 
 ax.hlines(.1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
 ax.set_yticks([.1,.2,.3,.4])
-ax.set_xticks(np.arange(1,11))
+ax.set_xticks(np.arange(2,11,2))
 ax.tick_params(labelsize=ticksize)
 ax.set_ylabel('Average Accuracy \n (Resource constrained)', fontsize=fontsize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
@@ -819,6 +821,8 @@ right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
 ########################
+
+fig.text(.3, 0.95, "CIFAR 10X10 (500 samples)", fontsize=fontsize+10)
 
 fig.legend(handles_top, labels_top, bbox_to_anchor=(.995, .9), fontsize=legendsize+14, frameon=False)
 fig.legend(handles_bottom, labels_bottom, bbox_to_anchor=(.995, .5), fontsize=legendsize+14, frameon=False)

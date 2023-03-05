@@ -305,8 +305,8 @@ df_5000 = pd.melt(df_5000,var_name='Algorithms', value_name='Learning Efficieny'
 
 
 # %%
-fig = plt.figure(constrained_layout=True,figsize=(52,40))
-gs = fig.add_gridspec(40,52)
+fig = plt.figure(constrained_layout=True,figsize=(42,32))
+gs = fig.add_gridspec(32,42)
 
 clr_top = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#984ea3"]
 c_top = sns.color_palette(clr_top, n_colors=len(clr_top))
@@ -329,7 +329,7 @@ fontsize=38
 ticksize=34
 legendsize=16
 
-ax = fig.add_subplot(gs[2:10,1:9])
+ax = fig.add_subplot(gs[4:12,:8])
 ax.plot([0], [0], color=[1,1,1], label='Resource Growing     ')
 
 for i, fte in enumerate(ftes_top):
@@ -344,7 +344,7 @@ for i, fte in enumerate(ftes_top):
     
     ax.plot(np.arange(1,11), fte, color=c_top[i], marker=marker_style_top[i], markersize=12, label=alg_name_top[i])
 
-
+ax.set_title('Forward Learning (FL)', fontsize=fontsize)
 ax.set_xticks(np.arange(1,11))
 ax.set_yticks([0.8, 0.9, 1, 1.1, 1.2, 1.3])
 #ax.set_yticks([])
@@ -365,7 +365,7 @@ ax.set_yticklabels(labels)
 
 ax.tick_params(labelsize=ticksize)
 
-ax.set_ylabel('log Forward LE', fontsize=fontsize)
+ax.set_ylabel('log FLE', fontsize=fontsize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 
 right_side = ax.spines["right"]
@@ -377,7 +377,7 @@ ax.hlines(1, 1,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chan
 handles_top, labels_top = ax.get_legend_handles_labels()
 
 #ax[0][0].grid(axis='x')
-ax = fig.add_subplot(gs[:13,9:28], projection='3d')
+ax = fig.add_subplot(gs[2:15,8:27], projection='3d')
 
 color = ['b', 'r']
 for i in range(task_num - 1):
@@ -432,8 +432,9 @@ ax.view_init(elev=10., azim=15, roll=0)
 '''for i in range(total_alg_top,total_alg_top+total_alg_bottom-1):
     ax.plot(1,0,color=c_combined[i], marker=marker_style[i], markersize=8,label=combined_alg_name[i])'''
 
+ax.text(.9, .5, 1.4, 'Backward Learning (BL)', fontsize=fontsize)
 ax.set_xlabel('Tasks seen', fontsize=30, labelpad=15)
-ax.set_zlabel('log Backward LE', fontsize=30, labelpad=15)
+ax.set_zlabel('log BLE', fontsize=30, labelpad=15)
 
 ax.set_zticks([.8,.9,1, 1.1,1.2])
 ax.set_xticks(np.arange(1,task_num+1,4))
@@ -463,7 +464,7 @@ for ytick, color in zip(ax.get_yticklabels(), clr_combined):
 
 
 
-ax = fig.add_subplot(gs[2:10,29:37])
+'''ax = fig.add_subplot(gs[2:10,29:37])
 
 for i in range(total_alg_top):
     if i==0 or i==1:
@@ -505,9 +506,9 @@ ax.set_xlabel('Tasks seen', fontsize=fontsize)
 right_side = ax.spines["right"]
 right_side.set_visible(False)
 top_side = ax.spines["top"]
-top_side.set_visible(False)
+top_side.set_visible(False)'''
 #########################################################
-ax = fig.add_subplot(gs[15:23,1:9])
+ax = fig.add_subplot(gs[19:27,:8])
 ax.plot([0], [0], color=[1,1,1], label='Resource Constrained')
 
 for i, fte in enumerate(ftes_bottom):
@@ -524,10 +525,11 @@ for i, fte in enumerate(ftes_bottom):
     
 ax.set_xticks(np.arange(1,11))
 ax.set_yticks([0.7, 1, 1.25])
-ax.set_ylim(0.7, 1.25)
+ax.set_ylim(0.7, 1.28)
 ax.tick_params(labelsize=ticksize)
 
-ax.set_ylabel('Resource Constrained log FLE', fontsize=fontsize)
+ax.set_title('Resource Constrained FL', fontsize=fontsize)
+ax.set_ylabel('log FLE', fontsize=fontsize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
 
 log_lbl = np.round(
@@ -553,7 +555,7 @@ handles_bottom, labels_bottom = ax.get_legend_handles_labels()
 
 
 #ax[0][0].grid(axis='x')
-ax = fig.add_subplot(gs[15:28,9:28], projection='3d')
+ax = fig.add_subplot(gs[17:30,8:27], projection='3d')
 color = ['b', 'r']
 for i in range(task_num - 1):
 
@@ -607,8 +609,9 @@ ax.view_init(elev=10., azim=15, roll=0)
 '''for i in range(total_alg_top,total_alg_top+total_alg_bottom-1):
     ax.plot(1,0,color=c_combined[i], marker=marker_style[i], markersize=8,label=combined_alg_name[i])'''
 
+ax.text(.9, .5, 1.4, 'Resource Constrained BL', fontsize=fontsize)
 ax.set_xlabel('Tasks seen', fontsize=30, labelpad=15)
-ax.set_zlabel('log Backward LE', fontsize=30, labelpad=15)
+ax.set_zlabel('log BLE', fontsize=30, labelpad=15)
 
 ax.set_zticks([.5,.8, 1, 1.15])
 ax.set_xticks(np.arange(1,task_num+1,4))
@@ -639,7 +642,7 @@ for ytick, color in zip(ax.get_yticklabels(), clr_bottom):
 
 ############################
 
-ax = fig.add_subplot(gs[15:23,29:37])
+'''ax = fig.add_subplot(gs[15:23,29:37])
 
 for i in range(total_alg_bottom):
     if i==0:
@@ -680,9 +683,9 @@ ax.set_xlabel('Tasks seen', fontsize=fontsize)
 right_side = ax.spines["right"]
 right_side.set_visible(False)
 top_side = ax.spines["top"]
-top_side.set_visible(False)
+top_side.set_visible(False)'''
 ########################
-ax = fig.add_subplot(gs[30:38,28:36])
+ax = fig.add_subplot(gs[19:27,28:36])
 
 mean_error, std_error = unpickle('../recruitment_exp/result/recruitment_exp_500.pickle')
 ns = 10*np.array([10, 50, 100, 200, 350, 500])
@@ -713,6 +716,7 @@ ax.set_xlabel('')
 ax.tick_params(labelsize=ticksize)
 #ax.set_ylim(0.325, 0.575)
 #ax.set_title("CIFAR Recruitment",fontsize=titlesize)
+ax.set_title("CIFAR Recruitment",fontsize=fontsize)
 ax.set_xticks([])
 ax.set_yticks([0.45, 0.55, 0.65,0.75])
 #ax.set_ylim([0.43,0.62])
@@ -731,7 +735,9 @@ top_side = ax.spines["top"]
 top_side.set_visible(False)
 
 ####################
-ax = fig.add_subplot(gs[30:38,12:20])
+ax = fig.add_subplot(gs[4:12,28:36])
+ax.set_title('Overall Learning', fontsize=fontsize)
+
 ax.tick_params(labelsize=22)
 ax_ = sns.boxplot(
     x="Algorithms", y="Learning Efficieny", data=df_5000, palette=c_combined_, whis=np.inf,
@@ -756,7 +762,8 @@ top_side.set_visible(False)
 
 fig.legend(handles_top, labels_top, bbox_to_anchor=(.995, .8), fontsize=legendsize+14, frameon=False)
 fig.legend(handles_bottom, labels_bottom, bbox_to_anchor=(.995, .5), fontsize=legendsize+14, frameon=False)
-fig.text(.4,.9, 'Lifelong Learners', fontsize=80)
-fig.text(.7,.9, 'Single Task Learners', fontsize=80)
+
+fig.text(.35, 0.88, "CIFAR 10X10 (5000 samples)", fontsize=fontsize+10)
+
 plt.savefig('result/figs/benchmark_5000.pdf')
 # %%
