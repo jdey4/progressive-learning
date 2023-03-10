@@ -395,33 +395,24 @@ for i in range(task_num - 1):
         et[j,:] = np.asarray(btes_top[j][i])
 
     ns = np.arange(i + 1, task_num + 1)
-    ns_new = np.linspace(ns.min(), ns.max(), 300)
+    ns_new = np.linspace(ns.min(), ns.max(), 60)
 
     for j in range(0,total_alg_top):
         y_interp = np.interp(ns_new, ns, et[j,:])
-        idx = np.zeros(len(y_interp), dtype=int)
-        idx[np.where(y_interp>=1)[0]] = 1     
-        clr = [color[i] for i in idx]
+        idx = np.where(y_interp < 1.0)[0]
+        supper = y_interp.copy()
+        supper[idx] = np.nan
 
-        if j == 0:
-            if i == 0:
-                ax.scatter(ns_new, y_interp, zs=j, zdir='y', label = alg_name_top[j], c=clr, s=2)
-            else:
-                ax.scatter(ns_new, y_interp, zs=j, zdir='y', c=clr, s=2)
-        elif j == 1:
-            if i == 0:
-                ax.scatter(ns_new, y_interp, zs=j, zdir='y', label = alg_name_top[j], c=clr, s=2)
-            else:
-                ax.scatter(ns_new, y_interp, zs=j, zdir='y', c=clr, s=2)
-        else:
-            if i == 0:
-                ax.scatter(ns_new, y_interp, zs=j, zdir='y', label = alg_name_top[j], c=clr, s=2)
-            else:
-                ax.scatter(ns_new, y_interp, zs=j, zdir='y', c=clr, s=2)
+        idx = np.where(y_interp >= 1.0)[0]
+        slower = y_interp.copy()
+        slower[idx] = np.nan
 
+        ax.plot(ns_new, supper, zs=j, zdir='y', color='r', linewidth=3)
+        ax.plot(ns_new, slower, zs=j, zdir='y', color='b', linewidth=3)
+        
 
-xs = np.linspace(0, 10, 100)
-zs = np.linspace(0, 7, 100)
+xs = np.linspace(0, 10, 10)
+zs = np.linspace(0, 7, 10)
 X, Y = np.meshgrid(xs, zs)
 Z = np.ones(X.shape)
 
@@ -549,7 +540,6 @@ handles_bottom, labels_bottom = ax.get_legend_handles_labels()
 #####################################################
 ax = fig.add_subplot(gs[17:30,8:27], projection='3d')
 
-color = ['b', 'r']
 for i in range(task_num - 1):
 
     et = np.zeros((total_alg_bottom,task_num-i))
@@ -562,29 +552,20 @@ for i in range(task_num - 1):
 
     for j in range(0,total_alg_bottom):
         y_interp = np.interp(ns_new, ns, et[j,:])
-        idx = np.zeros(len(y_interp), dtype=int)
-        idx[np.where(y_interp>=1)[0]] = 1     
-        clr = [color[i] for i in idx]
+        idx = np.where(y_interp < 1.0)[0]
+        supper = y_interp.copy()
+        supper[idx] = np.nan
 
-        if j == 0:
-            if i == 0:
-                ax.scatter(ns_new, y_interp, zs=j, zdir='y', c=clr, s=2)
-            else:
-                ax.scatter(ns_new, y_interp, zs=j, zdir='y', c=clr, s=2)
-        elif j == 1:
-            if i == 0:
-                ax.scatter(ns_new, y_interp, zs=j, zdir='y', c=clr, s=2)
-            else:
-                ax.scatter(ns_new, y_interp, zs=j, zdir='y', c=clr, s=2)
-        else:
-            if i == 0:
-                ax.scatter(ns_new, y_interp, zs=j, zdir='y', c=clr, s=2)
-            else:
-                ax.scatter(ns_new, y_interp, zs=j, zdir='y', c=clr, s=2)
+        idx = np.where(y_interp >= 1.0)[0]
+        slower = y_interp.copy()
+        slower[idx] = np.nan
 
+        ax.plot(ns_new, supper, zs=j, zdir='y', color='r', linewidth=3)
+        ax.plot(ns_new, slower, zs=j, zdir='y', color='b', linewidth=3)
+        
 
-xs = np.linspace(0, 10, 100)
-zs = np.linspace(0, 7, 100)
+xs = np.linspace(0, 10, 10)
+zs = np.linspace(0, 7, 10)
 X, Y = np.meshgrid(xs, zs)
 Z = np.ones(X.shape)
 
@@ -689,7 +670,7 @@ fig.text(.35, 0.88, "CIFAR 10X10 (500 samples)", fontsize=fontsize+10)
 fig.legend(handles_top, labels_top, bbox_to_anchor=(1, .8), fontsize=legendsize+14, frameon=False)
 fig.legend(handles_bottom, labels_bottom, bbox_to_anchor=(1, .45), fontsize=legendsize+14, frameon=False)
 
-plt.savefig('result/figs/cifar_exp_500_recruit_with_rep.pdf')
+plt.savefig('result/figs/cifar_exp_500_recruit_with_rep.pdf', dpi=300)
 
 
 
