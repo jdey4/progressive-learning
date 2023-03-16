@@ -298,13 +298,16 @@ te_500 = {'SynN':np.zeros(10,dtype=float), 'SynF':np.zeros(10,dtype=float),
           'tag':np.zeros(10,dtype=float), 'None':np.zeros(10,dtype=float)}
 
 for count,name in enumerate(te_500.keys()):
-    print(name, count)
+    #print(name, count)
     for i in range(10):
         if count <8:
             te_500[name][i] = np.log(tes_top[count][i][9-i])
         else:
             te_500[name][i] = np.log(tes_bottom[count-8][i][9-i])
 
+
+for name in te_500.keys():
+    print(name, np.round(np.mean(te_500[name]),2), np.round(np.std(te_500[name], ddof=1),2))
 
 df_500 = pd.DataFrame.from_dict(te_500)
 df_500 = pd.melt(df_500,var_name='Algorithms', value_name='Learning Efficieny')
