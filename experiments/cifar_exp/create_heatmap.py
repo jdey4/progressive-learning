@@ -40,11 +40,11 @@ forget['imagenet'] = [.03, .02, np.nan, np.nan, -.04, -.01, -.01, .06,\
 transfer['imagenet'] = [.02, .04, np.nan, np.nan, -.07, -.03, -.03, .1,\
             np.nan, -.01, -.06, -.04, -.01, .05, -.04, -.1]
 
-accuracy['speech'] = [.91, .91, np.nan, np.nan, .73, .93, .93, np.nan,\
+accuracy['speech'] = [.91, .91, np.nan, np.nan, .73, .93, .93, .98,\
             np.nan, .76, .72, .72, np.nan, np.nan, np.nan, .73]
-forget['speech'] = [.035, .01, np.nan, np.nan, -.28, 0, 0, np.nan,\
+forget['speech'] = [.035, .01, np.nan, np.nan, -.28, 0, 0, 0.01,\
             np.nan, -.24, -.29, -.27, np.nan, np.nan, np.nan, -.3]
-transfer['speech'] = [.16, .03, np.nan, np.nan, -.24, -.04, -.04, np.nan,\
+transfer['speech'] = [.16, .03, np.nan, np.nan, -.24, -.04, -.04, 0,\
             np.nan, -.21, -.25, -.25, np.nan, np.nan, np.nan, -.23]
 
 accuracy['food1k'] = [.45, .36, np.nan, np.nan, np.nan, np.nan, np.nan, .42,\

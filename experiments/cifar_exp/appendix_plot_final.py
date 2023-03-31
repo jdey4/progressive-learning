@@ -673,7 +673,7 @@ clr = ["#e41a1c", "#377eb8", "#4daf4a", "#984ea3"]
 colors = sns.color_palette(clr, n_colors=len(clr))
 
 #labels = ['recruiting', 'Uncertainty Forest', 'hybrid', '50 Random', 'BF', 'building']
-labels = ['SynF (building)', 'UF (new)', 'recruiting', 'hybrid']
+labels = ['SynF (building)', 'UF (new)', 'recycling', 'hybrid']
 algo = ['building', 'UF', 'recruiting', 'hybrid']
 adjust = 0
 for i,key in enumerate(algo):

@@ -63,12 +63,12 @@ def get_fte_bte(err, single_err):
     
     for i in range(6):
         for j in range(i,6):
-            #print(err[j][i],j,i)
-            bte[i].append(err[i][i]/err[j][i])
-            te[i].append(single_err[i]/err[j][i])
+            #print((err[i][i]+1e-6)/(err[j][i]+1e-6), err[i][i], err[j][i])
+            bte[i].append((err[i][i]+1e-2)/(err[j][i]+1e-2))
+            te[i].append((single_err[i]+1e-2)/(err[j][i]+1e-2))
                 
     for i in range(6):
-        fte.append(single_err[i]/err[i][i])
+        fte.append((single_err[i]+1e-2)/(err[i][i]+1e-2))
             
             
     return fte,bte,te
@@ -154,12 +154,12 @@ def stratified_scatter(te_dict,axis_handle,s,color,style):
 #%%
 ### MAIN HYPERPARAMS ###
 task_num = 6
-total_alg = 9
-combined_alg_name = ['SynN','SynF','LwF','EWC','O-EWC','SI', 'Total Replay', 'Partial Replay', 'None']
+total_alg = 10
+combined_alg_name = ['SynN','SynF', 'Model Zoo','LwF','EWC','O-EWC','SI', 'Total Replay', 'Partial Replay', 'None']
 btes = [[] for i in range(total_alg)]
 ftes = [[] for i in range(total_alg)]
 tes = [[] for i in range(total_alg)]
-model_file_combined = ['odin','odif', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
+model_file_combined = ['odin','odif', 'model_zoo', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'None']
 avg_acc = [[] for i in range(total_alg)]
 avg_var = [[] for i in range(total_alg)]
 avg_single_acc = [[] for i in range(total_alg)]
@@ -194,6 +194,7 @@ for alg in range(total_alg):
     #single_err /= reps
     #err /= reps
     fte, bte, te = get_fte_bte(err,single_err)
+
     avg_acc_, avg_var_ = calc_avg_acc(err, reps)
     avg_single_acc_, avg_single_var_ = calc_avg_single_acc(single_err, reps)
 
@@ -212,7 +213,8 @@ for alg in range(total_alg):
 
 #%%
 te = {'SynN':np.zeros(6,dtype=float), 'SynF':np.zeros(6,dtype=float), 
-    'LwF':np.zeros(6,dtype=float), 'EWC':np.zeros(6,dtype=float), 
+    'Model Zoo':np.zeros(6,dtype=float), 'LwF':np.zeros(6,dtype=float), 
+    'EWC':np.zeros(6,dtype=float), 
     'O-EWC':np.zeros(6,dtype=float), 'SI':np.zeros(6,dtype=float),
     'Total Replay':np.zeros(6,dtype=float), 'Partial Replay':np.zeros(6,dtype=float), 
     'None':np.zeros(6,dtype=float)}
@@ -229,10 +231,10 @@ df = pd.melt(df,var_name='Algorithms', value_name='Transfer Efficieny')
 fig = plt.figure(constrained_layout=True,figsize=(40,12))
 gs = fig.add_gridspec(12, 40)
 
-marker_style = ['.', '.', '.', '+', 'o', '*', '.', '+', 'o']
-marker_style_scatter = ['.', '.', '.', '+', 'o', '*', '.', '+', 'o']
+marker_style = ['.', '.', '.', '.', '+', 'o', '*', '.', '+', 'o']
+marker_style_scatter = ['.', '.', '.','.', '+', 'o', '*', '.', '+', 'o']
 
-clr_combined = ["#377eb8", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
+clr_combined = ["#377eb8", "#e41a1c", "#4daf4a", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928"]
 c_combined = sns.color_palette(clr_combined, n_colors=total_alg)
 
 fontsize=29
@@ -333,17 +335,17 @@ ax.view_init(elev=10., azim=15, roll=0)
 '''for i in range(total_alg_top,total_alg_top+total_alg_bottom-1):
     ax.plot(1,0,color=c_combined[i], marker=marker_style[i], markersize=8,label=combined_alg_name[i])'''
 
-ax.text(.9, .5, 4.3, 'Backward Learning (BL)', fontsize=fontsize+5)
+ax.text(.9, .5, 7, 'Backward Learning (BL)', fontsize=fontsize+5)
 ax.set_xlabel('Tasks seen', fontsize=30, labelpad=15)
 ax.set_zlabel('log BLE', fontsize=30, labelpad=15)
 
-ax.set_zticks([.1,1,2,3.5])
+ax.set_zticks([.1,1,3.5,5.9])
 ax.set_xticks(np.arange(2,task_num+1,2))
 ax.set_yticks(np.arange(0,total_alg,1))
-ax.set_zlim(0.1, 3.5)
+ax.set_zlim(0.1, 5.9)
 ax.set_ylim([0,total_alg-1])
 log_lbl = np.round(
-    np.log([.1,1,2,3.5]),
+    np.log([.1,1,3.5,5.9]),
     1
 )
 labels = [item.get_text() for item in ax.get_zticklabels()]
@@ -379,7 +381,7 @@ ax.set_title('Overall Learning', fontsize=fontsize+5)
 ax_.set_xlabel('', fontsize=fontsize)
 ax.set_ylabel('log LE after 6 Tasks', fontsize=fontsize-5)
 ax_.set_xticklabels(
-    ['SynN','SynF','LwF','EWC','O-EWC','SI','Total Replay','Partial Replay', 'None'],
+    ['SynN','SynF','Model Zoo','LwF','EWC','O-EWC','SI','Total Replay','Partial Replay', 'None'],
     fontsize=18,rotation=65,ha="right",rotation_mode='anchor'
     )
 
