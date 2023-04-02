@@ -92,18 +92,25 @@ data['transfer']['mean'] = data['transfer'].mean(axis=1)
 mean_trn = list(data['transfer']['mean'])
 print(np.argsort(mean_trn)[::-1])
 
-fig, ax = plt.subplots(1, 3, figsize=(20,8), sharey=True, sharex=True)
+
+keys_ = ['Accuracy', 'Forget', 'Transfer']
+fig, ax = plt.subplots(1, 3, figsize=(18,8), sharey=True, sharex=True)
 #cbar_ax = fig.add_axes([.91, .3, .03, .4])
 vmins = [0,-.3,-.3]
 vmaxs = [1,.3,.3]
+clr = ["#984ea3","#984ea3","#984ea3","#984ea3","#4daf4a","#984ea3","#984ea3","#4daf4a","#4daf4a","#4daf4a","#984ea3","#4daf4a","#4daf4a","#4daf4a","#984ea3","#4daf4a"]
+
 for i in range(3):
     sns.heatmap(data[keys[i]], yticklabels=algorithms,\
                 vmin=vmins[i], vmax=vmaxs[i],
              cmap='coolwarm', ax=ax[i],)# cbar=i == 0, \
              #cbar_ax=cbar_ax if i==0 else None)
-    ax[i].set_title(keys[i], fontsize=35)
+    ax[i].set_title(keys_[i], fontsize=35)
     ax[i].set_xticklabels(ax[i].get_xticklabels(), rotation=70, fontsize=20)
     #ax[i].set_yticklabels(ax[i].get_yticklabels(), fontsize=20)
+
+for ytick, color in zip(ax[0].get_yticklabels(), clr):
+    ytick.set_color(color)
 
 fig.tight_layout(rect=[0, 0, .9, 1])
 plt.savefig('/Users/jayantadey/progressive-learning/result/figs/heatmap_performance.pdf')
