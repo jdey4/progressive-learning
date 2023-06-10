@@ -415,8 +415,8 @@ for i in range(task_num - 1):
         ax.plot(ns_new, slower, zs=j, zdir='y', color='b', linewidth=3)
         
 
-xs = np.linspace(0, 10, 10)
-zs = np.linspace(0, 7, 10)
+xs = np.linspace(0, 11, 10)
+zs = np.linspace(0, 8, 10)
 X, Y = np.meshgrid(xs, zs)
 Z = np.ones(X.shape)
 
@@ -442,7 +442,7 @@ ax.set_zlabel('log BLE', fontsize=30, labelpad=15)
 ax.set_zticks([.8,.9,1, 1.1,1.2])
 ax.set_xticks(np.arange(2,11,4))
 ax.set_zlim(0.76, 1.25)
-ax.set_ylim([0,7])
+ax.set_ylim([0,8])
 log_lbl = np.round(
     np.log([.8,.9,1,1.1,1.2]),
     1
