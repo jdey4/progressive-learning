@@ -331,7 +331,7 @@ marker_style_scatter = ['.', '.', '.', '.', 'o', '+', 'v', '.', '+', '.', '.', '
 clr_combined = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#984ea3", "#f781bf", "#b15928", "#b15928", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928"]
 c_combined = sns.color_palette(clr_combined, n_colors=total_alg_top+total_alg_bottom-1)
 
-clr_combined_ = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#984ea3", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928"]
+clr_combined_ = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#984ea3", "#f781bf", "#b15928", "#b15928", "#984ea3", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928"]
 c_combined_ = sns.color_palette(clr_combined_, n_colors=total_alg_top+total_alg_bottom)
 
 fontsize=38
