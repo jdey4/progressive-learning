@@ -694,13 +694,13 @@ plt.savefig('result/figs/cifar_exp_500_recruit_with_rep.pdf', dpi=300)
 fig = plt.figure(constrained_layout=True,figsize=(25,19))
 gs = fig.add_gridspec(19,25)
 
-clr_top = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#984ea3"]
+clr_top = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#984ea3", "#f781bf", "#b15928", "#b15928", "#984ea3"]
 c_top = sns.color_palette(clr_top, n_colors=len(clr_top))
 
 clr_bottom = ["#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928"]
 c_bottom = sns.color_palette(clr_bottom, n_colors=len(clr_bottom))
 
-marker_style_top = ['.', '.', '.', '.', '+', '.', '+', 'v']
+marker_style_top = ['.', '.', '.', '.', 'o', '+', '.', '+', 'v']
 marker_style_bottom = ['.', '.', 'o', '*', '.', '+', 'x', 'o']
 marker_style = ['.', '.', '.', '.', '+', '.', '+',  'v', '.', 'o', '*', '.', '+', 'x', 'o']
 marker_style_scatter = ['.', '.', '.', '.', '+', 'v', '.', '+', '.', '.', 'o', '*', '.', '+', 'x', 'o']
