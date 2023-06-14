@@ -322,8 +322,8 @@ c_top = sns.color_palette(clr_top, n_colors=len(clr_top))
 
 marker_style_top = ['.', '.', '.', '.', 'o', '+', '.', '+', 'v']
 
-fontsize=38
-ticksize=34
+fontsize=30
+ticksize=26
 legendsize=16
 
 ax = fig.add_subplot(gs[1:6,:6])
@@ -422,7 +422,7 @@ ax.view_init(elev=10., azim=15, roll=0)
 '''for i in range(total_alg_top,total_alg_top+total_alg_bottom-1):
     ax.plot(1,0,color=c_combined[i], marker=marker_style[i], markersize=8,label=combined_alg_name[i])'''
 
-ax.text(.9, .6, 1.4, 'Backward Learning (BL)', fontsize=fontsize)
+ax.text(.6, .6, 1.4, 'Backward Learning (BL)', fontsize=fontsize)
 ax.set_xlabel('Tasks seen', fontsize=30, labelpad=15)
 ax.set_zlabel('log BLE', fontsize=30, labelpad=15)
 
@@ -456,8 +456,8 @@ for ytick, color in zip(ax.get_yticklabels(), clr_top):
 
 
 ##########################################################
-fig.text(.25, .9, "CIFAR 10X10 (500 samples)", fontsize=fontsize+10)
-fig.legend(handles_top, labels_top, bbox_to_anchor=(1, .8), fontsize=legendsize+14, frameon=False)
+fig.text(.25, .9, "CIFAR 10X10 (500 samples)", fontsize=fontsize+5)
+fig.legend(handles_top, labels_top, bbox_to_anchor=(1, .8), fontsize=legendsize+8, frameon=False)
 
 plt.savefig('result/figs/cifar_exp_500.pdf', dpi=300)
 # %%
