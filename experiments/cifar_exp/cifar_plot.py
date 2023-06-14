@@ -427,6 +427,7 @@ ax.set_xlabel('Tasks seen', fontsize=30, labelpad=15)
 ax.set_zlabel('log BLE', fontsize=30, labelpad=15)
 
 ax.set_zticks([.8,1,1.2])
+ax.set_yticks([0,1,2,3,4,5,6,7,8])
 ax.set_xticks(np.arange(2,11,4))
 ax.set_zlim(0.76, 1.25)
 ax.set_ylim([0,8])
