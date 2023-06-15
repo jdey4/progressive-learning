@@ -322,8 +322,8 @@ df_500_replay = pd.melt(df_500_replay,var_name='Algorithms', value_name='Learnin
 
 
 # %%
-fig = plt.figure(constrained_layout=True,figsize=(42,32))
-gs = fig.add_gridspec(32,42)
+fig = plt.figure(constrained_layout=True,figsize=(46,32))
+gs = fig.add_gridspec(32,46)
 
 clr_replay = ["#984ea3", "#984ea3", "#984ea3", "#984ea3", "#4daf4a", "#4daf4a", "#4daf4a", "#4daf4a"]
 
@@ -337,7 +337,7 @@ ticksize=34
 legendsize=16
 
 ax = fig.add_subplot(gs[4:12,:8])
-#ax.plot([0], [0], color=[1,1,1], label='Resource Constrained')
+ax.plot([0], [0], color=[1,1,1], label='Resource Constrained')
 
 for i, fte in enumerate(ftes_bottom):
     fte[0] = 1
@@ -515,9 +515,10 @@ top_side.set_visible(False)
 #########################################################
 
 #fig.text(.35, 0.85, "CIFAR 10X10 (Controlled Replay)", fontsize=fontsize+10)
-fig.legend(handles_bottom, labels_bottom, bbox_to_anchor=(.9, .75), fontsize=legendsize+14, frameon=False)
+fig.legend(handles_bottom, labels_bottom, bbox_to_anchor=(.9, .8), fontsize=legendsize+14, frameon=False)
 #########################################################
 ax = fig.add_subplot(gs[19:27,:8])
+ax.plot([0], [0], color=[1,1,1], label='Controlled Replay')
 fte = ftes_top_replay[3]
 fte[0] = 1
 ax.plot(np.arange(1,11), fte, color=clr_replay[0], label='SynN', linewidth=3)
