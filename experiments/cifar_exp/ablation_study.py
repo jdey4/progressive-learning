@@ -155,9 +155,9 @@ ntrees = 10
 slots = 10
 task_num = 10
 shifts = 6
-total_alg_bottom = 8
-alg_name_bottom = ['SynF','LwF','O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None']
-model_file_bottom = ['uf10withrep', 'LwF', 'OEWC', 'si', 'er', 'agem', 'tag', 'None']
+total_alg_bottom = 11
+alg_name_bottom = ['SynF', 'EWC', 'Total Replay', 'Partial Replay', 'LwF','O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None']
+model_file_bottom = ['uf10withrep', 'EWC', 'offline', 'exact', 'LwF', 'OEWC', 'si', 'er', 'agem', 'tag', 'None']
 btes_bottom = [[] for i in range(total_alg_bottom)]
 ftes_bottom = [[] for i in range(total_alg_bottom)]
 tes_bottom = [[] for i in range(total_alg_bottom)]
@@ -327,10 +327,10 @@ gs = fig.add_gridspec(32,46)
 
 clr_replay = ["#984ea3", "#984ea3", "#984ea3", "#984ea3", "#4daf4a", "#4daf4a", "#4daf4a", "#4daf4a"]
 
-clr_bottom = ["#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928"]
+clr_bottom = ["#e41a1c", "#b15928", "#b15928", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928"]
 c_bottom = sns.color_palette(clr_bottom, n_colors=len(clr_bottom))
 
-marker_style_bottom = ['.', '.', 'o', '*', '.', '+', 'x', 'o']
+marker_style_bottom = ['.', '.', '+', 'v', '.', 'o', '*', '.', '+', 'x', 'o']
 
 fontsize=38
 ticksize=34
@@ -411,7 +411,7 @@ for i in range(task_num - 1):
         
 
 xs = np.linspace(0, 10, 10)
-zs = np.linspace(0, 7, 10)
+zs = np.linspace(0, total_alg_bottom-1, 10)
 X, Y = np.meshgrid(xs, zs)
 Z = np.ones(X.shape)
 
@@ -434,8 +434,9 @@ ax.set_zlabel('log BLE', fontsize=30, labelpad=15)
 
 ax.set_zticks([.8,.9,1, 1.1,1.2])
 ax.set_xticks(np.arange(2,11,4))
+ax.set_yticks(list(range(total_alg_bottom)))
 ax.set_zlim(0.76, 1.25)
-ax.set_ylim([0,7])
+ax.set_ylim([0,total_alg_bottom-1])
 log_lbl = np.round(
     np.log([.8,.9,1,1.1,1.2]),
     1

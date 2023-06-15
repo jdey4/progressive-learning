@@ -157,12 +157,12 @@ ntrees = 10
 slots = 10
 task_num = 10
 shifts = 6
-total_alg_top = 9
+total_alg_top = 6
 total_alg_bottom = 8
-alg_name_top = ['SynN','SynF', 'Model Zoo','ProgNN', 'LMC', 'DF-CNN', 'EWC', 'Total Replay', 'Partial Replay']
+alg_name_top = ['SynN','SynF', 'Model Zoo','ProgNN', 'LMC', 'DF-CNN']
 alg_name_bottom = ['SynF','LwF','O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None']
 combined_alg_name = ['SynN','SynF', 'Model Zoo','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'LwF', 'O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None']
-model_file_top = ['dnn0withrep','fixed_uf10withrep', 'model_zoo','Prog_NN', 'LMC', 'DF_CNN', 'EWC', 'offline', 'exact']
+model_file_top = ['dnn0withrep','fixed_uf10withrep', 'model_zoo','Prog_NN', 'LMC', 'DF_CNN']
 model_file_bottom = ['uf10withrep', 'LwF', 'OEWC', 'si', 'er', 'agem', 'tag', 'None']
 btes_top = [[] for i in range(total_alg_top)]
 ftes_top = [[] for i in range(total_alg_top)]
@@ -239,88 +239,13 @@ for alg in range(total_alg_top):
     
 
 # %%
-reps = slots*shifts
-
-for alg in range(total_alg_bottom): 
-    count = 0 
-    bte_tmp = [[] for _ in range(reps)]
-    fte_tmp = [[] for _ in range(reps)] 
-    te_tmp = [[] for _ in range(reps)]
-
-    for slot in range(slots):
-        for shift in range(shifts):
-            if alg < 1:
-                filename = './result/result/'+model_file_bottom[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
-            else:
-                filename = './benchmarking_algorthms_result/'+model_file_bottom[alg]+'-'+str(slot+1)+'-'+str(shift+1)+'.pickle'
-
-            multitask_df, single_task_df = unpickle(filename)
-
-            single_err_, err_ = get_error_matrix(filename)
-
-            if count == 0:
-                single_err, err = single_err_, err_
-            else:
-                err = sum_error_matrix(err, err_)
-                single_err = list(
-                    np.asarray(single_err) + np.asarray(single_err_)
-                )
-
-            count += 1
-    #single_err /= reps
-    #err /= reps
-    fte, bte, te = get_fte_bte(err,single_err)
-    avg_acc, avg_var = calc_avg_acc(err, reps)
-    avg_single_acc, avg_single_var = calc_avg_single_acc(single_err, reps)
-
-
-    btes_bottom[alg].extend(bte)
-    ftes_bottom[alg].extend(fte)
-    tes_bottom[alg].extend(te)
-    avg_acc_bottom[alg] = avg_acc
-    avg_var_bottom[alg] = avg_var
-    avg_single_acc_bottom[alg]= avg_single_acc
-    avg_single_var_bottom[alg] = avg_single_var
-
-    print('Algo name:' , alg_name_bottom[alg])
-    print('Accuracy', np.round(calc_acc(err,reps),2))
-    print('forget', np.round(calc_forget(err, reps),2))
-    print('transfer', np.round(calc_transfer(err, single_err, reps),2))
-#%%
-te_500 = {'SynN':np.zeros(10,dtype=float), 'SynF':np.zeros(10,dtype=float), 
-          'Model Zoo':np.zeros(10,dtype=float),
-          'Prog-NN':np.zeros(10,dtype=float), 'LMC':np.zeros(10,dtype=float),
-          'DF-CNN':np.zeros(10,dtype=float), 
-          'EWC':np.zeros(10,dtype=float),'Total Replay':np.zeros(10,dtype=float),
-          'Partial Replay':np.zeros(10,dtype=float),
-          'SynF (constrained)':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
-           'O-EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float),
-          'er':np.zeros(10,dtype=float), 'agem':np.zeros(10,dtype=float),
-          'tag':np.zeros(10,dtype=float), 'None':np.zeros(10,dtype=float)}
-
-for count,name in enumerate(te_500.keys()):
-    #print(name, count)
-    for i in range(10):
-        if count <9:
-            te_500[name][i] = np.log(tes_top[count][i][9-i])
-        else:
-            te_500[name][i] = np.log(tes_bottom[count-9][i][9-i])
-
-
-for name in te_500.keys():
-    print(name, np.round(np.mean(te_500[name]),2), np.round(np.std(te_500[name], ddof=1),2))
-
-df_500 = pd.DataFrame.from_dict(te_500)
-df_500 = pd.melt(df_500,var_name='Algorithms', value_name='Learning Efficieny')
-
-# %%
-fig = plt.figure(constrained_layout=True,figsize=(20,8))
-gs = fig.add_gridspec(8,20)
+fig = plt.figure(constrained_layout=True,figsize=(18,8))
+gs = fig.add_gridspec(8,18)
 
 clr_top = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#984ea3", "#f781bf", "#b15928", "#b15928", "#984ea3"]
 c_top = sns.color_palette(clr_top, n_colors=len(clr_top))
 
-marker_style_top = ['.', '.', '.', '.', 'o', '+', '.', '+', 'v']
+marker_style_top = ['.', '.', '.', '.', 'o', '+']
 
 fontsize=30
 ticksize=26
@@ -403,7 +328,7 @@ for i in range(task_num - 1):
         
 
 xs = np.linspace(0, 11, 10)
-zs = np.linspace(0, 8, 10)
+zs = np.linspace(0, 5, 10)
 X, Y = np.meshgrid(xs, zs)
 Z = np.ones(X.shape)
 
@@ -427,10 +352,10 @@ ax.set_xlabel('Tasks seen', fontsize=30, labelpad=15)
 ax.set_zlabel('log BLE', fontsize=30, labelpad=15)
 
 ax.set_zticks([.8,1,1.2])
-ax.set_yticks([0,1,2,3,4,5,6,7,8])
+ax.set_yticks([0,1,2,3,4,5])
 ax.set_xticks(np.arange(2,11,4))
 ax.set_zlim(0.76, 1.25)
-ax.set_ylim([0,8])
+ax.set_ylim([0,5])
 log_lbl = np.round(
     np.log([.8,1,1.2]),
     1
