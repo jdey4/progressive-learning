@@ -157,12 +157,12 @@ ntrees = 10
 slots = 10
 task_num = 10
 shifts = 6
-total_alg_top = 8
+total_alg_top = 9
 total_alg_bottom = 8
-alg_name_top = ['SynN','SynF', 'Model Zoo','ProgNN', 'DF-CNN', 'EWC', 'Total Replay', 'Partial Replay']
+alg_name_top = ['SynN','SynF', 'Model Zoo','ProgNN', 'LMC', 'DF-CNN', 'EWC', 'Total Replay', 'Partial Replay']
 alg_name_bottom = ['SynF','LwF','O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None']
 combined_alg_name = ['SynN','SynF', 'Model Zoo','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'LwF', 'O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None']
-model_file_top = ['dnn0','fixed_uf10', 'model_zoo','Prog_NN','DF_CNN', 'EWC', 'offline', 'exact']
+model_file_top = ['dnn0','fixed_uf10', 'model_zoo','Prog_NN', 'LMC', 'DF_CNN', 'EWC', 'offline', 'exact']
 model_file_bottom = ['uf10', 'LwF', 'OEWC', 'si', 'er', 'agem', 'tag', 'None']
 btes_top = [[] for i in range(total_alg_top)]
 ftes_top = [[] for i in range(total_alg_top)]
@@ -197,7 +197,7 @@ for alg in range(total_alg_top):
     for shift in range(shifts):
         if alg < 2:
             filename = './result/result/'+model_file_top[alg]+'_'+str(shift+1)+'.pickle'
-        elif alg == 3 or alg == 4:
+        elif alg == 3 or alg == 5:
             filename = './benchmarking_algorthms_result/'+model_file_top[alg]+'_'+str(shift+1)+'.pickle'
         elif alg == 2:
                 filename = './benchmarking_algorthms_result/'+model_file_top[alg]+'_'+str(shift+1)+'.pickle'
@@ -284,9 +284,10 @@ for alg in range(total_alg_bottom):
     print('transfer', np.round(calc_transfer(err, single_err, reps),2))
 #%%
 te_5000 = {'SynN':np.zeros(10,dtype=float), 'SynF':np.zeros(10,dtype=float), 
-          'Prog-NN':np.zeros(10,dtype=float), 'DF-CNN':np.zeros(10,dtype=float), 
+          'Model Zoo':np.zeros(10,dtype=float), 'Prog-NN':np.zeros(10,dtype=float), 
+          'LMC':np.zeros(10,dtype=float), 'DF-CNN':np.zeros(10,dtype=float), 
           'EWC':np.zeros(10,dtype=float),'Total Replay':np.zeros(10,dtype=float),
-          'Partial Replay':np.zeros(10,dtype=float), 'Model Zoo':np.zeros(10,dtype=float),
+          'Partial Replay':np.zeros(10,dtype=float), 
           'SynF (constrained)':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
            'O-EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float),
           'er':np.zeros(10,dtype=float), 'agem':np.zeros(10,dtype=float),
@@ -294,10 +295,10 @@ te_5000 = {'SynN':np.zeros(10,dtype=float), 'SynF':np.zeros(10,dtype=float),
 
 for count,name in enumerate(te_5000.keys()):
     for i in range(10):
-        if count <8:
+        if count <9:
             te_5000[name][i] = np.log(tes_top[count][i][9-i])
         else:
-            te_5000[name][i] = np.log(tes_bottom[count-8][i][9-i])
+            te_5000[name][i] = np.log(tes_bottom[count-9][i][9-i])
 
 
 df_5000 = pd.DataFrame.from_dict(te_5000)
@@ -308,21 +309,21 @@ df_5000 = pd.melt(df_5000,var_name='Algorithms', value_name='Learning Efficieny'
 fig = plt.figure(constrained_layout=True,figsize=(42,32))
 gs = fig.add_gridspec(32,42)
 
-clr_top = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#984ea3"]
+clr_top = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#984ea3", "#f781bf", "#b15928", "#b15928", "#984ea3"]
 c_top = sns.color_palette(clr_top, n_colors=len(clr_top))
 
 clr_bottom = ["#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928"]
 c_bottom = sns.color_palette(clr_bottom, n_colors=len(clr_bottom))
 
-marker_style_top = ['.', '.', '.', '.', '+', '.', '+', 'v']
+marker_style_top = ['.', '.', '.', '.', 'o', '+', '.', '+', 'v']
 marker_style_bottom = ['.', '.', 'o', '*', '.', '+', 'x', 'o']
-marker_style = ['.', '.', '.', '.', '+', '.', '+',  'v', '.', 'o', '*', '.', '+', 'x', 'o']
-marker_style_scatter = ['.', '.', '.', '.', '+', 'v', '.', '+', '.', '.', 'o', '*', '.', '+', 'x', 'o']
+marker_style = ['.', '.', '.', '.', 'o', '+', '.', '+',  'v', '.', 'o', '*', '.', '+', 'x', 'o']
+marker_style_scatter = ['.', '.', '.', '.', 'o', '+', 'v', '.', '+', '.', '.', 'o', '*', '.', '+', 'x', 'o']
 
-clr_combined = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928"]
+clr_combined = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#984ea3", "#f781bf", "#b15928", "#b15928", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928"]
 c_combined = sns.color_palette(clr_combined, n_colors=total_alg_top+total_alg_bottom-1)
 
-clr_combined_ = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#f781bf", "#b15928", "#b15928", "#984ea3", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928"]
+clr_combined_ = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#984ea3", "#f781bf", "#b15928", "#b15928", "#984ea3", "#e41a1c", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928"]
 c_combined_ = sns.color_palette(clr_combined_, n_colors=total_alg_top+total_alg_bottom)
 
 fontsize=38
@@ -730,7 +731,7 @@ ax.hlines(0, -1,15, colors='grey', linestyles='dashed',linewidth=1.5, label='cha
 ax_.set_xlabel('', fontsize=fontsize)
 ax.set_ylabel('log LE after 10 Tasks', fontsize=fontsize-5)
 ax_.set_xticklabels(
-    ['SynN','SynF', 'Model Zoo','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'SynF (constrained)', 'LwF', 'O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None'],
+    ['SynN','SynF', 'Model Zoo','ProgNN', 'LMC', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'SynF (constrained)', 'LwF', 'O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None'],
     fontsize=19,rotation=65,ha="right",rotation_mode='anchor'
     )
 
