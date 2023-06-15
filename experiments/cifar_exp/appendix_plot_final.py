@@ -432,7 +432,7 @@ ax.set_zlabel('log BLE', fontsize=30, labelpad=15)
 ax.set_zticks([.8,.9,1, 1.1,1.2])
 ax.set_xticks(np.arange(1,task_num+1,4))
 ax.set_yticks(np.arange(0,total_alg_top,1))
-ax.set_zlim(0.76, 1.25)
+ax.set_zlim(0.7, 1.25)
 ax.set_ylim([0,total_alg_top-1])
 log_lbl = np.round(
     np.log([.8,.9,1, 1.1,1.2]),
