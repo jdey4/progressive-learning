@@ -357,7 +357,7 @@ ax.set_ylim(0.8, 1.15)
 ax.tick_params(labelsize=ticksize)
 ax.set_title('Resource Constrained FL', fontsize=fontsize)
 
-ax.set_ylabel('log FLE', fontsize=fontsize)
+ax.set_ylabel('Forward Transfer', fontsize=fontsize)
 ax.set_xlabel('Tasks seen', fontsize=fontsize)
 
 log_lbl = np.round(
@@ -430,7 +430,7 @@ ax.view_init(elev=10., azim=15, roll=0)
     ax.plot(1,0,color=c_combined[i], marker=marker_style[i], markersize=8,label=combined_alg_name[i])'''
 
 ax.set_xlabel('Tasks seen', fontsize=30, labelpad=15)
-ax.set_zlabel('log BLE', fontsize=30, labelpad=15)
+ax.set_zlabel('Backward Transfer', fontsize=30, labelpad=15)
 
 ax.set_zticks([.8,.9,1, 1.1,1.2])
 ax.set_xticks(np.arange(2,11,4))
@@ -549,7 +549,7 @@ ax.set_yticklabels(labels)
 
 ax.tick_params(labelsize=ticksize)
 
-ax.set_ylabel('log FLE', fontsize=fontsize)
+ax.set_ylabel('Forward Transfer', fontsize=fontsize)
 ax.set_xlabel('Tasks seen', fontsize=fontsize)
 
 right_side = ax.spines["right"]
@@ -644,7 +644,7 @@ ax.view_init(elev=10., azim=15, roll=0)
 
 ax.text(.9, .5, 1.35, 'Backward Learning (BL)', fontsize=fontsize)
 ax.set_xlabel('Tasks seen', fontsize=30, labelpad=15)
-ax.set_zlabel('log BLE', fontsize=30, labelpad=15)
+ax.set_zlabel('Backward Transfer', fontsize=30, labelpad=15)
 
 ax.set_zticks([.9,1, 1.1,1.2])
 ax.set_xticks(np.arange(2,11,4))
@@ -691,7 +691,7 @@ ax.hlines(0, -1,8, colors='grey', linestyles='dashed',linewidth=1.5, label='chan
 #ax_=sns.pointplot(x="Algorithms", y="Transfer Efficieny", data=df_500, join=False, color='grey', linewidth=1.5, ci='sd',ax=ax)
 ax_.set_yticks([0,.1,.25])
 ax_.set_xlabel('', fontsize=fontsize)
-ax.set_ylabel('log LE after 10 Tasks', fontsize=fontsize-5)
+ax.set_ylabel('Oveall transfer after 10 Tasks', fontsize=fontsize-5)
 ax_.set_xticklabels(
     ['SynN (0.4)','SynN (0.6)', 'SynN (0.8)', 'SynN (1.0)','SynF (0.4)', 'SynF (0.6)', 'SynF (0.8)', 'SynF (1.0)'],
     fontsize=22,rotation=80,ha="right",rotation_mode='anchor'

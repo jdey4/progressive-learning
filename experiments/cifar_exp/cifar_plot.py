@@ -157,12 +157,12 @@ ntrees = 10
 slots = 10
 task_num = 10
 shifts = 6
-total_alg_top = 6
+total_alg_top = 7
 total_alg_bottom = 8
-alg_name_top = ['SynN','SynF', 'Model Zoo','ProgNN', 'LMC', 'DF-CNN']
+alg_name_top = ['SynN','SynF', 'Model Zoo','ProgNN', 'LMC', 'DF-CNN', 'CoSCL']
 alg_name_bottom = ['SynF','LwF','O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None']
-combined_alg_name = ['SynN','SynF', 'Model Zoo','ProgNN', 'DF-CNN','EWC', 'Total Replay', 'Partial Replay', 'LwF', 'O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None']
-model_file_top = ['dnn0withrep','fixed_uf10withrep', 'model_zoo','Prog_NN', 'LMC', 'DF_CNN']
+combined_alg_name = ['SynN','SynF', 'Model Zoo','ProgNN', 'DF-CNN', 'CoSCL', 'EWC', 'Total Replay', 'Partial Replay', 'LwF', 'O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None']
+model_file_top = ['dnn0withrep','fixed_uf10withrep', 'model_zoo','Prog_NN', 'LMC', 'DF_CNN', 'CoSCL']
 model_file_bottom = ['uf10withrep', 'LwF', 'OEWC', 'si', 'er', 'agem', 'tag', 'None']
 btes_top = [[] for i in range(total_alg_top)]
 ftes_top = [[] for i in range(total_alg_top)]
@@ -181,7 +181,7 @@ avg_single_acc_bottom = [[] for i in range(total_alg_bottom)]
 avg_single_var_bottom = [[] for i in range(total_alg_bottom)]
 
 #combined_alg_name = ['L2N','L2F','Prog-NN', 'DF-CNN','LwF','EWC','O-EWC','SI', 'Replay (increasing amount)', 'Replay (fixed amount)', 'None']
-model_file_combined = ['dnn0withrep','fixed_uf10withrep', 'model_zoo','Prog_NN','DF_CNN', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'er', 'agem', 'tag', 'None']
+model_file_combined = ['dnn0withrep','fixed_uf10withrep', 'model_zoo','Prog_NN','DF_CNN', 'CoSCL', 'LwF', 'EWC', 'OEWC', 'si', 'offline', 'exact', 'er', 'agem', 'tag', 'None']
 
 ########################
 
@@ -200,6 +200,8 @@ for alg in range(total_alg_top):
                 filename = './result/result/'+model_file_top[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
             elif alg == 3 or alg == 5:
                 filename = './benchmarking_algorthms_result/'+model_file_top[alg]+'-'+str(shift+1)+'-'+str(slot+1)+'.pickle'
+            elif alg == 6:
+                filename = './benchmarking_algorthms_result/'+model_file_top[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
             elif alg == 2:
                 filename = './benchmarking_algorthms_result/'+model_file_top[alg]+'_'+str(slot+1)+'_'+str(shift+1)+'.pickle'
             else:
@@ -245,7 +247,7 @@ gs = fig.add_gridspec(8,18)
 clr_top = ["#377eb8", "#e41a1c", "#4daf4a", "#984ea3", "#984ea3", "#f781bf", "#b15928", "#b15928", "#984ea3"]
 c_top = sns.color_palette(clr_top, n_colors=len(clr_top))
 
-marker_style_top = ['.', '.', '.', '.', 'o', '+']
+marker_style_top = ['.', '.', '.', '.', 'o', '+','o']
 
 fontsize=30
 ticksize=26
@@ -286,7 +288,7 @@ ax.set_yticklabels(labels)
 
 ax.tick_params(labelsize=ticksize)
 
-ax.set_ylabel('log FLE', fontsize=fontsize)
+ax.set_ylabel('Forward Transfer', fontsize=fontsize)
 ax.set_xlabel('Tasks seen', fontsize=fontsize)
 
 right_side = ax.spines["right"]
@@ -328,7 +330,7 @@ for i in range(task_num - 1):
         
 
 xs = np.linspace(0, 11, 10)
-zs = np.linspace(0, 5, 10)
+zs = np.linspace(0, 6, 10)
 X, Y = np.meshgrid(xs, zs)
 Z = np.ones(X.shape)
 
@@ -349,13 +351,13 @@ ax.view_init(elev=10., azim=15, roll=0)
 
 ax.text(.6, .6, 1.4, 'Backward Learning (BL)', fontsize=fontsize)
 ax.set_xlabel('Tasks seen', fontsize=30, labelpad=15)
-ax.set_zlabel('log BLE', fontsize=30, labelpad=15)
+ax.set_zlabel('Backward Transfer', fontsize=30, labelpad=15)
 
 ax.set_zticks([.8,1,1.2])
 ax.set_yticks([0,1,2,3,4,5])
 ax.set_xticks(np.arange(2,11,4))
 ax.set_zlim(0.76, 1.25)
-ax.set_ylim([0,5])
+ax.set_ylim([0,6])
 log_lbl = np.round(
     np.log([.8,1,1.2]),
     1
@@ -366,7 +368,7 @@ for ii,_ in enumerate(labels):
     labels[ii] = str(log_lbl[ii])
 
 ax.set_zticklabels(labels)
-ax.set_yticklabels(alg_name_top, rotation=80)
+#ax.set_yticklabels(alg_name_top, rotation=80)
 ax.tick_params(labelsize=ticksize-8)
 #ax[0][1].grid(axis='x')
 ax.invert_xaxis()
