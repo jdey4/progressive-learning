@@ -208,11 +208,12 @@ fte_top_end = {'SynF':np.zeros(10,dtype=float), 'EWC':np.zeros(10,dtype=float),
                'ER':np.zeros(10,dtype=float), 'A-GEM':np.zeros(10,dtype=float),
                'TAG':np.zeros(10,dtype=float), 'None':np.zeros(10,dtype=float)}
 
-
+task_order = []
 for count,name in enumerate(fte_top_end.keys()):
     #print(name, count)
     for i in range(10):
         fte_top_end[name][i] = np.log(ftes_top[count][i])
+        task_order.append(i+1)
 
 tmp_fle = {}
 for id in fte_top_end.keys():
@@ -220,6 +221,7 @@ for id in fte_top_end.keys():
 
 df_fle = pd.DataFrame.from_dict(tmp_fle)
 df_fle = pd.melt(df_fle,var_name='Algorithms', value_name='Forward Transfer Efficieny')
+df_fle.insert(2, "Task ID", task_order)
 #%%
 bte_end = {'SynF':np.zeros(10,dtype=float), 'EWC':np.zeros(10,dtype=float),
            'Total Replay':np.zeros(10,dtype=float),
@@ -240,7 +242,7 @@ for id in alg_name_top:
 
 df_ble = pd.DataFrame.from_dict(tmp_ble)
 df_ble = pd.melt(df_ble,var_name='Algorithms', value_name='Backward Transfer Efficieny')
-
+df_ble.insert(2, "Task ID", task_order)
 #%%
 ### MAIN HYPERPARAMS ###
 ntrees = 10
@@ -345,14 +347,17 @@ fte_replay_end = {'SynN (.4)':np.zeros(10,dtype=float), 'SynN (.6)':np.zeros(10,
           'SynF (.6)':np.zeros(10,dtype=float),'SynF (.8)':np.zeros(10,dtype=float),
           'SynF (1)':np.zeros(10,dtype=float)}
 
+task_order = []
 for count,name in enumerate(fte_replay_end.keys()):
     print(name, count)
     if count < 4:
         for i in range(10):
             fte_replay_end[name][i] = np.log(ftes_top_replay[0][i])
+            task_order.append(i+1)
     else:
         for i in range(10):
             fte_replay_end[name][i] = np.log(ftes_bottom_replay[0][i])
+            task_order.append(i+1)
 
 tmp_fle = {}
 for id in fte_replay_end.keys():
@@ -360,7 +365,7 @@ for id in fte_replay_end.keys():
 
 df_fle_replay = pd.DataFrame.from_dict(tmp_fle)
 df_fle_replay = pd.melt(df_fle_replay,var_name='Algorithms', value_name='Forward Transfer Efficieny')
-
+df_fle_replay.insert(2, "Task ID", task_order)
 #%%
 bte_end_replay = {'SynN (.4)':np.zeros(10,dtype=float), 'SynN (.6)':np.zeros(10,dtype=float), 
           'SynN (.8)':np.zeros(10,dtype=float),
@@ -373,9 +378,9 @@ for count,name in enumerate(bte_end_replay.keys()):
     #print(name, count)
     for i in range(10):
         if count <4:
-            bte_end_replay[name][i] = np.log(tes_top_replay[count][i][9-i])
+            bte_end_replay[name][i] = np.log(btes_top_replay[count][i][9-i])
         else:
-            bte_end_replay[name][i] = np.log(tes_bottom_replay[count-4][i][9-i])
+            bte_end_replay[name][i] = np.log(btes_bottom_replay[count-4][i][9-i])
 
 tmp_ble = {}
 for id in bte_end_replay.keys():
@@ -383,7 +388,7 @@ for id in bte_end_replay.keys():
 
 df_ble_replay = pd.DataFrame.from_dict(tmp_ble)
 df_ble_replay = pd.melt(df_ble_replay,var_name='Algorithms', value_name='Backward Transfer Efficieny')
-
+df_ble_replay.insert(2, "Task ID", task_order)
 #%%
 te_500_replay = {'SynN (.4)':np.zeros(10,dtype=float), 'SynN (.6)':np.zeros(10,dtype=float), 
           'SynN (.8)':np.zeros(10,dtype=float),
@@ -402,16 +407,13 @@ for count,name in enumerate(te_500_replay.keys()):
 
 df_500_replay = pd.DataFrame.from_dict(te_500_replay)
 df_500_replay = pd.melt(df_500_replay,var_name='Algorithms', value_name='Learning Efficieny')
-
+df_500_replay.insert(2, "Task ID", task_order)
 
 # %%
 fig = plt.figure(constrained_layout=True,figsize=(46,32))
 gs = fig.add_gridspec(32,46)
 
-clr_replay = ["#984ea3", "#984ea3", "#984ea3", "#984ea3", "#4daf4a", "#4daf4a", "#4daf4a", "#4daf4a"]
-
-clr_top = ["#e41a1c", "#b15928", "#b15928", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928"]
-c_top = sns.color_palette(clr_top, n_colors=len(clr_top))
+c_top = sns.color_palette('Reds', n_colors=10)
 
 marker_style = ['.', '.', '+', 'v', '.', 'o', '*', '.', '+', 'x', 'o']
 
@@ -419,17 +421,20 @@ fontsize=40
 ticksize=34
 legendsize=16
 
+
 ax = fig.add_subplot(gs[4:12,:8])
-ax.plot([0], [0], color=[1,1,1], label='Resource Constrained')
-ax_ = sns.stripplot(x='Algorithms', y='Forward Transfer Efficieny', data=df_fle, hue='Algorithms', palette=c_top, ax=ax, size=20, legend=None, alpha=.3)
+
+ax.plot([0], [0], color=[1,1,1], label='Task ID')
+for ii in range(10):
+    ax.plot(0,0, label=str(ii+1), c=c_top[ii], linestyle='dotted')
+
+ax_ = sns.stripplot(x='Algorithms', y='Forward Transfer Efficieny', hue='Task ID', data=df_fle, palette=c_top, ax=ax, size=25, legend=None)
 ax_.set_xticklabels(
     alg_name_top,
     fontsize=fontsize,rotation=65,ha="right",rotation_mode='anchor'
     )
-for xtick, color in zip(ax_.get_xticklabels(), c_top):
-        xtick.set_color(color)
 
-ax.set_title('Resource Constrained FL', fontsize=fontsize)
+#ax.set_title('Resource Constrained FL', fontsize=fontsize)
 
 ax_.set_yticks([-.3,0,.1])
 ax.set_ylabel('Forward Transfer', fontsize=fontsize)
@@ -441,31 +446,28 @@ right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
 
-for i in range(0,total_alg_top):
-    ax.plot(1,0,color=c_top[i], markersize=8,label=alg_name_top[i])
 ax.hlines(0, 0,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
 
-handles_bottom, labels_bottom = ax.get_legend_handles_labels()
+handles_task, labels_task = ax.get_legend_handles_labels()
 
 #########################################################
 #ax[0][0].grid(axis='x')
 ax = fig.add_subplot(gs[4:12,12:20])
-ax.plot([0], [0], color=[1,1,1], label='Resource Constrained')
-ax_ = sns.stripplot(x='Algorithms', y='Backward Transfer Efficieny', data=df_ble, hue='Algorithms', palette=c_top, ax=ax, size=20, legend=None, alpha=.3)
+
+ax_ = sns.stripplot(x='Algorithms', y='Backward Transfer Efficieny', hue='Task ID', data=df_ble, palette=c_top, ax=ax, size=25, legend=None)
 ax_.set_xticklabels(
     alg_name_top,
     fontsize=fontsize,rotation=65,ha="right",rotation_mode='anchor'
     )
-for xtick, color in zip(ax_.get_xticklabels(), c_top):
-        xtick.set_color(color)
 
 ax_.set_yticks([-.4,0,.1])
-ax.set_title('Resource Constrained BL', fontsize=fontsize)
+#ax.set_title('Resource Constrained BL', fontsize=fontsize)
 ax.set_ylabel('Backward Transfer', fontsize=fontsize)
 ax.hlines(0, 0,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
 ax.set_xlabel('')
 ax.tick_params(labelsize=ticksize)
 
+ax.text(-.5,.2, 'Constrained Resource', fontsize=fontsize+15)
 right_side = ax.spines["right"]
 right_side.set_visible(False)
 top_side = ax.spines["top"]
@@ -485,7 +487,7 @@ algo = ['building', 'UF', 'recruiting', 'hybrid']
 adjust = 0
 for i,key in enumerate(algo):
     err = np.array(mean_error[key])
-    ax.plot(ns, err, c=colors[i], label=labels[i])
+    ax.plot(ns, err, c=colors[i], label=labels[i], linewidth=3)
 
 
 #ax.set_title('CIFAR Recruitment Experiment', fontsize=30)
@@ -495,7 +497,7 @@ ax.set_ylabel('Generalization Error', fontsize=fontsize)
 ax.set_xlabel('')
 ax.tick_params(labelsize=ticksize)
 #ax.set_ylim(0.325, 0.575)
-ax.set_title("Resource Recycling",fontsize=fontsize)
+ax.set_title("Resource Recycling",fontsize=fontsize+15)
 ax.set_xticks([])
 ax.set_yticks([0.45, 0.55, 0.65,0.75])
 #ax.set_ylim([0.43,0.62])
@@ -505,7 +507,7 @@ ax.text(500, 0.424, "500", fontsize=ticksize-2)
 ax.text(5000, 0.424, "5000", fontsize=ticksize-2)
 ax.text(120, 0.39, "Number of Task 10 Samples", fontsize=fontsize-1)
 
-ax.legend(loc='lower left',fontsize=legendsize+6, frameon=False)
+ax.legend(loc='lower left',fontsize=legendsize+10, frameon=False)
 #ax.set_title('Recruitment Experiment on Task 10', fontsize=fontsize)
 
 right_side = ax.spines["right"]
@@ -517,21 +519,17 @@ top_side.set_visible(False)
 #########################################################
 
 #fig.text(.35, 0.85, "CIFAR 10X10 (Controlled Replay)", fontsize=fontsize+10)
-fig.legend(handles_bottom, labels_bottom, bbox_to_anchor=(.9, .9), fontsize=legendsize+14, frameon=False)
+#fig.legend(handles_bottom, labels_bottom, bbox_to_anchor=(.9, .9), fontsize=legendsize+14, frameon=False)
 #########################################################
-color = ['b','b','b','b','r','r','r','r']
 
 ax = fig.add_subplot(gs[13:21,:9])
-ax.plot([0], [0], color=[1,1,1], label='Controlled Replay')
-ax_ = sns.stripplot(x='Algorithms', y='Forward Transfer Efficieny', data=df_fle_replay, hue='Algorithms', palette=color, ax=ax, size=20, legend=None, alpha=.3)
+ax_ = sns.stripplot(x='Algorithms', y='Forward Transfer Efficieny', hue='Task ID', data=df_fle_replay, palette=c_top, ax=ax, size=25, legend=None)
 ax_.set_xticklabels(
     combined_alg_name_replay,
     fontsize=fontsize,rotation=65,ha="right",rotation_mode='anchor'
     )
-for xtick, c in zip(ax_.get_xticklabels(), color):
-        xtick.set_color(c)
 
-ax.set_title('Forward Learning (FL)', fontsize=fontsize)
+#ax.set_title('Forward Learning (FL)', fontsize=fontsize)
 ax_.set_yticks([0,.1])
 ax.set_ylabel('Forward Transfer', fontsize=fontsize)
 ax.set_xlabel('', fontsize=fontsize)
@@ -542,25 +540,20 @@ right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
 
-ax.plot(1,0,color=color[0], markersize=8,label='SynN')
-ax.plot(1,0,color=color[5], markersize=8,label='SynF')
-
-ax.hlines(0, 1,8, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
+ax.hlines(0, 0,8, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
 
 handles_top, labels_top = ax.get_legend_handles_labels()
 
 
 #####################################################
 ax = fig.add_subplot(gs[13:21,12:20])
-ax_ = sns.stripplot(x='Algorithms', y='Backward Transfer Efficieny', data=df_ble_replay, hue='Algorithms', palette=color, ax=ax, size=20, legend=None, alpha=.3)
+ax_ = sns.stripplot(x='Algorithms', y='Backward Transfer Efficieny', data=df_ble_replay, hue='Task ID', palette=c_top, ax=ax, size=25, legend=None)
 ax_.set_xticklabels(
     combined_alg_name_replay,
     fontsize=fontsize,rotation=65,ha="right",rotation_mode='anchor'
     )
-for xtick, c in zip(ax_.get_xticklabels(), color):
-        xtick.set_color(c)
 
-ax.set_title('Backward Learning (BL)', fontsize=fontsize)
+ax.set_title('Controlled Replay', fontsize=fontsize+15)
 ax_.set_yticks([0,.2])
 ax.set_ylabel('Backward Transfer', fontsize=fontsize)
 ax.set_xlabel('', fontsize=fontsize)
@@ -571,22 +564,18 @@ right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
 
-for i in range(0,total_alg_top):
-    ax.plot(1,0,color=c_top[i], markersize=8,label=alg_name_top[i])
 ax.hlines(0, 0,8, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
 
 ############################
 
 ax = fig.add_subplot(gs[13:21,24:32])
-ax_ = sns.stripplot(x='Algorithms', y='Learning Efficieny', data=df_500_replay, hue='Algorithms', palette=color, ax=ax, size=20, legend=None, alpha=.3)
+ax_ = sns.stripplot(x='Algorithms', y='Learning Efficieny', data=df_500_replay, hue='Task ID', palette=c_top, ax=ax, size=25, legend=None)
 ax_.set_xticklabels(
     combined_alg_name_replay,
     fontsize=fontsize,rotation=65,ha="right",rotation_mode='anchor'
     )
-for xtick, c in zip(ax_.get_xticklabels(), color):
-        xtick.set_color(c)
 
-ax.set_title('Overall Learning', fontsize=fontsize)
+#ax.set_title('Overall Learning', fontsize=fontsize)
 ax_.set_yticks([0,.2])
 ax.set_ylabel('Oveall transfer after 10 Tasks', fontsize=fontsize)
 ax.set_xlabel('', fontsize=fontsize)
@@ -597,14 +586,13 @@ right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
 
-for i in range(0,total_alg_top):
-    ax.plot(1,0,color=c_top[i], markersize=8,label=alg_name_top[i])
-ax.hlines(0, 0,8, colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
+ax.hlines(0, 0,8, colors='grey', linestyles='dashed',linewidth=1.5)
 
 #########################################################
 
-fig.text(.35, .93, "CIFAR 10X10 (Ablation Study)", fontsize=fontsize+20)
-fig.legend(handles_top, labels_top, bbox_to_anchor=(.9, .55), fontsize=legendsize+14, frameon=False)
+fig.text(.25, .93, "CIFAR 10X10 (Ablation Study)", fontsize=fontsize+20)
+#fig.legend(handles_top, labels_top, bbox_to_anchor=(.9, .55), fontsize=legendsize+14, frameon=False)
+#fig.legend(handles_task, labels_task, bbox_to_anchor=(.9, .45), fontsize=legendsize+14, frameon=False)
 
 plt.savefig('result/figs/cifar_ablation.pdf', dpi=300)
 
