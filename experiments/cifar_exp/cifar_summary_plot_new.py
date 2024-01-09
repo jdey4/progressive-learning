@@ -9,7 +9,17 @@ from itertools import product
 import seaborn as sns
 import matplotlib.gridspec as gridspec
 import matplotlib
+from matplotlib.colors import LinearSegmentedColormap
+from matplotlib.cm import register_cmap
 #%%
+def register_palette(name, clr):
+    # relative positions of colors in cmap/palette 
+    pos = [0.0,1.0]
+
+    colors=['#FFFFFF',clr]
+    cmap = LinearSegmentedColormap.from_list("", list(zip(pos, colors)))
+    register_cmap(name, cmap)
+
 def calc_forget(err, total_task, reps):
 #Tom Vient et al
     forget = 0
@@ -234,11 +244,13 @@ te_500 = {'SynN':np.zeros(10,dtype=float), 'SynF':np.zeros(10,dtype=float),
 
 
 task_order = []
+t = 1
 for count,name in enumerate(te_500.keys()):
     #print(name, count)
     for i in range(10):
         te_500[name][i] = np.log(tes[count][i][9-i])
-        task_order.append(i+1)
+        task_order.append(t+1)
+        t += 1
 
 mean_val = []
 for name in te_500.keys():
@@ -312,42 +324,67 @@ tes_all['cifar'] = df_le
 labels.append(combined_alg_name)
 
 #%%
-font=25
+universal_clr_dict = {'SynN': '#377eb8',
+                      'SynF': '#e41a1c',
+                      'ProgNN': '#4daf4a',
+                      'Model Zoo': '#984ea3',
+                      'LMC': '#f781bf',
+                      'CoSCL': '#984ea3',
+                      'DF-CNN': '#b15928',
+                    }
+
+for ii, name in enumerate(universal_clr_dict.keys()):
+    print(name)
+    register_palette(name, universal_clr_dict[name])
+    
+#%%
+font=30
 datasets = ['CIFAR 10X10']
 FLE_yticks = [[-.3,0,.3], [-1.5,0,1], [-.1,0,.4], [-0.4,0,.6], [-1.5,0,.3]]
 BLE_yticks = [[-.4,0,.2], [-3,0,2], [-.3,0,.3], [-0.6,0,.2], [-2.5,0,.5]]
 LE_yticks = [[-.4,0,.2], [-3,0,2], [-.3,0,.4], [-0.6,0,.6], [-2.5,0,.4]]
 
-c_top = sns.color_palette('Reds', n_colors=10)
+#c_top = sns.color_palette('Reds', n_colors=10)
 
-fig, ax = plt.subplots(len(tes_all.keys()), 4, figsize=(32,10))
+fig, ax = plt.subplots(len(tes_all.keys()), 3, figsize=(24,10))
 sns.set_context('talk')
 
+clr_ = []
+for name in universal_clr_dict.keys():
+    clr_.extend(
+        sns.color_palette(
+            name, 
+            n_colors=task_num
+            )
+        )
+    
 for ii, data in enumerate(tes_all.keys()):
-    ax_ = sns.stripplot(x='Algorithms', y='Forward Transfer Efficieny', data=ftes_all[data], hue='Task ID', palette=c_top, ax=ax[0], size=25, legend=None)
+    ax_ = sns.stripplot(x='Algorithms', y='Forward Transfer Efficieny', data=ftes_all[data], hue='Task ID', palette=clr_, ax=ax[0], size=25, legend=None)
     ax_.set_xticklabels(
     labels[ii],
     fontsize=font,rotation=65,ha="right",rotation_mode='anchor'
     )
-
+    for xtick, color in zip(ax_.get_xticklabels(), universal_clr_dict.values()):
+        xtick.set_color(color)
     ax_.hlines(0, -1,len(labels[ii]), colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
 
     ax_.set_xlabel('')
     ax_.set_yticks(FLE_yticks[ii])
     ax_.tick_params('y',labelsize=30)
-    ax_.set_ylabel('Forward Learning', fontsize=font+5)
+    ax_.set_ylabel('Forward Transfer', fontsize=font+5)
 
     right_side = ax_.spines["right"]
     right_side.set_visible(False)
     top_side = ax_.spines["top"]
     top_side.set_visible(False)
 
-    ax_ = sns.stripplot(x='Algorithms', y='Backward Transfer Efficieny', data=btes_all[data], hue='Task ID', palette=c_top, ax=ax[1], size=25, legend=None)
+    ax_ = sns.stripplot(x='Algorithms', y='Backward Transfer Efficieny', data=btes_all[data], hue='Task ID', palette=clr_, ax=ax[1], size=25, legend=None)
     ax_.set_xticklabels(
     labels[ii],
     fontsize=font,rotation=65,ha="right",rotation_mode='anchor'
     )
-    
+    for xtick, color in zip(ax_.get_xticklabels(), universal_clr_dict.values()):
+        xtick.set_color(color)
     #ax_.set_xticklabels([])
     #ax_.set_xlim([0, len(labels[ii])])
     ax_.hlines(0, -1,len(labels[ii]), colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
@@ -355,7 +392,7 @@ for ii, data in enumerate(tes_all.keys()):
     ax_.set_xlabel('')
     ax_.set_yticks(BLE_yticks[ii])
     ax_.tick_params('y', labelsize=30)
-    ax_.set_ylabel('Backward Learning', fontsize=font+5)
+    ax_.set_ylabel('Backward Transfer', fontsize=font+5)
 
     ax_.set_title('CIFAR 10X10 (500 samples)', fontsize=45)
     right_side = ax_.spines["right"]
@@ -363,19 +400,21 @@ for ii, data in enumerate(tes_all.keys()):
     top_side = ax_.spines["top"]
     top_side.set_visible(False)
 
-    ax_ = sns.stripplot(x='Algorithms', y='Transfer Efficieny', data=tes_all[data], hue='Task ID', palette=c_top, ax=ax[2], size=25, legend=None)
+    ax_ = sns.stripplot(x='Algorithms', y='Transfer Efficieny', data=tes_all[data], hue='Task ID', palette=clr_, ax=ax[2], size=25, legend=None)
     
     ax_.set_xticklabels(
     labels[ii],
     fontsize=font,rotation=65,ha="right",rotation_mode='anchor'
     )
+    for xtick, color in zip(ax_.get_xticklabels(), universal_clr_dict.values()):
+        xtick.set_color(color)
 
     ax_.hlines(0, -1,len(labels[ii]), colors='grey', linestyles='dashed',linewidth=1.5, label='chance')
 
     ax_.set_xlabel('')
     ax_.set_yticks(LE_yticks[ii])
     ax_.tick_params('y', labelsize=30)
-    ax_.set_ylabel('Overall Learning', fontsize=font+5)
+    ax_.set_ylabel('Transfer', fontsize=font+5)
 
     right_side = ax_.spines["right"]
     right_side.set_visible(False)
