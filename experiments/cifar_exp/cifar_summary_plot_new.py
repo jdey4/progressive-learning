@@ -328,8 +328,8 @@ universal_clr_dict = {'SynN': '#377eb8',
                       'SynF': '#e41a1c',
                       'ProgNN': '#4daf4a',
                       'Model Zoo': '#984ea3',
-                      'LMC': '#f781bf',
-                      'CoSCL': '#984ea3',
+                      'LMC': '#83d0c9',
+                      'CoSCL': '#f781bf',
                       'DF-CNN': '#b15928',
                     }
 

@@ -2422,3 +2422,29 @@ trailer
 startxref
 530828
 %%EOF
+11 0 obj
+<< /CropBox [ 0 543.0946 2819.471 2233.418 ] /Annots 10 0 R /LastModified
+(D:20240105105119-05'00') /MediaBox [ 0 0 3312 2304 ] /Parent 2 0 R /BleedBox
+[ 0 0 3312 2304 ] /Rotate 0 /Thumb 186 0 R /TrimBox [ 0 0 3312 2304 ] /ArtBox
+[ 2.99086 586.739 2716.77 2188.32 ] /Type /Page /PieceInfo << /Illustrator
+187 0 R >> /Contents 184 0 R /Resources << /Font << /T1_0 181 0 R >> /ProcSet
+[ /PDF /Text ] /Properties << /MC0 182 0 R >> /ExtGState << /GS0 185 0 R >>
+>> >>
+endobj
+202 0 obj
+<< /Producer (macOS Version 14.1 \(Build 23B74\) Quartz PDFContext, AppendMode 1.1)
+/CreationDate (D:20240104225018-04'00') /ModDate (D:20240109052026Z00'00')
+/Creator (Matplotlib v3.6.3, https://matplotlib.org) >>
+endobj
+xref
+0 1
+0000000000 65535 f 
+11 1
+0000531071 00000 n 
+202 1
+0000531552 00000 n 
+trailer
+<< /ID [<3E7935ECD6C743A9B8396E6F5F03FEA4><2FCA2DF0AF34E4966DA31FD444FD1231> ] /Root 1 0 R /Size 203 /Prev 530828 /Info 202 0 R >> 
+startxref
+531784
+%%EOF
