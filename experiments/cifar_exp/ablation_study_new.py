@@ -9,7 +9,17 @@ from itertools import product
 import seaborn as sns
 import matplotlib.gridspec as gridspec
 import matplotlib
+from matplotlib.colors import LinearSegmentedColormap
+from matplotlib.cm import register_cmap
 #%%
+def register_palette(name, clr):
+    # relative positions of colors in cmap/palette 
+    pos = [0.0,1.0]
+
+    colors=['#FFFFFF',clr]
+    cmap = LinearSegmentedColormap.from_list("", list(zip(pos, colors)))
+    register_cmap(name, cmap)
+
 def calc_forget(err, reps, total_task=10):
 #Tom Vient et al
     forget = 0
@@ -209,11 +219,13 @@ fte_top_end = {'SynF':np.zeros(10,dtype=float), 'EWC':np.zeros(10,dtype=float),
                'TAG':np.zeros(10,dtype=float), 'None':np.zeros(10,dtype=float)}
 
 task_order = []
+t = 1
 for count,name in enumerate(fte_top_end.keys()):
     #print(name, count)
     for i in range(10):
         fte_top_end[name][i] = np.log(ftes_top[count][i])
-        task_order.append(i+1)
+        task_order.append(t)
+        t += 1
 
 tmp_fle = {}
 for id in fte_top_end.keys():
@@ -348,16 +360,19 @@ fte_replay_end = {'SynN (.4)':np.zeros(10,dtype=float), 'SynN (.6)':np.zeros(10,
           'SynF (1)':np.zeros(10,dtype=float)}
 
 task_order = []
+t = 1
 for count,name in enumerate(fte_replay_end.keys()):
     print(name, count)
     if count < 4:
         for i in range(10):
             fte_replay_end[name][i] = np.log(ftes_top_replay[0][i])
-            task_order.append(i+1)
+            task_order.append(t+1)
+            t += 1
     else:
         for i in range(10):
             fte_replay_end[name][i] = np.log(ftes_bottom_replay[0][i])
-            task_order.append(i+1)
+            task_order.append(t+1)
+            t += 1
 
 tmp_fle = {}
 for id in fte_replay_end.keys():
@@ -409,14 +424,37 @@ df_500_replay = pd.DataFrame.from_dict(te_500_replay)
 df_500_replay = pd.melt(df_500_replay,var_name='Algorithms', value_name='Learning Efficieny')
 df_500_replay.insert(2, "Task ID", task_order)
 
+#%%
+universal_clr_dict = {'SynN': '#377eb8',
+                      'SynF': '#e41a1c',
+                      'EWC': '#4daf4a',
+                      'Total Replay': '#b15928',
+                      'Partial Replay': '#f47835',
+                      'LwF': '#f781bf',
+                      'O-EWC': '#83d0c9',
+                      'SI': '#f781bf',
+                      'ER': '#b15928',
+                      'A-GEM': '#8b8589',
+                      'TAG': '#f781bf',
+                      'None': '#4c516d'}
+for ii, name in enumerate(universal_clr_dict.keys()):
+    print(name)
+    register_palette(name, universal_clr_dict[name])
+    
 # %%
 fig = plt.figure(constrained_layout=True,figsize=(46,32))
 gs = fig.add_gridspec(32,46)
 
 c_top = sns.color_palette('Reds', n_colors=10)
-
-marker_style = ['.', '.', '+', 'v', '.', 'o', '*', '.', '+', 'x', 'o']
-
+c_top = []
+for name in alg_name_top:
+    c_top.extend(
+        sns.color_palette(
+            name, 
+            n_colors=task_num
+            )
+        )
+    
 fontsize=40
 ticksize=34
 legendsize=16
@@ -424,15 +462,13 @@ legendsize=16
 
 ax = fig.add_subplot(gs[4:12,:8])
 
-ax.plot([0], [0], color=[1,1,1], label='Task ID')
-for ii in range(10):
-    ax.plot(0,0, label=str(ii+1), c=c_top[ii], linestyle='dotted')
-
 ax_ = sns.stripplot(x='Algorithms', y='Forward Transfer Efficieny', hue='Task ID', data=df_fle, palette=c_top, ax=ax, size=25, legend=None)
 ax_.set_xticklabels(
     alg_name_top,
     fontsize=fontsize,rotation=65,ha="right",rotation_mode='anchor'
     )
+for xtick, color in zip(ax_.get_xticklabels(), alg_name_top):
+        xtick.set_color(universal_clr_dict[color])
 
 #ax.set_title('Resource Constrained FL', fontsize=fontsize)
 
@@ -459,6 +495,8 @@ ax_.set_xticklabels(
     alg_name_top,
     fontsize=fontsize,rotation=65,ha="right",rotation_mode='anchor'
     )
+for xtick, color in zip(ax_.get_xticklabels(), alg_name_top):
+        xtick.set_color(universal_clr_dict[color])
 
 ax_.set_yticks([-.4,0,.1])
 #ax.set_title('Resource Constrained BL', fontsize=fontsize)
@@ -521,14 +559,32 @@ top_side.set_visible(False)
 #fig.text(.35, 0.85, "CIFAR 10X10 (Controlled Replay)", fontsize=fontsize+10)
 #fig.legend(handles_bottom, labels_bottom, bbox_to_anchor=(.9, .9), fontsize=legendsize+14, frameon=False)
 #########################################################
+c_top = []
+for name in range(4):
+    c_top.extend(
+        sns.color_palette(
+            'SynN', 
+            n_colors=task_num
+            )
+        )
 
+for name in range(4):
+    c_top.extend(
+        sns.color_palette(
+            'SynF', 
+            n_colors=task_num
+            )
+        ) 
+    
 ax = fig.add_subplot(gs[13:21,:9])
 ax_ = sns.stripplot(x='Algorithms', y='Forward Transfer Efficieny', hue='Task ID', data=df_fle_replay, palette=c_top, ax=ax, size=25, legend=None)
 ax_.set_xticklabels(
     combined_alg_name_replay,
     fontsize=fontsize,rotation=65,ha="right",rotation_mode='anchor'
     )
-
+for xtick, color in zip(ax_.get_xticklabels(), combined_alg_name_replay):
+        xtick.set_color(universal_clr_dict[color[:4]])
+        
 #ax.set_title('Forward Learning (FL)', fontsize=fontsize)
 ax_.set_yticks([0,.1])
 ax.set_ylabel('Forward Transfer', fontsize=fontsize)
@@ -552,6 +608,8 @@ ax_.set_xticklabels(
     combined_alg_name_replay,
     fontsize=fontsize,rotation=65,ha="right",rotation_mode='anchor'
     )
+for xtick, color in zip(ax_.get_xticklabels(), combined_alg_name_replay):
+        xtick.set_color(universal_clr_dict[color[:4]])
 
 ax.set_title('Controlled Replay', fontsize=fontsize+15)
 ax_.set_yticks([0,.2])
@@ -574,6 +632,8 @@ ax_.set_xticklabels(
     combined_alg_name_replay,
     fontsize=fontsize,rotation=65,ha="right",rotation_mode='anchor'
     )
+for xtick, color in zip(ax_.get_xticklabels(), combined_alg_name_replay):
+        xtick.set_color(universal_clr_dict[color[:4]])
 
 #ax.set_title('Overall Learning', fontsize=fontsize)
 ax_.set_yticks([0,.2])
