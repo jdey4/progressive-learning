@@ -445,7 +445,7 @@ for ii, name in enumerate(universal_clr_dict.keys()):
 fig = plt.figure(constrained_layout=True,figsize=(46,32))
 gs = fig.add_gridspec(32,46)
 
-c_top = sns.color_palette('Reds', n_colors=10)
+#c_top = sns.color_palette('Reds', n_colors=10)
 c_top = []
 for name in alg_name_top:
     c_top.extend(
