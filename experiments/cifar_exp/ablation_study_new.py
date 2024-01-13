@@ -16,7 +16,7 @@ def register_palette(name, clr):
     # relative positions of colors in cmap/palette 
     pos = [0.0,1.0]
 
-    colors=[clr,'#FFFFFF']
+    colors=['#FFFFFF', clr]
     cmap = LinearSegmentedColormap.from_list("", list(zip(pos, colors)))
     register_cmap(name, cmap)
 
@@ -223,7 +223,7 @@ t = 1
 for count,name in enumerate(fte_top_end.keys()):
     #print(name, count)
     for i in range(10):
-        fte_top_end[name][i] = np.log(ftes_top[count][i])
+        fte_top_end[name][9-i] = np.log(ftes_top[count][i])
         task_order.append(t)
         t += 1
 
@@ -246,7 +246,7 @@ bte_end = {'SynF':np.zeros(10,dtype=float), 'EWC':np.zeros(10,dtype=float),
 for count,name in enumerate(bte_end.keys()):
     #print(name, count)
     for i in range(10):
-        bte_end[name][i] = np.log(btes_top[count][i][9-i])
+        bte_end[name][9-i] = np.log(btes_top[count][i][9-i])
 
 tmp_ble = {}
 for id in alg_name_top:
@@ -365,12 +365,12 @@ for count,name in enumerate(fte_replay_end.keys()):
     print(name, count)
     if count < 4:
         for i in range(10):
-            fte_replay_end[name][i] = np.log(ftes_top_replay[0][i])
+            fte_replay_end[name][9-i] = np.log(ftes_top_replay[0][i])
             task_order.append(t+1)
             t += 1
     else:
         for i in range(10):
-            fte_replay_end[name][i] = np.log(ftes_bottom_replay[0][i])
+            fte_replay_end[name][9-i] = np.log(ftes_bottom_replay[0][i])
             task_order.append(t+1)
             t += 1
 
@@ -393,9 +393,9 @@ for count,name in enumerate(bte_end_replay.keys()):
     #print(name, count)
     for i in range(10):
         if count <4:
-            bte_end_replay[name][i] = np.log(btes_top_replay[count][i][9-i])
+            bte_end_replay[name][9-i] = np.log(btes_top_replay[count][i][9-i])
         else:
-            bte_end_replay[name][i] = np.log(btes_bottom_replay[count-4][i][9-i])
+            bte_end_replay[name][9-i] = np.log(btes_bottom_replay[count-4][i][9-i])
 
 tmp_ble = {}
 for id in bte_end_replay.keys():
@@ -415,7 +415,7 @@ for count,name in enumerate(te_500_replay.keys()):
     #print(name, count)
     for i in range(10):
         if count <4:
-            te_500_replay[name][i] = np.log(tes_top_replay[count][i][9-i])
+            te_500_replay[name][9-i] = np.log(tes_top_replay[count][i][9-i])
         else:
             te_500_replay[name][i] = np.log(tes_bottom_replay[count-4][i][9-i])
 
