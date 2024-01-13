@@ -16,7 +16,7 @@ def register_palette(name, clr):
     # relative positions of colors in cmap/palette 
     pos = [0.0,1.0]
 
-    colors=['#FFFFFF',clr]
+    colors=[clr,'#FFFFFF']
     cmap = LinearSegmentedColormap.from_list("", list(zip(pos, colors)))
     register_cmap(name, cmap)
 
@@ -505,7 +505,7 @@ ax.hlines(0, 0,10, colors='grey', linestyles='dashed',linewidth=1.5, label='chan
 ax.set_xlabel('')
 ax.tick_params(labelsize=ticksize)
 
-ax.text(-.5,.2, 'Constrained Resource', fontsize=fontsize+15)
+ax.text(-.5,.2, 'Constrained Resource (A, B)', fontsize=fontsize+15)
 right_side = ax.spines["right"]
 right_side.set_visible(False)
 top_side = ax.spines["top"]
@@ -520,7 +520,7 @@ clr = ["#e41a1c", "#377eb8", "#4daf4a", "#984ea3"]
 colors = sns.color_palette(clr, n_colors=len(clr))
 
 #labels = ['recruiting', 'Uncertainty Forest', 'hybrid', '50 Random', 'BF', 'building']
-labels = ['SynF (building)', 'UF (new)', 'recycling', 'hybrid']
+labels = ['SynF (building)', 'RF (new)', 'recycling', 'hybrid']
 algo = ['building', 'UF', 'recruiting', 'hybrid']
 adjust = 0
 for i,key in enumerate(algo):
@@ -535,7 +535,7 @@ ax.set_ylabel('Generalization Error', fontsize=fontsize)
 ax.set_xlabel('')
 ax.tick_params(labelsize=ticksize)
 #ax.set_ylim(0.325, 0.575)
-ax.set_title("Resource Recycling",fontsize=fontsize+15)
+ax.set_title("Resource Recycling (C)",fontsize=fontsize+15)
 ax.set_xticks([])
 ax.set_yticks([0.45, 0.55, 0.65,0.75])
 #ax.set_ylim([0.43,0.62])
@@ -611,7 +611,7 @@ ax_.set_xticklabels(
 for xtick, color in zip(ax_.get_xticklabels(), combined_alg_name_replay):
         xtick.set_color(universal_clr_dict[color[:4]])
 
-ax.set_title('Controlled Replay', fontsize=fontsize+15)
+ax.set_title('Controlled Replay (D, E, F)', fontsize=fontsize+15)
 ax_.set_yticks([0,.2])
 ax.set_ylabel('Backward Transfer', fontsize=fontsize)
 ax.set_xlabel('', fontsize=fontsize)
