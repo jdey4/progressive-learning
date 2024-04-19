@@ -75,9 +75,9 @@ def get_error_matrix(filename):
     return err
 
 #%%
-alg_name = ['SynN','SynF', 'Model Zoo', 'LwF','EWC','O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'Total Replay', 'Partial Replay', 'None']
-model_file = ['dnn0','uf10', 'model_zoo', 'LwF', 'EWC', 'OEWC', 'SI', 'er', 'agem', 'tag', 'offline', 'exact', 'None']
-total_alg = 13
+alg_name = ['SiLLy-N', 'Model Zoo', 'LwF','EWC','O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'Total Replay', 'Partial Replay', 'None']
+model_file = ['dnn0', 'model_zoo', 'LwF', 'EWC', 'OEWC', 'SI', 'er', 'agem', 'tag', 'offline', 'exact', 'None']
+total_alg = 12
 slots = 10
 shifts = 6
 
@@ -90,12 +90,12 @@ for alg in range(total_alg):
 
     for slot in range(slots):
         for shift in range(shifts):
-            if alg < 2:
-                filename = './label_shuffle_result/'+model_file[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
-            elif alg == 2:
-                filename = './label_shuffle_result/'+model_file[alg]+'_'+str(slot+1)+'_'+str(shift+1)+'.pickle'
+            if alg < 1:
+                filename = '/Users/jayantadey/progressive-learning/experiments/plot_label_shuffled_angle_recruitment/label_shuffle_result/'+model_file[alg]+'_'+str(shift+1)+'_'+str(slot)+'.pickle'
+            elif alg == 1:
+                filename = '/Users/jayantadey/progressive-learning/experiments/plot_label_shuffled_angle_recruitment/label_shuffle_result/'+model_file[alg]+'_'+str(slot+1)+'_'+str(shift+1)+'.pickle'
             else:
-                filename = './label_shuffle_result/'+model_file[alg]+'-'+str(slot+1)+'-'+str(shift+1)+'.pickle'
+                filename = '/Users/jayantadey/progressive-learning/experiments/plot_label_shuffled_angle_recruitment/label_shuffle_result/'+model_file[alg]+'-'+str(slot+1)+'-'+str(shift+1)+'.pickle'
 
             err_ += np.ravel(np.array(get_error_matrix(filename)))
     
@@ -108,15 +108,15 @@ for alg in range(total_alg):
         tes_label_shuffle[alg].extend(te)
 
 #%% calculate TE for rotation experiment
-alg_name = ['SynN','SynF', 'Model Zoo', 'LwF','EWC','O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'Total Replay', 'Partial Replay', 'None']
-model_file = ['dnn','uf', 'model_zoo', 'LwF', 'EWC', 'OEWC', 'si', 'er', 'agem', 'tag', 'offline', 'exact', 'None']
-total_alg = 13
+alg_name = ['SiLLy-N', 'Model Zoo', 'LwF','EWC','O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'Total Replay', 'Partial Replay', 'None']
+model_file = ['dnn', 'model_zoo', 'LwF', 'EWC', 'OEWC', 'si', 'er', 'agem', 'tag', 'offline', 'exact', 'None']
+total_alg = 12
 angles = range(0,182,4)
 tes_angle = [[] for i in range(total_alg)]
 
 for alg in range(total_alg): 
     for angle in angles:
-        if alg < 2:
+        if alg < 1:
             filename = '../rotation_cifar/results/'+model_file[alg]+'-'+str(angle)+'.pickle'
         else:
             filename = '../rotation_cifar/benchmarking_algorthms_result/'+model_file[alg]+'-'+str(angle)+'.pickle'
@@ -124,21 +124,21 @@ for alg in range(total_alg):
         err = unpickle(filename)
         tes_angle[alg].extend([err[0]/err[1]])
 # %%
-alg_name = ['SynN','SynF','Model Zoo', 'LwF','EWC','O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'Total Replay', 'Partial Replay', 'None']
+alg_name = ['SiLLy-N','Model Zoo', 'LwF','EWC','O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'Total Replay', 'Partial Replay', 'None']
 
 fontsize=24
 ticksize=22
 fig = plt.figure(constrained_layout=True,figsize=(18,6))
 gs = fig.add_gridspec(6, 18)
 
-clr = ["#377eb8", "#e41a1c", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928", "#b15928", "#b15928", "#b15928", "#b15928"]
+clr = ["#e41a1c", "#984ea3", "#f781bf", "#f781bf", "#f781bf", "#f781bf", "#b15928", "#b15928", "#b15928", "#b15928", "#b15928", "#b15928", "#b15928", "#b15928"]
 c = sns.color_palette(clr, n_colors=len(clr))
-marker_style = ['.', '.', 'v', '.', '.', '.', '+', 'o', '*', '.', '+', 'x', 'v']
+marker_style = ['.', 'v', '.', '.', '.', '+', 'o', '*', '.', '+', 'x', 'v']
 
 ax = fig.add_subplot(gs[:6,:6])
 
 for alg_no,alg in enumerate(alg_name):
-    if alg_no<2:
+    if alg_no<1:
         ax.plot(np.arange(1,11),tes_label_shuffle[alg_no], c=c[alg_no], label=alg_name[alg_no], linewidth=3, marker=marker_style[alg_no])
     else:
         ax.plot(np.arange(1,11),tes_label_shuffle[alg_no], c=c[alg_no], label=alg_name[alg_no], marker=marker_style[alg_no])
@@ -161,7 +161,7 @@ ax.set_yticklabels(labels)
 
 ax.tick_params(labelsize=ticksize)
 ax.set_xlabel('Number of tasks seen', fontsize=fontsize)
-ax.set_ylabel('log Backward LE', fontsize=fontsize)
+ax.set_ylabel('Backward Transfer', fontsize=fontsize)
 ax.set_title("A. Label Shuffled CIFAR", fontsize = fontsize)
 ax.hlines(1,1,10, colors='grey', linestyles='dashed',linewidth=1.5)
 right_side = ax.spines["right"]
@@ -202,7 +202,7 @@ ax.set_yticklabels(labels)
 
 ax.tick_params(labelsize=ticksize)
 ax.set_xlabel('Angle of Rotation (Degrees)', fontsize=fontsize)
-ax.set_ylabel('log Backward LE', fontsize=fontsize)
+ax.set_ylabel('Backward Transfer', fontsize=fontsize)
 ax.set_title("B. Rotation Experiment", fontsize=fontsize)
 handles, labels_ = ax.get_legend_handles_labels()
 right_side = ax.spines["right"]
@@ -212,7 +212,7 @@ top_side.set_visible(False)
 plt.tight_layout()
 
 fig.legend(handles, labels_, bbox_to_anchor=(.99, .93), fontsize=20, frameon=False)
-plt.savefig('figs/adversary.pdf', dpi=500)
+plt.savefig('/Users/jayantadey/progressive-learning/experiments/plot_label_shuffled_angle_recruitment/figs/adversary.pdf', dpi=500)
 
 # %%
 fig, ax = plt.subplots(1,1, figsize=(8,8))
