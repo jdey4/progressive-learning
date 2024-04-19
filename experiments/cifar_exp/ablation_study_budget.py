@@ -627,7 +627,7 @@ for name in range(4):
         )
     
 ax = fig.add_subplot(gs[13:21,:8])
-ax_ = sns.stripplot(x='Algorithms', y='Forward Transfer Efficieny', hue='Task ID', data=df_fle_replay, palette=c_top, ax=ax, size=25, legend=None)
+ax_ = sns.stripplot(x='Algorithms', y='Forward Transfer Efficieny', hue='Task ID', data=df_fle_replay, palette=c_top, ax=ax, size=30, legend=None)
 ax_.set_xticklabels(
     combined_alg_name_replay,
     fontsize=fontsize,rotation=65,ha="right",rotation_mode='anchor'
@@ -651,7 +651,7 @@ handles_top, labels_top = ax.get_legend_handles_labels()
 
 #####################################################
 ax = fig.add_subplot(gs[13:21,10:18])
-ax_ = sns.stripplot(x='Algorithms', y='Backward Transfer Efficieny', data=df_ble_replay, hue='Task ID', palette=c_top, ax=ax, size=25, legend=None)
+ax_ = sns.stripplot(x='Algorithms', y='Backward Transfer Efficieny', data=df_ble_replay, hue='Task ID', palette=c_top, ax=ax, size=30, legend=None)
 ax_.set_xticklabels(
     combined_alg_name_replay,
     fontsize=fontsize,rotation=65,ha="right",rotation_mode='anchor'
@@ -671,7 +671,7 @@ ax.hlines(0, 0, 3, colors='grey', linestyles='dashed',linewidth=1.5, label='chan
 ############################
 
 ax = fig.add_subplot(gs[13:21,20:28])
-ax_ = sns.stripplot(x='Algorithms', y='Learning Efficieny', data=df_500_replay, hue='Task ID', palette=c_top, ax=ax, size=25, legend=None)
+ax_ = sns.stripplot(x='Algorithms', y='Learning Efficieny', data=df_500_replay, hue='Task ID', palette=c_top, ax=ax, size=30, legend=None)
 ax_.set_xticklabels(
     combined_alg_name_replay,
     fontsize=fontsize,rotation=65,ha="right",rotation_mode='anchor'
@@ -692,7 +692,7 @@ ax.hlines(0, 0, 3, colors='grey', linestyles='dashed',linewidth=1.5)
 
 #########################################################
 ax = fig.add_subplot(gs[13:21,30:38])
-ax_ = sns.stripplot(x='Algorithms', y='Accuracy', data=df_acc_replay, hue='Task ID', palette=c_top, ax=ax, size=25, legend=None)
+ax_ = sns.stripplot(x='Algorithms', y='Accuracy', data=df_acc_replay, hue='Task ID', palette=c_top, ax=ax, size=30, legend=None)
 ax_.set_xticklabels(
     combined_alg_name_replay,
     fontsize=fontsize,rotation=65,ha="right",rotation_mode='anchor'
