@@ -477,7 +477,7 @@ ticksize=38
 legendsize=16
 
 
-ax = fig.add_subplot(gs[2:10,:8])
+ax = fig.add_subplot(gs[2:10,10:18])
 
 ax_ = sns.stripplot(x='Algorithms', y='Forward Transfer Efficieny', hue='Task ID', data=df_fle, palette=c_top, ax=ax, size=25, legend=None)
 ax_.set_xticklabels(
@@ -505,7 +505,7 @@ handles_task, labels_task = ax.get_legend_handles_labels()
 
 #########################################################
 #ax[0][0].grid(axis='x')
-ax = fig.add_subplot(gs[2:10,10:18])
+ax = fig.add_subplot(gs[2:10,20:28])
 
 ax_ = sns.stripplot(x='Algorithms', y='Backward Transfer Efficieny', hue='Task ID', data=df_ble, palette=c_top, ax=ax, size=25, legend=None)
 ax_.set_xticklabels(
@@ -527,7 +527,7 @@ right_side.set_visible(False)
 top_side = ax.spines["top"]
 top_side.set_visible(False)
 ########################################################
-ax = fig.add_subplot(gs[2:10,20:28])
+ax = fig.add_subplot(gs[2:10,:8])
 
 ax_ = sns.stripplot(x='Algorithms', y='Transfer Efficiency', hue='Task ID', data=df_le, palette=c_top, ax=ax, size=25, legend=None)
 ax_.set_xticklabels(
@@ -626,7 +626,7 @@ for name in range(4):
             )
         )
     
-ax = fig.add_subplot(gs[13:21,:8])
+ax = fig.add_subplot(gs[13:21,10:18])
 ax_ = sns.stripplot(x='Algorithms', y='Forward Transfer Efficieny', hue='Task ID', data=df_fle_replay, palette=c_top, ax=ax, size=30, legend=None)
 ax_.set_xticklabels(
     combined_alg_name_replay,
@@ -650,7 +650,7 @@ handles_top, labels_top = ax.get_legend_handles_labels()
 
 
 #####################################################
-ax = fig.add_subplot(gs[13:21,10:18])
+ax = fig.add_subplot(gs[13:21,20:28])
 ax_ = sns.stripplot(x='Algorithms', y='Backward Transfer Efficieny', data=df_ble_replay, hue='Task ID', palette=c_top, ax=ax, size=30, legend=None)
 ax_.set_xticklabels(
     combined_alg_name_replay,
@@ -670,7 +670,7 @@ ax.hlines(0, 0, 3, colors='grey', linestyles='dashed',linewidth=1.5, label='chan
 
 ############################
 
-ax = fig.add_subplot(gs[13:21,20:28])
+ax = fig.add_subplot(gs[13:21,:8])
 ax_ = sns.stripplot(x='Algorithms', y='Learning Efficieny', data=df_500_replay, hue='Task ID', palette=c_top, ax=ax, size=30, legend=None)
 ax_.set_xticklabels(
     combined_alg_name_replay,
