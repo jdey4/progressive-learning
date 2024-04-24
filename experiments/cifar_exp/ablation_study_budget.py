@@ -710,7 +710,7 @@ top_side = ax.spines["top"]
 top_side.set_visible(False)
 
 fig.text(.38,.96, 'Constrained Resource', fontsize=fontsize+15)
-fig.text(0.38, 0.56, 'Controlled Replay', fontsize=fontsize+15)
+fig.text(0.28, 0.56, 'Controlled Replay (Resource Growing)', fontsize=fontsize+15)
 fig.text(.33, 1, "CIFAR 10X10 (Ablation Study)", fontsize=fontsize+20)
 
 fig.text(.35, 0.25, "Fraction of old data replayed", fontsize=fontsize+10)
