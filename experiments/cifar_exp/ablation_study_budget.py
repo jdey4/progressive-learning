@@ -172,9 +172,9 @@ ntrees = 10
 slots = 10
 task_num = 10
 shifts = 6
-total_alg_top = 11
-alg_name_top = ['SiLLy-N-4', 'EWC', 'Total Replay', 'Partial Replay', 'LwF','O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'None']
-model_file_top = ['dnn_budget', 'EWC', 'offline', 'exact', 'LwF', 'OEWC', 'si', 'er', 'agem', 'tag', 'None']
+total_alg_top = 12
+alg_name_top = ['SiLLy-N-4', 'EWC', 'Total Replay', 'Partial Replay', 'LwF','O-EWC','SI', 'ER', 'A-GEM', 'TAG', 'RanDumb', 'None']
+model_file_top = ['dnn_budget', 'EWC', 'offline', 'exact', 'LwF', 'OEWC', 'si', 'er', 'agem', 'tag', 'ranDumb', 'None']
 btes_top = [[] for i in range(total_alg_top)]
 ftes_top = [[] for i in range(total_alg_top)]
 tes_top = [[] for i in range(total_alg_top)]
@@ -225,7 +225,8 @@ fte_top_end = {'SiLLy-N-4':np.zeros(10,dtype=float), 'EWC':np.zeros(10,dtype=flo
                'Partial Replay':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
                'O-EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float),
                'ER':np.zeros(10,dtype=float), 'A-GEM':np.zeros(10,dtype=float),
-               'TAG':np.zeros(10,dtype=float), 'None':np.zeros(10,dtype=float)}
+               'TAG':np.zeros(10,dtype=float), 'RanDumb':np.zeros(10,dtype=float),
+               'None':np.zeros(10,dtype=float)}
 
 task_order = []
 t = 1
@@ -245,11 +246,12 @@ df_fle = pd.melt(df_fle,var_name='Algorithms', value_name='Forward Transfer Effi
 df_fle.insert(2, "Task ID", task_order)
 #%%
 bte_end = {'SiLLy-N-4':np.zeros(10,dtype=float), 'EWC':np.zeros(10,dtype=float),
-           'Total Replay':np.zeros(10,dtype=float),
-           'Partial Replay':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
-           'O-EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float),
-           'ER':np.zeros(10,dtype=float), 'A-GEM':np.zeros(10,dtype=float),
-           'TAG':np.zeros(10,dtype=float), 'None':np.zeros(10,dtype=float)}
+            'Total Replay':np.zeros(10,dtype=float),
+            'Partial Replay':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
+            'O-EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float),
+            'ER':np.zeros(10,dtype=float), 'A-GEM':np.zeros(10,dtype=float),
+            'TAG':np.zeros(10,dtype=float), 'RanDumb':np.zeros(10,dtype=float),
+            'None':np.zeros(10,dtype=float)}
 
 
 for count,name in enumerate(bte_end.keys()):
@@ -267,11 +269,12 @@ df_ble.insert(2, "Task ID", task_order)
 
 #%%
 te_end = {'SiLLy-N-4':np.zeros(10,dtype=float), 'EWC':np.zeros(10,dtype=float),
-           'Total Replay':np.zeros(10,dtype=float),
-           'Partial Replay':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
-           'O-EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float),
-           'ER':np.zeros(10,dtype=float), 'A-GEM':np.zeros(10,dtype=float),
-           'TAG':np.zeros(10,dtype=float), 'None':np.zeros(10,dtype=float)}
+        'Total Replay':np.zeros(10,dtype=float),
+        'Partial Replay':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
+        'O-EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float),
+        'ER':np.zeros(10,dtype=float), 'A-GEM':np.zeros(10,dtype=float),
+        'TAG':np.zeros(10,dtype=float), 'RanDumb':np.zeros(10,dtype=float),
+        'None':np.zeros(10,dtype=float)}
 
 
 for count,name in enumerate(bte_end.keys()):
@@ -288,11 +291,12 @@ df_le = pd.melt(df_le,var_name='Algorithms', value_name='Transfer Efficiency')
 df_le.insert(2, "Task ID", task_order)
 #%%
 acc_end = {'SiLLy-N-4':np.zeros(10,dtype=float), 'EWC':np.zeros(10,dtype=float),
-           'Total Replay':np.zeros(10,dtype=float),
-           'Partial Replay':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
-           'O-EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float),
-           'ER':np.zeros(10,dtype=float), 'A-GEM':np.zeros(10,dtype=float),
-           'TAG':np.zeros(10,dtype=float), 'None':np.zeros(10,dtype=float)}
+        'Total Replay':np.zeros(10,dtype=float),
+        'Partial Replay':np.zeros(10,dtype=float), 'LwF':np.zeros(10,dtype=float),
+        'O-EWC':np.zeros(10,dtype=float), 'SI':np.zeros(10,dtype=float),
+        'ER':np.zeros(10,dtype=float), 'A-GEM':np.zeros(10,dtype=float),
+        'TAG':np.zeros(10,dtype=float), 'RanDumb':np.zeros(10,dtype=float),
+        'None':np.zeros(10,dtype=float)}
 
 
 for count,name in enumerate(bte_end.keys()):
@@ -453,6 +457,7 @@ universal_clr_dict = {'SiLLy-N-4': 'r',
                       'ER': '#b15928',
                       'A-GEM': '#8b8589',
                       'TAG': '#f781bf',
+                      'RanDumb': '#4daf4a',
                       'None': '#4c516d'}
 for ii, name in enumerate(universal_clr_dict.keys()):
     print(name)
